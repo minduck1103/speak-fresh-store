@@ -32,7 +32,7 @@ const Banner2 = () => {
           className="text-center mb-12"
         >
           <h2 className="text-3xl font-bold">
-            NGUỒN GỐC & CHẤT LƯỢNG
+          🌿NGUỒN GỐC CHẤT LƯỢNG🛡️
           </h2>
           <p className="text-gray-600 mt-4">
             Cam kết mang đến những sản phẩm tươi ngon nhất cho gia đình bạn

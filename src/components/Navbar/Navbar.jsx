@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 const Navbar = () => {
   return (
-    <nav className="bg-white py-4">
+    <nav className="bg-white py-4 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 flex justify-between items-center">
         <div className="flex items-center">
           <Link to="/" className="text-2xl font-bold">
@@ -12,23 +12,47 @@ const Navbar = () => {
           </Link>
         </div>
         <div className="hidden md:flex items-center space-x-8">
-          <Link to="/" className="text-gray-700 hover:text-gray-900">
-            Home
+          <Link 
+            to="/" 
+            className="text-gray-700 hover:text-green-500 transition-colors"
+          >
+            <span className="text-xl">🏠</span>
+            <span className="ml-1">Trang chủ</span>
           </Link>
-          <Link to="/products" className="text-gray-700 hover:text-gray-900">
-            Products
+          <Link 
+            to="/products" 
+            className="text-gray-700 hover:text-green-500 transition-colors"
+          >
+            <span className="text-xl">📦</span>
+            <span className="ml-1">Sản phẩm</span>
           </Link>
-          <Link to="/about" className="text-gray-700 hover:text-gray-900">
-            About
+          <Link 
+            to="/about" 
+            className="text-gray-700 hover:text-green-500 transition-colors"
+          >
+            <span className="text-xl">💬</span>
+            <span className="ml-1">Giới thiệu</span>
           </Link>
-          <Link to="/shop" className="text-gray-700 hover:text-gray-900">
-            Shop
+          <Link 
+            to="/contacts" 
+            className="text-gray-700 hover:text-green-500 transition-colors"
+          >
+            <span className="text-xl">☎️</span>
+            <span className="ml-1">Liên hệ</span>
           </Link>
-          <Link to="/contacts" className="text-gray-700 hover:text-gray-900">
-            Contacts
+          <Link 
+            to="/cart" 
+            className="text-gray-700 hover:text-green-500 transition-colors flex items-center"
+          >
+            <span className="text-xl">🛒</span>
+            <span className="ml-1">Giỏ hàng</span>
           </Link>
-          <Link to="/cart" className="text-gray-700 hover:text-gray-900">
-            🛒
+          <Link 
+            to="/login" 
+            className="text-gray-700 hover:text-green-500 transition-colors flex items-center"
+          >
+            <span className="text-xl">👤</span>
+            <span className="ml-1">Tài khoản</span>
           </Link>
         </div>
       </div>
