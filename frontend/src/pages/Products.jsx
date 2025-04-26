@@ -4,6 +4,7 @@ import productService from '../services/productService';
 import categoryService from '../services/categoryService';
 import cartService from '../services/cartService';
 import { toast } from 'react-toastify';
+import { Link } from 'react-router-dom';
 
 const Products = () => {
     const [products, setProducts] = useState([]);
@@ -16,7 +17,7 @@ const Products = () => {
     const [minPrice, setMinPrice] = useState('');
     const [maxPrice, setMaxPrice] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
-    const productsPerPage = 8;
+    const productsPerPage = 9;
 
     useEffect(() => {
         fetchProducts();
@@ -211,18 +212,18 @@ const Products = () => {
                             <h4 className="text-muted">Không tìm thấy sản phẩm nào</h4>
                         </div>
                     ) : (
-                        <>
-                <Row>
-                                {currentProducts.map((product) => (
-                                    <Col key={product._id} xs={12} sm={6} md={6} lg={4} className="mb-4">
+                        <Row>
+                            {currentProducts.map((product, idx) => (
+                                <Col key={product._id} xs={12} sm={6} md={4} className="mb-4">
+                                    <Link to={`/products/${product._id}`} style={{ textDecoration: 'none' }}>
                                         <Card className="h-100 border-success product-card">
                                             <div className="position-relative">
-                                <Card.Img 
-                                    variant="top" 
-                                    src={product.images[0]?.url || 'https://via.placeholder.com/300'} 
-                                    alt={product.name}
-                                    style={{ height: '200px', objectFit: 'cover' }}
-                                />
+                                                <Card.Img 
+                                                    variant="top" 
+                                                    src={product.images && (product.images[0]?.url || product.images[0]) ? (product.images[0]?.url || product.images[0]) : '/no-image.png'} 
+                                                    alt={product.name}
+                                                    style={{ height: '200px', objectFit: 'cover' }}
+                                                />
                                                 <Badge 
                                                     bg={product.stock > 0 ? "success" : "danger"} 
                                                     className="position-absolute top-0 end-0 m-2"
@@ -234,12 +235,15 @@ const Products = () => {
                                                 <div className="d-flex justify-content-between align-items-start mb-2">
                                                     <div>
                                                         <Card.Title className="text-success mb-1">{product.name}</Card.Title>
+                                                        <div className="text-gray-500 text-sm mb-1">
+                                                            Danh mục: {product.category?.name || (categories.find(c => c._id === (product.category?._id || product.category))?.name) || 'Chưa phân loại'}
+                                                        </div>
                                                         <div className="d-flex align-items-center mb-2">
                                                             <div className="text-warning me-2">
                                                                 {[...Array(5)].map((_, i) => (
                                                                     <i 
                                                                         key={i} 
-                                                                        className={`fas fa-star ${i < (product.rating || 0) ? 'text-warning' : 'text-muted'}`}
+                                                                        className={`fas fa-star ${i < (product.ratings || 0) ? 'text-warning' : 'text-muted'}`}
                                                                     ></i>
                                                                 ))}
                                                             </div>
@@ -261,6 +265,12 @@ const Products = () => {
                                                                 </span>
                                                             )}
                                                         </h5>
+                                                        {/* Mô tả ngắn nếu muốn */}
+                                                        {product.description && (
+                                                            <div className="text-gray-700 text-sm mt-1 line-clamp-2" style={{overflow: 'hidden', textOverflow: 'ellipsis', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical'}}>
+                                                                {product.description}
+                                                            </div>
+                                                        )}
                                                     </div>
                                                 </div>
                                                 <div className="mt-auto">
@@ -268,40 +278,40 @@ const Products = () => {
                                                         variant="success" 
                                                         className="w-100"
                                                         disabled={product.stock <= 0}
-                                                        onClick={() => handleAddToCart(product)}
+                                                        onClick={(e) => { e.preventDefault(); handleAddToCart(product); }}
                                                     >
                                                         {product.stock > 0 ? "Thêm vào giỏ hàng" : "Hết hàng"}
                                                     </Button>
                                                 </div>
-                                </Card.Body>
-                            </Card>
-                        </Col>
-                    ))}
-                </Row>
+                                            </Card.Body>
+                                        </Card>
+                                    </Link>
+                                </Col>
+                            ))}
+                        </Row>
+                    )}
 
-                            {/* Pagination */}
-                            {totalPages > 1 && (
-                                <div className="d-flex justify-content-center mt-4">
-                                    <Pagination>
-                                        <Pagination.First onClick={() => paginate(1)} disabled={currentPage === 1} />
-                                        <Pagination.Prev onClick={() => paginate(currentPage - 1)} disabled={currentPage === 1} />
-                                        
-                                        {Array.from({ length: totalPages }, (_, i) => i + 1).map(number => (
-                                            <Pagination.Item
-                                                key={number}
-                                                active={number === currentPage}
-                                                onClick={() => paginate(number)}
-                                            >
-                                                {number}
-                                            </Pagination.Item>
-                                        ))}
-                                        
-                                        <Pagination.Next onClick={() => paginate(currentPage + 1)} disabled={currentPage === totalPages} />
-                                        <Pagination.Last onClick={() => paginate(totalPages)} disabled={currentPage === totalPages} />
-                                    </Pagination>
-                                </div>
-                            )}
-                        </>
+                    {/* Pagination */}
+                    {totalPages > 1 && (
+                        <div className="d-flex justify-content-center mt-4">
+                            <Pagination className="custom-green-pagination">
+                                <Pagination.First onClick={() => paginate(1)} disabled={currentPage === 1} />
+                                <Pagination.Prev onClick={() => paginate(currentPage - 1)} disabled={currentPage === 1} />
+                                {Array.from({ length: totalPages }, (_, i) => i + 1).map(number => (
+                                    <Pagination.Item
+                                        key={number}
+                                        active={number === currentPage}
+                                        onClick={() => paginate(number)}
+                                        className={number === currentPage ? 'bg-success text-white border-success' : 'text-success'}
+                                        style={number === currentPage ? { backgroundColor: '#22c55e', borderColor: '#22c55e', color: '#fff' } : { color: '#22c55e' }}
+                                    >
+                                        {number}
+                                    </Pagination.Item>
+                                ))}
+                                <Pagination.Next onClick={() => paginate(currentPage + 1)} disabled={currentPage === totalPages} />
+                                <Pagination.Last onClick={() => paginate(totalPages)} disabled={currentPage === totalPages} />
+                            </Pagination>
+                        </div>
                     )}
                 </Col>
             </Row>

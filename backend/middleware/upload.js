@@ -1,10 +1,11 @@
 const multer = require('multer');
 const path = require('path');
+const fs = require('fs');
 
 // Set storage engine
 const storage = multer.diskStorage({
     destination: function(req, file, cb) {
-        cb(null, 'uploads/');
+        cb(null, path.join(__dirname, '../../frontend/public/images/'));
     },
     filename: function(req, file, cb) {
         cb(
@@ -35,5 +36,10 @@ const upload = multer({
         checkFileType(file, cb);
     }
 });
+
+const imagesDir = path.join(__dirname, '../../frontend/public/images/');
+if (!fs.existsSync(imagesDir)) {
+    fs.mkdirSync(imagesDir, { recursive: true });
+}
 
 module.exports = upload; 

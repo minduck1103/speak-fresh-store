@@ -3,7 +3,7 @@ import axios from 'axios';
 const API_URL = 'http://localhost:5000/api/v1';
 
 // Configure axios instance
-const axiosInstance = axios.create({
+export const axiosInstance = axios.create({
     baseURL: API_URL,
     headers: {
         'Content-Type': 'application/json'
@@ -18,6 +18,7 @@ const authService = {
             
             if (response.data.success) {
                 localStorage.setItem('token', response.data.token);
+                axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
             }
             return response.data;
         } catch (error) {

@@ -1,6 +1,9 @@
 const Product = require('../models/Product');
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
+const path = require('path');
+const fs = require('fs');
+const upload = require('../middleware/upload');
 
 // @desc    Get all products
 // @route   GET /api/v1/products
@@ -35,37 +38,57 @@ exports.getProduct = asyncHandler(async (req, res, next) => {
 // @desc    Create new product
 // @route   POST /api/v1/products
 // @access  Private/Admin
-exports.createProduct = asyncHandler(async (req, res, next) => {
-    const product = await Product.create(req.body);
-
-    res.status(201).json({
-        success: true,
-        data: product
+exports.createProduct = [
+  upload.single('image'),
+  asyncHandler(async (req, res, next) => {
+    // Xử lý dữ liệu từ FormData
+    const { name, price, category, description, stock } = req.body;
+    let imagePath = '';
+    if (req.file) {
+      imagePath = `/images/${req.file.filename}`;
+    }
+    const product = await Product.create({
+      name,
+      price,
+      category,
+      description,
+      stock,
+      image: imagePath
     });
-});
+    res.status(201).json({ success: true, data: product });
+  })
+];
 
 // @desc    Update product
 // @route   PUT /api/v1/products/:id
 // @access  Private/Admin
-exports.updateProduct = asyncHandler(async (req, res, next) => {
+exports.updateProduct = [
+  upload.single('image'),
+  asyncHandler(async (req, res, next) => {
     let product = await Product.findById(req.params.id);
-
     if (!product) {
-        return next(
-            new ErrorResponse(`Product not found with id of ${req.params.id}`, 404)
-        );
+      return next(new ErrorResponse(`Product not found with id of ${req.params.id}`, 404));
     }
-
-    product = await Product.findByIdAndUpdate(req.params.id, req.body, {
-        new: true,
-        runValidators: true
-    });
-
-    res.status(200).json({
-        success: true,
-        data: product
-    });
-});
+    // Nếu có file ảnh mới thì xóa ảnh cũ và cập nhật ảnh mới
+    if (req.file) {
+      if (product.image && typeof product.image === 'string' && product.image.trim() !== '') {
+        const oldPath = path.join(__dirname, '../../frontend/public', product.image);
+        if (fs.existsSync(oldPath)) {
+          fs.unlinkSync(oldPath);
+        }
+      }
+      product.image = `/images/${req.file.filename}`;
+    }
+    // Cập nhật các trường khác
+    product.name = req.body.name;
+    product.price = req.body.price;
+    product.category = req.body.category;
+    product.description = req.body.description;
+    product.stock = req.body.stock;
+    await product.save();
+    res.status(200).json({ success: true, data: product });
+  })
+];
 
 // @desc    Delete product
 // @route   DELETE /api/v1/products/:id
@@ -79,7 +102,15 @@ exports.deleteProduct = asyncHandler(async (req, res, next) => {
         );
     }
 
-    await product.remove();
+    // Xóa file ảnh nếu có và file tồn tại
+    if (product.image && typeof product.image === 'string' && product.image.trim() !== '') {
+        const imagePath = path.join(__dirname, '../../frontend/public', product.image);
+        if (fs.existsSync(imagePath)) {
+            fs.unlinkSync(imagePath);
+        }
+    }
+
+    await Product.findByIdAndDelete(req.params.id);
 
     res.status(200).json({
         success: true,
@@ -178,4 +209,33 @@ exports.deleteReview = asyncHandler(async (req, res, next) => {
         success: true,
         data: product
     });
-}); 
+});
+
+// @desc    Upload product image
+// @route   PUT /api/v1/products/:id/image
+// @access  Private/Admin
+exports.uploadProductImage = [
+  upload.single('image'),
+  asyncHandler(async (req, res, next) => {
+    console.log('DEBUG req.file:', req.file);
+    const product = await Product.findById(req.params.id);
+    if (!product) {
+      return next(new ErrorResponse(`Product not found with id of ${req.params.id}`, 404));
+    }
+    if (!req.file) {
+      return next(new ErrorResponse('No image file uploaded', 400));
+    }
+    // Lưu đường dẫn tương đối để frontend dùng được
+    const imagePath = `/images/${req.file.filename}`;
+    // Nếu có ảnh cũ thì xóa file cũ (nếu muốn)
+    if (product.image && product.image !== imagePath) {
+      const oldPath = path.join(__dirname, '../../frontend/public', product.image);
+      if (fs.existsSync(oldPath)) {
+        fs.unlinkSync(oldPath);
+      }
+    }
+    product.image = imagePath;
+    await product.save();
+    res.status(200).json({ success: true, data: product });
+  })
+]; 

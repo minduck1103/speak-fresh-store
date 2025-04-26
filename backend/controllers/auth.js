@@ -7,16 +7,31 @@ const crypto = require('crypto');
 // @route   POST /api/v1/auth/register
 // @access  Public
 exports.register = asyncHandler(async (req, res, next) => {
+    console.log('Register request body:', req.body);
     const { name, email, password } = req.body;
 
-    // Create user
-    const user = await User.create({
-        name,
-        email,
-        password
-    });
+    try {
+        // Check if user already exists
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
+            return next(new ErrorResponse('Email đã được sử dụng', 400));
+        }
 
-    sendTokenResponse(user, 200, res);
+        // Create user
+        const user = await User.create({
+            name,
+            email,
+            password
+        });
+
+        sendTokenResponse(user, 200, res);
+    } catch (error) {
+        console.log('Register error:', error);
+        if (error.code === 11000) {
+            return next(new ErrorResponse('Email đã được sử dụng', 400));
+        }
+        return next(new ErrorResponse(error.message, 500));
+    }
 });
 
 // @desc    Login user

@@ -7,7 +7,8 @@ const {
     deleteProduct,
     createProductReview,
     getProductReviews,
-    deleteReview
+    deleteReview,
+    uploadProductImage
 } = require('../controllers/products');
 
 const router = express.Router();
@@ -25,5 +26,7 @@ router.route('/:id/reviews')
     .get(getProductReviews)
     .post(createProductReview)
     .delete(deleteReview);
+
+router.route('/:id/image').put(uploadProductImage);
 
 module.exports = router; 

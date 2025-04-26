@@ -11,6 +11,13 @@ import Register from "./pages/Register";
 import Cart from "./pages/Cart";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
+import ProductDetail from "./pages/ProductDetail";
+import Checkout from "./pages/Checkout";
+import EditAccount from "./pages/EditAccount";
+import Orders from "./pages/Orders";
+import AdminPage from "./pages/admin/AdminPage";
+import SellerPage from "./pages/seller/SellerPage";
+import DeliveryPage from "./pages/delivery/DeliveryPage";
 
 const App = () => {
   return (
@@ -25,6 +32,13 @@ const App = () => {
           <Route path="/cart" element={<Cart />} />
           <Route path="/about" element={<About />} />
           <Route path="/contacts" element={<Contact />} />
+          <Route path="/products/:id" element={<ProductDetail />} />
+          <Route path="/checkout" element={<Checkout />} />
+          <Route path="/account/edit" element={<EditAccount />} />
+          <Route path="/orders" element={<Orders />} />
+          <Route path="/admin" element={<AdminPage />} />
+          <Route path="/seller" element={<SellerPage />} />
+          <Route path="/delivery" element={<DeliveryPage />} />
         </Routes>
         <Footer />
         <ToastContainer

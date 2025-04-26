@@ -15,16 +15,10 @@ const productSchema = new mongoose.Schema({
         required: [true, 'Please enter product price'],
         maxLength: [8, 'Price cannot exceed 8 characters']
     },
-    images: [{
-        public_id: {
-            type: String,
-            required: true
-        },
-        url: {
-            type: String,
-            required: true
-        }
-    }],
+    image: {
+        type: String,
+        required: [true, 'Please upload product image']
+    },
     category: {
         type: mongoose.Schema.ObjectId,
         ref: 'Category',

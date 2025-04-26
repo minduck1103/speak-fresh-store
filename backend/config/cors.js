@@ -1,5 +1,5 @@
 const corsOptions = {
-    origin: true, // Cho phép tất cả các origin trong development
+    origin: 'http://localhost:5173', // CHỈ ĐỂ DOMAIN NÀY
     credentials: true,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     preflightContinue: false,
@@ -9,10 +9,7 @@ const corsOptions = {
         'X-Requested-With',
         'Content-Type',
         'Accept',
-        'Authorization',
-        'Access-Control-Allow-Headers',
-        'Access-Control-Request-Method',
-        'Access-Control-Request-Headers'
+        'Authorization'
     ]
 };
 
