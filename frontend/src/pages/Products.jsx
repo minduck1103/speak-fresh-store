@@ -1,161 +1,312 @@
-import React, { useState, useMemo } from 'react';
-import ProductFilter from '../components/Products/ProductFilter';
-import ProductList from '../components/Products/ProductList';
-import ProductSort from '../components/Products/ProductSort';
-import ProductSearch from '../components/Products/ProductSearch';
+import React, { useState, useEffect } from 'react';
+import { Container, Row, Col, Card, Form, InputGroup, Button, Pagination, Badge } from 'react-bootstrap';
+import productService from '../services/productService';
+import categoryService from '../services/categoryService';
+import cartService from '../services/cartService';
+import { toast } from 'react-toastify';
 
 const Products = () => {
-  // State for filters
-  const [selectedCategories, setSelectedCategories] = useState([]);
-  const [priceRange, setPriceRange] = useState({ min: 0, max: 1000000 });
-  const [searchQuery, setSearchQuery] = useState('');
-  const [sortOption, setSortOption] = useState('name-asc');
+    const [products, setProducts] = useState([]);
+    const [categories, setCategories] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [selectedCategory, setSelectedCategory] = useState('all');
+    const [sortBy, setSortBy] = useState('name-asc');
+    const [minPrice, setMinPrice] = useState('');
+    const [maxPrice, setMaxPrice] = useState('');
+    const [currentPage, setCurrentPage] = useState(1);
+    const productsPerPage = 8;
 
-  // Danh sách sản phẩm mẫu
-  const products = [
-    {
-      id: 1,
-      name: "Táo Envy New Zealand",
-      price: 189000,
-      category: "táo",
-      origin: "New Zealand",
-      image: "/src/assets/products/apple-envy.png",
-      description: "Táo Envy có vỏ màu đỏ thẫm, thịt giòn, ngọt đậm",
-      discount: 0,
-    },
-    {
-      id: 2,
-      name: "Cam Valencia Úc",
-      price: 159000,
-      category: "cam",
-      origin: "Úc",
-      image: "/src/assets/products/orange-valencia.png",
-      description: "Cam Valencia vỏ mỏng, nhiều nước, vị ngọt thanh",
-      discount: 10,
-    },
-    {
-      id: 3,
-      name: "Nho xanh không hạt Úc",
-      price: 239000,
-      category: "nho",
-      origin: "Úc",
-      image: "/src/assets/products/grape-green.png",
-      description: "Nho xanh không hạt, vị ngọt đậm, giòn",
-      discount: 0,
-    },
-    {
-      id: 4,
-      name: "Lê Singo Hàn Quốc",
-      price: 209000,
-      category: "lê",
-      origin: "Hàn Quốc",
-      image: "/src/assets/products/pear-singo.png",
-      description: "Lê Singo thịt trắng, giòn ngọt, mọng nước",
-      discount: 15,
-    },
-    {
-      id: 5,
-      name: "Kiwi vàng New Zealand",
-      price: 179000,
-      category: "kiwi",
-      origin: "New Zealand",
-      image: "/src/assets/products/kiwi-gold.png",
-      description: "Kiwi vàng thịt vàng óng, vị ngọt đặc trưng",
-      discount: 0,
-    },
-    {
-      id: 6,
-      name: "Cherry đỏ Mỹ",
-      price: 499000,
-      category: "cherry",
-      origin: "Mỹ",
-      image: "/src/assets/products/cherry-red.png",
-      description: "Cherry đỏ tươi, thịt chắc, vị ngọt chua",
-      discount: 20,
-    },
-  ];
+    useEffect(() => {
+        fetchProducts();
+    }, []);
 
-  // Get unique categories
-  const categories = useMemo(() => {
-    return [...new Set(products.map(product => product.category))];
-  }, [products]);
+        const fetchProducts = async () => {
+            try {
+            setLoading(true);
+            const [productsResponse, categoriesResponse] = await Promise.all([
+                productService.getProducts(),
+                categoryService.getCategories()
+            ]);
+            setProducts(productsResponse.data || []);
+            setCategories(categoriesResponse.data || []);
+            setError(null);
+            } catch (err) {
+            setError('Failed to fetch products');
+                console.error('Error fetching products:', err);
+        } finally {
+                setLoading(false);
+            }
+        };
 
-  // Filter and sort products
-  const filteredAndSortedProducts = useMemo(() => {
-    let result = [...products];
+    const handleAddToCart = (product) => {
+        try {
+            cartService.addToCart(product);
+            toast.success('Sản phẩm đã được thêm vào giỏ hàng');
+            // Trigger cart update event
+            window.dispatchEvent(new Event('cartUpdated'));
+        } catch (err) {
+            toast.error('Không thể thêm sản phẩm vào giỏ hàng');
+        }
+    };
 
-    // Apply search filter
-    if (searchQuery) {
-      result = result.filter(product =>
-        product.name.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-    }
+    const formatPrice = (price) => {
+        return new Intl.NumberFormat('vi-VN', {
+            style: 'currency',
+            currency: 'VND'
+        }).format(price);
+    };
 
-    // Apply category filter
-    if (selectedCategories.length > 0) {
-      result = result.filter(product => selectedCategories.includes(product.category));
-    }
+    // Filter and sort products
+    const filteredProducts = products
+        .filter(product => 
+            product.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
+            (selectedCategory === 'all' || product.category === selectedCategory)
+        )
+        .sort((a, b) => {
+            switch (sortBy) {
+                case 'price-asc':
+                    return a.price - b.price;
+                case 'price-desc':
+                    return b.price - a.price;
+                case 'name-desc':
+                    return b.name.localeCompare(a.name);
+                default: // name-asc
+                    return a.name.localeCompare(b.name);
+            }
+        });
 
-    // Apply price filter
-    result = result.filter(product => {
-      const finalPrice = product.discount 
-        ? product.price * (1 - product.discount / 100) 
-        : product.price;
-      return finalPrice >= priceRange.min && finalPrice <= priceRange.max;
-    });
+    // Pagination logic
+    const indexOfLastProduct = currentPage * productsPerPage;
+    const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+    const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct);
+    const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
 
-    // Apply sorting
-    result.sort((a, b) => {
-      const getPrice = (product) => product.discount 
-        ? product.price * (1 - product.discount / 100) 
-        : product.price;
+    const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-      switch (sortOption) {
-        case 'price-asc':
-          return getPrice(a) - getPrice(b);
-        case 'price-desc':
-          return getPrice(b) - getPrice(a);
-        case 'name-asc':
-          return a.name.localeCompare(b.name);
-        case 'name-desc':
-          return b.name.localeCompare(a.name);
-        default:
-          return 0;
-      }
-    });
-
-    return result;
-  }, [products, selectedCategories, priceRange, sortOption, searchQuery]);
-
-  return (
-    <div className="bg-gray-50 min-h-screen py-12">
-      <div className="max-w-7xl mx-auto px-4">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">Sản Phẩm</h1>
-        
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-          {/* Sidebar Filters */}
-          <div className="lg:col-span-1">
-            <ProductFilter 
-              categories={categories}
-              selectedCategories={selectedCategories}
-              setSelectedCategories={setSelectedCategories}
-              priceRange={priceRange}
-              setPriceRange={setPriceRange}
-            />
-          </div>
-
-          {/* Product List */}
-          <div className="lg:col-span-3">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-              <ProductSearch searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
-              <ProductSort sortOption={sortOption} setSortOption={setSortOption} />
+    if (loading) {
+        return (
+            <div className="max-w-7xl mx-auto px-4 py-8">
+                <div className="text-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500 mx-auto"></div>
+                    <p className="mt-4 text-gray-600">Đang tải sản phẩm...</p>
+                </div>
             </div>
-            <ProductList products={filteredAndSortedProducts} />
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="max-w-7xl mx-auto px-4 py-8">
+                <div className="text-center text-red-500">
+                    <p>{error}</p>
+                    <button
+                        onClick={fetchProducts}
+                        className="mt-4 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600"
+                    >
+                        Thử lại
+                    </button>
+                </div>
+            </div>
+        );
+    }
+
+    return (
+        <Container className="py-5">
+            {/* Banner Section */}
+            <div className="position-relative mb-5">
+                <img 
+                    src="https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" 
+                    alt="Products Banner" 
+                    className="w-100 rounded-3"
+                    style={{ height: '300px', objectFit: 'cover' }}
+                />
+                <div className="position-absolute top-50 start-50 translate-middle text-center text-white">
+                    <h1 className="display-4 fw-bold mb-3">Sản phẩm tươi ngon</h1>
+                    <p className="lead">Chọn lọc những sản phẩm chất lượng nhất</p>
+                </div>
+            </div>
+
+            <Row>
+                {/* Left Sidebar - Filters */}
+                <Col md={3} className="mb-4">
+                    <Card className="border-success">
+                        <Card.Header className="bg-success text-white">
+                            <h5 className="mb-0">Bộ lọc</h5>
+                        </Card.Header>
+                        <Card.Body>
+                            <Form.Group className="mb-3">
+                                <Form.Label>Danh mục</Form.Label>
+                                <Form.Select 
+                                    value={selectedCategory}
+                                    onChange={(e) => setSelectedCategory(e.target.value)}
+                                    className="border-success"
+                                >
+                                    <option value="all">Tất cả danh mục</option>
+                                    {categories.map(category => (
+                                        <option key={category._id} value={category._id}>
+                                            {category.name}
+                                        </option>
+                                    ))}
+                                </Form.Select>
+                            </Form.Group>
+
+                            <Form.Group className="mb-3">
+                                <Form.Label>Khoảng giá</Form.Label>
+                                <div className="d-flex gap-2">
+                                    <Form.Control
+                                        type="number"
+                                        placeholder="Từ"
+                                        value={minPrice}
+                                        onChange={(e) => setMinPrice(e.target.value)}
+                                        className="border-success"
+                                    />
+                                    <Form.Control
+                                        type="number"
+                                        placeholder="Đến"
+                                        value={maxPrice}
+                                        onChange={(e) => setMaxPrice(e.target.value)}
+                                        className="border-success"
+                                    />
+                                </div>
+                            </Form.Group>
+                        </Card.Body>
+                    </Card>
+                </Col>
+
+                {/* Main Content */}
+                <Col md={9}>
+                    <div className="d-flex justify-content-between align-items-center mb-4">
+                        <h2 className="text-success mb-0">Danh sách sản phẩm</h2>
+                        <div className="d-flex gap-2">
+                            <InputGroup style={{ width: '300px' }}>
+                                <Form.Control
+                                    type="text"
+                                    placeholder="Tìm kiếm sản phẩm..."
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                />
+                                <Button variant="success">
+                                    <i className="fas fa-search"></i>
+                                </Button>
+                            </InputGroup>
+                            <Form.Select 
+                                value={sortBy}
+                                onChange={(e) => setSortBy(e.target.value)}
+                                className="border-success"
+                                style={{ width: '200px' }}
+                            >
+                                <option value="name-asc">Tên A-Z</option>
+                                <option value="name-desc">Tên Z-A</option>
+                                <option value="price-asc">Giá tăng dần</option>
+                                <option value="price-desc">Giá giảm dần</option>
+                            </Form.Select>
+                        </div>
+                    </div>
+
+                    {/* Products Grid */}
+                    {currentProducts.length === 0 ? (
+                        <div className="text-center py-5">
+                            <h4 className="text-muted">Không tìm thấy sản phẩm nào</h4>
+                        </div>
+                    ) : (
+                        <>
+                <Row>
+                                {currentProducts.map((product) => (
+                                    <Col key={product._id} xs={12} sm={6} md={6} lg={4} className="mb-4">
+                                        <Card className="h-100 border-success product-card">
+                                            <div className="position-relative">
+                                <Card.Img 
+                                    variant="top" 
+                                    src={product.images[0]?.url || 'https://via.placeholder.com/300'} 
+                                    alt={product.name}
+                                    style={{ height: '200px', objectFit: 'cover' }}
+                                />
+                                                <Badge 
+                                                    bg={product.stock > 0 ? "success" : "danger"} 
+                                                    className="position-absolute top-0 end-0 m-2"
+                                                >
+                                                    {product.stock > 0 ? "Còn hàng" : "Hết hàng"}
+                                                </Badge>
+                                            </div>
+                                            <Card.Body className="d-flex flex-column">
+                                                <div className="d-flex justify-content-between align-items-start mb-2">
+                                                    <div>
+                                                        <Card.Title className="text-success mb-1">{product.name}</Card.Title>
+                                                        <div className="d-flex align-items-center mb-2">
+                                                            <div className="text-warning me-2">
+                                                                {[...Array(5)].map((_, i) => (
+                                                                    <i 
+                                                                        key={i} 
+                                                                        className={`fas fa-star ${i < (product.rating || 0) ? 'text-warning' : 'text-muted'}`}
+                                                                    ></i>
+                                                                ))}
+                                                            </div>
+                                                            <small className="text-muted">({product.reviews?.length || 0} đánh giá)</small>
+                                                        </div>
+                                                        <h5 className="text-success mb-0">
+                                                            {product.discount > 0 ? (
+                                                                <>
+                                                                    <span className="text-lg font-bold text-green-600">
+                                                                        {formatPrice(product.price * (1 - product.discount / 100))}
+                                                                    </span>
+                                                                    <span className="text-sm text-gray-400 line-through ml-2">
+                                                                        {formatPrice(product.price)}
+                                                                    </span>
+                                                                </>
+                                                            ) : (
+                                                                <span className="text-lg font-bold text-green-600">
+                                                                    {formatPrice(product.price)}
+                                                                </span>
+                                                            )}
+                                                        </h5>
+                                                    </div>
+                                                </div>
+                                                <div className="mt-auto">
+                                                    <Button 
+                                                        variant="success" 
+                                                        className="w-100"
+                                                        disabled={product.stock <= 0}
+                                                        onClick={() => handleAddToCart(product)}
+                                                    >
+                                                        {product.stock > 0 ? "Thêm vào giỏ hàng" : "Hết hàng"}
+                                                    </Button>
+                                                </div>
+                                </Card.Body>
+                            </Card>
+                        </Col>
+                    ))}
+                </Row>
+
+                            {/* Pagination */}
+                            {totalPages > 1 && (
+                                <div className="d-flex justify-content-center mt-4">
+                                    <Pagination>
+                                        <Pagination.First onClick={() => paginate(1)} disabled={currentPage === 1} />
+                                        <Pagination.Prev onClick={() => paginate(currentPage - 1)} disabled={currentPage === 1} />
+                                        
+                                        {Array.from({ length: totalPages }, (_, i) => i + 1).map(number => (
+                                            <Pagination.Item
+                                                key={number}
+                                                active={number === currentPage}
+                                                onClick={() => paginate(number)}
+                                            >
+                                                {number}
+                                            </Pagination.Item>
+                                        ))}
+                                        
+                                        <Pagination.Next onClick={() => paginate(currentPage + 1)} disabled={currentPage === totalPages} />
+                                        <Pagination.Last onClick={() => paginate(totalPages)} disabled={currentPage === totalPages} />
+                                    </Pagination>
+                                </div>
+                            )}
+                        </>
+                    )}
+                </Col>
+            </Row>
+        </Container>
+    );
 };
 
 export default Products; 

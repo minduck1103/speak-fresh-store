@@ -1,168 +1,170 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import cartService from '../services/cartService';
+import authService from '../services/authService';
 
 const Cart = () => {
-  // Mock cart data - replace with real data later
-  const [cartItems, setCartItems] = useState([
-    {
-      id: 1,
-      name: "Táo Envy New Zealand",
-      price: 189000,
-      image: "/src/assets/products/apple-envy.png",
-      quantity: 2,
-    },
-    {
-      id: 2,
-      name: "Cam Valencia Úc",
-      price: 159000,
-      image: "/src/assets/products/orange-valencia.png",
-      quantity: 1,
-    },
-    {
-      id: 3,
-      name: "Nho xanh không hạt Úc",
-      price: 239000,
-      image: "/src/assets/products/grape-green.png",
-      quantity: 3,
-    },
-  ]);
+  const [cartItems, setCartItems] = useState([]);
+  const [total, setTotal] = useState(0);
+  const navigate = useNavigate();
 
-  const updateQuantity = (id, newQuantity) => {
-    if (newQuantity >= 0) {
-      setCartItems(cartItems.map(item => 
-        item.id === id ? { ...item, quantity: newQuantity } : item
-      ));
+  useEffect(() => {
+    if (!authService.isAuthenticated()) {
+      navigate('/login', { state: { from: '/cart' } });
+      return;
     }
+    
+    updateCart();
+  }, [navigate]);
+
+  const updateCart = () => {
+    const items = cartService.getCartItems();
+    setCartItems(items);
+    setTotal(cartService.getCartTotal());
   };
 
-  const removeItem = (id) => {
-    setCartItems(cartItems.filter(item => item.id !== id));
+  const handleQuantityChange = (productId, newQuantity) => {
+    cartService.updateQuantity(productId, newQuantity);
+    updateCart();
   };
 
-  const total = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const handleRemoveItem = (productId) => {
+    cartService.removeFromCart(productId);
+    updateCart();
+  };
+
+  const formatPrice = (price) => {
+    return new Intl.NumberFormat('vi-VN', {
+      style: 'currency',
+      currency: 'VND'
+    }).format(price);
+  };
 
   if (cartItems.length === 0) {
     return (
-      <div className="min-h-screen bg-gray-50 py-12 px-4">
-        <div className="max-w-3xl mx-auto text-center">
-          <div className="text-6xl mb-4">🛒</div>
-          <h2 className="text-2xl font-semibold text-gray-900 mb-4">Giỏ hàng trống</h2>
-          <p className="text-gray-600 mb-8">Hãy thêm sản phẩm vào giỏ hàng của bạn</p>
-          <Link
-            to="/products"
-            className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        <div className="text-center py-16">
+          <span className="text-6xl">🛒</span>
+          <h2 className="text-2xl font-semibold mt-4 mb-2">Giỏ hàng trống</h2>
+          <p className="text-gray-600 mb-4">Hãy thêm sản phẩm vào giỏ hàng của bạn</p>
+          <button
+            onClick={() => navigate('/products')}
+            className="bg-green-500 text-white px-6 py-2 rounded-lg hover:bg-green-600 transition-colors"
           >
             Tiếp tục mua sắm
-          </Link>
+          </button>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4">
-      <div className="max-w-7xl mx-auto">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">Giỏ hàng của bạn</h1>
-        
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Cart Items */}
-          <div className="lg:col-span-2">
-            <div className="bg-white rounded-lg shadow overflow-hidden">
-              <ul className="divide-y divide-gray-200">
-                {cartItems.map((item) => (
-                  <li key={item.id} className="p-6">
-                    <div className="flex items-center">
-                      <img
-                        src={item.image}
-                        alt={item.name}
-                        className="w-20 h-20 object-cover rounded-lg"
-                      />
-                      <div className="ml-6 flex-1">
-                        <div className="flex items-center justify-between">
-                          <h3 className="text-lg font-medium text-gray-900">{item.name}</h3>
-                          <button
-                            onClick={() => removeItem(item.id)}
-                            className="text-red-500 hover:text-red-700"
-                          >
-                            ×
-                          </button>
-                        </div>
-                        <p className="mt-1 text-lg font-medium text-green-600">
-                          {new Intl.NumberFormat('vi-VN', {
-                            style: 'currency',
-                            currency: 'VND'
-                          }).format(item.price)}
-                        </p>
-                        <div className="mt-4 flex items-center">
-                          <button
-                            onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                            className="text-gray-500 hover:text-gray-700 p-2"
-                          >
-                            -
-                          </button>
-                          <span className="mx-4 text-gray-900">{item.quantity}</span>
-                          <button
-                            onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                            className="text-gray-500 hover:text-gray-700 p-2"
-                          >
-                            +
-                          </button>
-                        </div>
+    <div className="max-w-7xl mx-auto px-4 py-8">
+      <h1 className="text-2xl font-bold mb-8 text-gray-800">Giỏ hàng của bạn</h1>
+      
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Cart Items */}
+        <div className="lg:col-span-2">
+          <div className="bg-white rounded-lg shadow-sm">
+            {cartItems.map((item) => {
+              const itemTotal = item.price * (1 - item.discount / 100) * item.quantity;
+              
+              return (
+                <div 
+                  key={item.productId}
+                  className="flex items-center p-4 border-b border-gray-100 last:border-b-0"
+                >
+                  <img
+                    src={item.image}
+                    alt={item.name}
+                    className="w-20 h-20 object-cover rounded-lg"
+                  />
+                  
+                  <div className="flex-grow ml-4">
+                    <h3 className="font-semibold text-gray-800">{item.name}</h3>
+                    <div className="flex items-center mt-2">
+                      <div className="text-green-600 font-medium">
+                        {formatPrice(item.price * (1 - item.discount / 100))}
                       </div>
+                      {item.discount > 0 && (
+                        <div className="ml-2 text-sm text-gray-400 line-through">
+                          {formatPrice(item.price)}
+                        </div>
+                      )}
                     </div>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
+                  </div>
 
-          {/* Order Summary */}
-          <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg shadow p-6">
-              <h2 className="text-lg font-medium text-gray-900 mb-4">Tổng đơn hàng</h2>
-              <div className="flow-root">
-                <dl className="-my-4 text-sm divide-y divide-gray-200">
-                  <div className="py-4 flex items-center justify-between">
-                    <dt className="text-gray-600">Tạm tính</dt>
-                    <dd className="font-medium text-gray-900">
-                      {new Intl.NumberFormat('vi-VN', {
-                        style: 'currency',
-                        currency: 'VND'
-                      }).format(total)}
-                    </dd>
+                  <div className="flex items-center">
+                    <div className="flex items-center border border-gray-200 rounded-lg">
+                      <button
+                        onClick={() => handleQuantityChange(item.productId, item.quantity - 1)}
+                        className="px-3 py-1 text-gray-600 hover:text-green-500 transition-colors"
+                      >
+                        -
+                      </button>
+                      <span className="px-3 py-1 border-x border-gray-200">
+                        {item.quantity}
+                      </span>
+                      <button
+                        onClick={() => handleQuantityChange(item.productId, item.quantity + 1)}
+                        className="px-3 py-1 text-gray-600 hover:text-green-500 transition-colors"
+                      >
+                        +
+                      </button>
+                    </div>
+                    
+                    <div className="ml-4 text-green-600 font-medium w-24 text-right">
+                      {formatPrice(itemTotal)}
+                    </div>
+                    
+                    <button
+                      onClick={() => handleRemoveItem(item.productId)}
+                      className="ml-4 text-gray-400 hover:text-red-500 transition-colors"
+                    >
+                      ❌
+                    </button>
                   </div>
-                  <div className="py-4 flex items-center justify-between">
-                    <dt className="text-gray-600">Phí vận chuyển</dt>
-                    <dd className="font-medium text-gray-900">Miễn phí</dd>
-                  </div>
-                  <div className="py-4 flex items-center justify-between">
-                    <dt className="text-base font-medium text-gray-900">Tổng cộng</dt>
-                    <dd className="text-base font-medium text-green-600">
-                      {new Intl.NumberFormat('vi-VN', {
-                        style: 'currency',
-                        currency: 'VND'
-                      }).format(total)}
-                    </dd>
-                  </div>
-                </dl>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Order Summary */}
+        <div className="lg:col-span-1">
+          <div className="bg-white rounded-lg shadow-sm p-6">
+            <h2 className="text-lg font-semibold mb-4">Tổng đơn hàng</h2>
+            
+            <div className="space-y-3 mb-6">
+              <div className="flex justify-between text-gray-600">
+                <span>Tạm tính</span>
+                <span>{formatPrice(total)}</span>
               </div>
-              <div className="mt-6">
-                <button
-                  type="button"
-                  className="w-full flex justify-center items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-                >
-                  Tiến hành thanh toán
-                </button>
+              <div className="flex justify-between text-gray-600">
+                <span>Phí vận chuyển</span>
+                <span>Miễn phí</span>
               </div>
-              <div className="mt-4">
-                <Link
-                  to="/products"
-                  className="text-sm text-green-600 hover:text-green-500 flex items-center justify-center"
-                >
-                  <span>← Tiếp tục mua sắm</span>
-                </Link>
+              <div className="border-t border-gray-100 pt-3">
+                <div className="flex justify-between font-semibold text-lg">
+                  <span>Tổng cộng</span>
+                  <span className="text-green-600">{formatPrice(total)}</span>
+                </div>
               </div>
             </div>
+
+            <button
+              onClick={() => navigate('/checkout')}
+              className="w-full bg-green-500 text-white py-3 rounded-lg hover:bg-green-600 transition-colors"
+            >
+              Tiến hành thanh toán
+            </button>
+            
+            <button
+              onClick={() => navigate('/products')}
+              className="w-full mt-4 text-green-500 hover:text-green-600 transition-colors"
+            >
+              ← Tiếp tục mua sắm
+            </button>
           </div>
         </div>
       </div>
