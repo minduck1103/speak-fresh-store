@@ -13,7 +13,7 @@ const router = express.Router();
 const { protect, authorize } = require('../middleware/auth');
 
 router.route('/')
-    .get(protect, authorize('admin'), getOrders)
+    .get(protect, getOrders)
     .post(protect, createOrder);
 
 router.route('/myorders')
@@ -22,6 +22,6 @@ router.route('/myorders')
 router.route('/:id')
     .get(protect, getOrder)
     .put(protect, authorize('admin'), updateOrder)
-    .delete(protect, authorize('admin'), deleteOrder);
+    .delete(protect, deleteOrder);
 
 module.exports = router; 

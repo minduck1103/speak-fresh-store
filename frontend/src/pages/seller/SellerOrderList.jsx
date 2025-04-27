@@ -23,11 +23,14 @@ const SellerOrderList = ({ orders = [] }) => {
             ) : (
               orders.map((o, idx) => (
                 <tr key={o._id || idx} className="border-t border-green-50">
-                  <td className="py-2 px-3 font-semibold text-green-700">{o._id}</td>
-                  <td className="py-2 px-3">{o.customer?.name || 'Ẩn danh'}</td>
+                  <td className="py-2 px-3 font-semibold text-green-700">{typeof o._id === 'object' && o._id.$oid ? o._id.$oid : o._id}</td>
+                  <td className="py-2 px-3">
+                    {o.shippingInfo?.name || o.shippingInfo?.phoneNo || 'Ẩn danh'}<br/>
+                    <span className="text-xs text-gray-500">{o.shippingInfo?.address}</span>
+                  </td>
                   <td className="py-2 px-3">{o.createdAt?.slice(0,10)}</td>
                   <td className="py-2 px-3">
-                    <span className={`px-2 py-1 rounded text-xs font-bold ${o.status === 'Đã giao' ? 'bg-green-200 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>{o.status || 'Đang xử lý'}</span>
+                    <span className={`px-2 py-1 rounded text-xs font-bold ${o.orderStatus === 'Delivered' || o.orderStatus === 'Đã giao' ? 'bg-green-200 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>{o.orderStatus || 'Đang xử lý'}</span>
                   </td>
                   <td className="py-2 px-3 text-green-600 font-bold">{o.totalPrice?.toLocaleString()}₫</td>
                   <td className="py-2 px-3">
@@ -45,22 +48,23 @@ const SellerOrderList = ({ orders = [] }) => {
             <button onClick={() => setSelected(null)} className="absolute top-3 right-3 text-gray-400 hover:text-green-600 text-3xl font-bold">×</button>
             <h2 className="text-2xl font-bold text-green-700 mb-4 text-center">Chi tiết đơn hàng</h2>
             <div className="mb-3 flex flex-col md:flex-row md:justify-between gap-2">
-              <div className="text-gray-700">Mã đơn: <span className="font-semibold text-green-700">{selected._id}</span></div>
+              <div className="text-gray-700">Mã đơn: <span className="font-semibold text-green-700">{typeof selected._id === 'object' && selected._id.$oid ? selected._id.$oid : selected._id}</span></div>
               <div className="text-gray-700">Ngày đặt: <span className="font-semibold">{selected.createdAt?.slice(0,10)}</span></div>
             </div>
-            <div className="mb-3 text-gray-700">Trạng thái: <span className={`font-bold px-2 py-1 rounded ${selected.status === 'Đã giao' ? 'bg-green-200 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>{selected.status || 'Đang xử lý'}</span></div>
+            <div className="mb-3 text-gray-700">Trạng thái: <span className={`font-bold px-2 py-1 rounded ${selected.orderStatus === 'Delivered' || selected.orderStatus === 'Đã giao' ? 'bg-green-200 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>{selected.orderStatus || 'Đang xử lý'}</span></div>
             <div className="mb-3 text-gray-700">Tổng tiền: <span className="font-bold text-2xl text-green-600">{selected.totalPrice?.toLocaleString()}₫</span></div>
             <div className="mb-3 text-gray-700">Thông tin khách hàng:</div>
             <div className="mb-4 bg-green-50 rounded-lg p-3 border border-green-100">
-              <div><span className="font-semibold">Tên:</span> {selected.customer?.name}</div>
-              <div><span className="font-semibold">SĐT:</span> {selected.customer?.phoneNo}</div>
-              <div><span className="font-semibold">Địa chỉ:</span> {selected.customer?.address}, {selected.customer?.city}</div>
+              <div><span className="font-semibold">Tên/SĐT:</span> {selected.shippingInfo?.name || selected.shippingInfo?.phoneNo}</div>
+              <div><span className="font-semibold">SĐT:</span> {selected.shippingInfo?.phoneNo}</div>
+              <div><span className="font-semibold">Địa chỉ:</span> {selected.shippingInfo?.address}, {selected.shippingInfo?.city}</div>
             </div>
             <div className="mb-2 text-gray-700 font-semibold">Sản phẩm:</div>
             <div className="overflow-x-auto">
               <table className="w-full text-sm border border-green-100 rounded-lg mb-4">
                 <thead className="bg-green-100">
                   <tr>
+                    <th className="py-2 px-2">Ảnh</th>
                     <th className="py-2 px-2">Tên</th>
                     <th className="py-2 px-2">SL</th>
                     <th className="py-2 px-2">Giá</th>
@@ -68,8 +72,9 @@ const SellerOrderList = ({ orders = [] }) => {
                   </tr>
                 </thead>
                 <tbody>
-                  {(selected.items || []).map((item, idx) => (
+                  {(selected.orderItems || []).map((item, idx) => (
                     <tr key={idx} className="border-t border-green-50">
+                      <td className="py-2 px-2"><img src={item.image} alt={item.name} className="w-12 h-12 object-cover rounded" /></td>
                       <td className="py-2 px-2 font-semibold text-green-700">{item.name}</td>
                       <td className="py-2 px-2 text-center">{item.quantity}</td>
                       <td className="py-2 px-2">{item.price?.toLocaleString()}₫</td>

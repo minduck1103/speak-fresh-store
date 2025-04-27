@@ -14,6 +14,8 @@ const SellerProductList = () => {
   const [productForm, setProductForm] = useState(initialProduct);
   const [productImageFile, setProductImageFile] = useState(null);
   const [formError, setFormError] = useState("");
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [productToDelete, setProductToDelete] = useState(null);
 
   useEffect(() => {
     fetchProducts();
@@ -105,11 +107,18 @@ const SellerProductList = () => {
     }
   };
 
-  const handleDeleteProduct = async (id) => {
-    if (!window.confirm("Bạn có chắc chắn muốn xóa sản phẩm này?")) return;
+  const openDeleteModal = (product) => {
+    setProductToDelete(product);
+    setShowDeleteModal(true);
+  };
+
+  const handleDeleteProduct = async () => {
+    if (!productToDelete) return;
     setLoading(true);
     try {
-      await productService.deleteProduct(id);
+      await productService.deleteProduct(productToDelete._id);
+      setShowDeleteModal(false);
+      setProductToDelete(null);
       fetchProducts();
     } catch {
       setError("Không thể xóa sản phẩm");
@@ -154,7 +163,7 @@ const SellerProductList = () => {
                     </td>
                     <td className="py-2 px-3 flex gap-2 items-center">
                       <button onClick={() => openEditProduct(p)} className="bg-yellow-400 text-green-900 px-3 py-1 rounded hover:bg-yellow-500 font-bold">Sửa</button>
-                      <button onClick={() => handleDeleteProduct(p._id)} className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 font-bold">Xóa</button>
+                      <button onClick={() => openDeleteModal(p)} className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 font-bold">Xóa</button>
                     </td>
                   </tr>
                 ))
@@ -202,6 +211,20 @@ const SellerProductList = () => {
             </div>
             <button type="submit" className="w-full bg-green-600 text-white font-bold py-3 rounded-lg hover:bg-green-700 transition-colors text-lg">{editingProduct ? 'Cập nhật' : 'Thêm mới'}</button>
           </form>
+        </div>
+      )}
+      {/* Modal xác nhận xóa sản phẩm */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 flex items-center justify-center z-50" style={{backdropFilter: 'blur(6px)'}}>
+          <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-md relative border-2 border-red-200">
+            <button type="button" onClick={() => setShowDeleteModal(false)} className="absolute top-3 right-3 text-gray-400 hover:text-red-600 text-3xl font-bold">×</button>
+            <h2 className="text-xl font-bold text-red-700 mb-4 text-center">Xác nhận xóa</h2>
+            <p className="text-center mb-6">Bạn có chắc chắn muốn xóa sản phẩm "{productToDelete?.name}"?</p>
+            <div className="flex gap-4 justify-center">
+              <button onClick={() => setShowDeleteModal(false)} className="bg-gray-500 text-white px-6 py-2 rounded hover:bg-gray-600 font-bold">Hủy</button>
+              <button onClick={handleDeleteProduct} className="bg-red-500 text-white px-6 py-2 rounded hover:bg-red-600 font-bold">Xóa</button>
+            </div>
+          </div>
         </div>
       )}
     </div>

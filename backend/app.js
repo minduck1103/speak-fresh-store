@@ -25,13 +25,15 @@ app.use('/api/v1/users', require('./routes/users'));
 app.use('/api/v1/products', require('./routes/products'));
 app.use('/api/v1/categories', require('./routes/categories'));
 app.use('/api/v1/orders', require('./routes/orders'));
+app.use('/api/v1/shipping', require('./routes/shipping'));
+app.use('/api/v1/reviews', require('./routes/reviews'));
 
 // Error handling middleware
 app.use((err, req, res, next) => {
     console.error(err.stack);
-    res.status(500).json({
+    res.status(err.statusCode || 500).json({
         success: false,
-        error: 'Something went wrong!'
+        error: err.message || 'Something went wrong!'
     });
 });
 

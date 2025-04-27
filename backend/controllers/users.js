@@ -4,9 +4,10 @@ const asyncHandler = require('../middleware/async');
 
 // @desc    Get all users
 // @route   GET /api/v1/users
-// @access  Private/Admin
+// @access  Public (hoặc Private/Admin nếu cần)
 exports.getUsers = asyncHandler(async (req, res, next) => {
-    res.status(200).json(res.advancedResults);
+    const users = await User.find(); // Lấy toàn bộ user từ database
+    res.status(200).json(users);     // Trả về mảng user
 });
 
 // @desc    Get single user
@@ -35,17 +36,35 @@ exports.createUser = asyncHandler(async (req, res, next) => {
 
 // @desc    Update user
 // @route   PUT /api/v1/users/:id
-// @access  Private/Admin
+// @access  Public (hoặc Private/Admin nếu cần)
 exports.updateUser = asyncHandler(async (req, res, next) => {
-    const user = await User.findByIdAndUpdate(req.params.id, req.body, {
-        new: true,
-        runValidators: true
-    });
+    // Chỉ cho phép cập nhật các trường hợp lệ
+    const fieldsToUpdate = {};
+    if (req.body.name !== undefined) fieldsToUpdate.name = req.body.name;
+    if (req.body.email !== undefined) fieldsToUpdate.email = req.body.email;
+    if (req.body.role !== undefined) fieldsToUpdate.role = req.body.role;
 
-    res.status(200).json({
-        success: true,
-        data: user
-    });
+    console.log('[DEBUG] updateUser req.body:', req.body);
+    console.log('[DEBUG] updateUser fieldsToUpdate:', fieldsToUpdate);
+
+    try {
+        const user = await User.findByIdAndUpdate(req.params.id, fieldsToUpdate, {
+            new: true,
+            runValidators: true
+        });
+
+        if (!user) {
+            return next(new ErrorResponse('User not found', 404));
+        }
+
+        res.status(200).json({
+            success: true,
+            data: user
+        });
+    } catch (err) {
+        console.error('Update user error:', err);
+        return next(new ErrorResponse('Update user failed', 500));
+    }
 });
 
 // @desc    Delete user

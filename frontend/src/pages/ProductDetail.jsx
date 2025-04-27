@@ -1,9 +1,13 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import productService from "../services/productService";
+import cartService from "../services/cartService";
+import { toast } from "react-toastify";
+import RelatedProducts from "./RelatedProducts";
 
 const ProductDetail = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [product, setProduct] = useState(null);
   const [selectedImage, setSelectedImage] = useState("");
   const [quantity, setQuantity] = useState(1);
@@ -16,8 +20,8 @@ const ProductDetail = () => {
       setLoading(true);
       try {
         const res = await productService.getProduct(id);
-        setProduct(res.data || res); // tuỳ API trả về
-        setSelectedImage(res.data?.images?.[0]?.url || res.images?.[0]?.url || "");
+        setProduct(res.data || res);
+        setSelectedImage(res.data?.image || res.data?.images?.[0]?.url || res.images?.[0]?.url || res.images?.[0] || "");
         setSelectedLevel(res.data?.level?.[0] || res.level?.[0] || "");
         setError("");
       } catch (err) {
@@ -33,6 +37,18 @@ const ProductDetail = () => {
     setQuantity((prev) => (type === "inc" ? prev + 1 : prev > 1 ? prev - 1 : 1));
   };
 
+  const handleAddToCart = () => {
+    cartService.addToCart({ ...product, quantity });
+    toast.success("Sản phẩm đã được thêm vào giỏ hàng");
+    window.dispatchEvent(new Event("cartUpdated"));
+  };
+
+  const handleBuyNow = () => {
+    cartService.addToCart({ ...product, quantity });
+    window.dispatchEvent(new Event("cartUpdated"));
+    navigate("/checkout");
+  };
+
   if (loading) return <div className="text-center py-10">Đang tải...</div>;
   if (error) return <div className="text-center text-red-500 py-10">{error}</div>;
   if (!product) return null;
@@ -44,7 +60,7 @@ const ProductDetail = () => {
         <div className="flex flex-col md:w-1/2 items-center">
           <div className="w-full flex flex-col items-center">
             <img
-              src={selectedImage || product.images?.[0]?.url || product.images?.[0] || '/no-image.png'}
+              src={selectedImage || product.image || product.images?.[0]?.url || product.images?.[0] || '/no-image.png'}
               alt="Sản phẩm"
               className="w-full max-w-md h-80 object-cover rounded-lg border-2 border-green-200 shadow"
             />
@@ -69,6 +85,15 @@ const ProductDetail = () => {
           <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
             {product.name}
           </h1>
+          {/* Rating & Reviews */}
+          <div className="flex items-center gap-2 mb-2">
+            <div className="flex text-yellow-400">
+              {[...Array(5)].map((_, i) => (
+                <i key={i} className={`fas fa-star ${i < (product.ratings || 0) ? '' : 'text-gray-300'}`}></i>
+              ))}
+            </div>
+            <span className="text-xs text-gray-500">({product.reviews?.length || 0} đánh giá)</span>
+          </div>
           <div className="flex items-center gap-2 text-green-700 font-semibold">
             <span>{product.brand || product.category?.name}</span>
             {product.sku && <><span className="text-gray-400 text-xs">|</span><span className="text-gray-500 text-xs">SKU:{product.sku}</span></>}
@@ -105,15 +130,16 @@ const ProductDetail = () => {
             <button onClick={() => handleQuantity("inc")} className="w-8 h-8 rounded-full border border-green-400 text-green-600 hover:bg-green-50">+</button>
           </div>
           <div className="flex gap-3 mt-4">
-            <button className="flex-1 bg-white border border-green-500 text-green-600 font-bold py-3 rounded-lg hover:bg-green-50 transition-colors">THÊM VÀO GIỎ</button>
-            <button className="flex-1 bg-green-600 text-white font-bold py-3 rounded-lg hover:bg-green-700 transition-colors">ĐẶT HÀNG NGAY</button>
+            <button className="flex-1 bg-white border border-green-500 text-green-600 font-bold py-3 rounded-lg hover:bg-green-50 transition-colors" onClick={handleAddToCart}>THÊM VÀO GIỎ</button>
+            <button className="flex-1 bg-green-600 text-white font-bold py-3 rounded-lg hover:bg-green-700 transition-colors" onClick={handleBuyNow}>ĐẶT HÀNG NGAY</button>
           </div>
-          <ul className="text-gray-700 text-sm mt-4 space-y-1">
-            <li>Giao hàng COD Toàn quốc</li>
-            <li>Giao hàng hoả tốc tại TP.HCM</li>
-            <li>Thiết kế và gói quà tặng</li>
-            <li>Cung cấp hàng giá sỉ cho shop</li>
-          </ul>
+          {/* Dịch vụ giao hàng/quà tặng */}
+          <div className="grid grid-cols-2 gap-3 mt-4 text-green-700 text-sm font-semibold">
+            <div className="flex items-center gap-2 bg-green-50 rounded-lg p-2"><i className="fas fa-shipping-fast text-green-500"></i> Giao hàng COD Toàn quốc</div>
+            <div className="flex items-center gap-2 bg-green-50 rounded-lg p-2"><i className="fas fa-bolt text-yellow-500"></i> Giao hàng hoả tốc tại TP.HCM</div>
+            <div className="flex items-center gap-2 bg-green-50 rounded-lg p-2"><i className="fas fa-gift text-pink-500"></i> Thiết kế và gói quà tặng</div>
+            <div className="flex items-center gap-2 bg-green-50 rounded-lg p-2"><i className="fas fa-store text-green-600"></i> Cung cấp hàng giá sỉ cho shop</div>
+          </div>
           {/* Social share */}
           <div className="flex gap-3 mt-2">
             <button className="w-8 h-8 rounded-full bg-green-100 text-green-600 flex items-center justify-center"><i className="fab fa-facebook-f"></i></button>
@@ -152,6 +178,8 @@ const ProductDetail = () => {
           <button className="mt-4 w-full bg-green-100 text-green-700 font-bold py-2 rounded hover:bg-green-200 transition-colors">Viết đánh giá</button>
         </div>
       </div>
+      {/* Related Products Section */}
+      <RelatedProducts currentProduct={product} />
     </div>
   );
 };

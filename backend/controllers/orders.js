@@ -113,17 +113,31 @@ exports.updateOrder = asyncHandler(async (req, res, next) => {
 
 // @desc    Delete order
 // @route   DELETE /api/v1/orders/:id
-// @access  Private/Admin
+// @access  Private
 exports.deleteOrder = asyncHandler(async (req, res, next) => {
     const order = await Order.findById(req.params.id);
+    console.log('[DELETE ORDER] Order:', order);
+    console.log('[DELETE ORDER] Current user:', req.user);
 
     if (!order) {
+        console.log('[DELETE ORDER] Order not found');
         return next(
             new ErrorResponse(`Order not found with id of ${req.params.id}`, 404)
         );
     }
 
-    await order.remove();
+    // Chỉ cho phép xóa nếu là chủ đơn hàng hoặc admin
+    if (order.user.toString() !== req.user.id && req.user.role !== 'admin') {
+        console.log('[DELETE ORDER] Not authorized:', req.user.id, 'order user:', order.user.toString());
+        return next(
+            new ErrorResponse(
+                `User ${req.user.id} is not authorized to delete this order`,
+                401
+            )
+        );
+    }
+
+    await Order.findByIdAndDelete(req.params.id);
 
     res.status(200).json({
         success: true,

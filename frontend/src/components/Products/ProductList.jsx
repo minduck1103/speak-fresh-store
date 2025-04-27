@@ -22,7 +22,7 @@ const ProductList = ({ products }) => {
             <h3 className="text-lg font-semibold mb-2 text-gray-800">{product.name}</h3>
             <p className="text-sm text-gray-600 mb-3">{product.category}</p>
             
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between mb-2">
               <div>
                 {product.discount > 0 ? (
                   <>
@@ -47,12 +47,14 @@ const ProductList = ({ products }) => {
                     }).format(product.price)}
                   </span>
                 )}
+                <span className={`ml-2 px-2 py-1 text-xs rounded-full font-semibold ${product.stock > 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600'}`}>
+                  {product.stock > 0 ? 'Còn hàng' : 'Hết hàng'}
+                </span>
               </div>
-              
-              <button className="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-dark transition-colors">
-                Thêm
-              </button>
             </div>
+            <button className="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-dark transition-colors w-full mt-2">
+              Thêm
+            </button>
           </div>
         </div>
       ))}

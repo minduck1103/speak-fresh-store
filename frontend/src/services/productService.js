@@ -48,9 +48,17 @@ const createProductFormData = async (formData) => {
 };
 
 const updateProductFormData = async (id, formData) => {
+    console.log('DEBUG updateProductFormData - formData entries:');
+    for (let [key, value] of formData.entries()) {
+        console.log(key, ':', value);
+    }
+    
     const response = await axios.put(`${API_URL}/products/${id}`, formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
+        headers: { 
+            'Content-Type': 'multipart/form-data'
+        }
     });
+    console.log('DEBUG updateProductFormData - response:', response.data);
     return response.data;
 };
 

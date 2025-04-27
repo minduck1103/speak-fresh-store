@@ -1,0 +1,42 @@
+[
+  {
+    "user": "65f8a1b2c3d4e5f6a7b8c9d0",
+    "product": "65f8a1b2c3d4e5f6a7b8c9d1",
+    "name": "Nguyễn Văn A",
+    "rating": 5,
+    "comment": "Sản phẩm rất tốt, chất lượng vượt mong đợi!",
+    "createdAt": "2024-04-26T10:00:00.000Z"
+  },
+  {
+    "user": "65f8a1b2c3d4e5f6a7b8c9d2",
+    "product": "65f8a1b2c3d4e5f6a7b8c9d3",
+    "name": "Trần Thị B",
+    "rating": 4,
+    "comment": "Sản phẩm đẹp, giao hàng nhanh, nhưng giá hơi cao.",
+    "createdAt": "2024-04-26T11:00:00.000Z"
+  },
+  {
+    "user": "65f8a1b2c3d4e5f6a7b8c9d4",
+    "product": "65f8a1b2c3d4e5f6a7b8c9d5",
+    "name": "Lê Văn C",
+    "rating": 3,
+    "comment": "Sản phẩm đúng như mô tả, nhưng có một số điểm cần cải thiện.",
+    "createdAt": "2024-04-26T12:00:00.000Z"
+  },
+  {
+    "user": "65f8a1b2c3d4e5f6a7b8c9d6",
+    "product": "65f8a1b2c3d4e5f6a7b8c9d7",
+    "name": "Phạm Thị D",
+    "rating": 5,
+    "comment": "Tuyệt vời! Sẽ mua lại sản phẩm này.",
+    "createdAt": "2024-04-26T13:00:00.000Z"
+  },
+  {
+    "user": "65f8a1b2c3d4e5f6a7b8c9d8",
+    "product": "65f8a1b2c3d4e5f6a7b8c9d9",
+    "name": "Hoàng Văn E",
+    "rating": 2,
+    "comment": "Sản phẩm không đạt chất lượng như mong đợi, khá thất vọng.",
+    "createdAt": "2024-04-26T14:00:00.000Z"
+  }
+] 

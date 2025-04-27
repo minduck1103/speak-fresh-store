@@ -2,20 +2,19 @@ import React, { useState, useEffect } from "react";
 import SellerDashboard from "./SellerDashboard";
 import SellerOrderList from "./SellerOrderList";
 import SellerProductList from "./SellerProductList";
+import SellerCategoryList from "./SellerCategoryList";
 import productService from "../../services/productService";
 import categoryService from "../../services/categoryService";
-
-const mockOrderCount = 12;
-const mockRevenue = 15000000;
-const mockOrders = [
-  { _id: 1, customer: { name: "Nguyễn Văn A", phoneNo: "0123456789", address: "123 Đường A", city: "Hà Nội" }, createdAt: "2024-04-25T10:00:00Z", status: "Đang xử lý", totalPrice: 250000, items: [ { name: "Táo", quantity: 2, price: 50000 }, { name: "Chuối", quantity: 3, price: 50000 } ] },
-  { _id: 2, customer: { name: "Trần Thị B", phoneNo: "0987654321", address: "456 Đường B", city: "HCM" }, createdAt: "2024-04-24T09:00:00Z", status: "Đã giao", totalPrice: 500000, items: [ { name: "Cam", quantity: 5, price: 100000 } ] },
-];
+import { getOrders } from "../../services/orderService";
 
 const SellerPage = () => {
   const [tab, setTab] = useState("dashboard");
+  const [subTab, setSubTab] = useState("products"); // tab con: "products" hoặc "categories"
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [orders, setOrders] = useState([]);
+  const [orderCount, setOrderCount] = useState(0);
+  const [revenue, setRevenue] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -43,7 +42,25 @@ const SellerPage = () => {
     }
   };
 
+  const fetchOrders = async () => {
+    try {
+      setLoading(true);
+      const res = await getOrders();
+      const orderList = res.data || [];
+      setOrders(orderList);
+      setOrderCount(orderList.length);
+      setRevenue(orderList.reduce((sum, o) => sum + (o.totalPrice || 0), 0));
+    } catch (err) {
+      setError("Không thể tải đơn hàng");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
+    if (tab === "dashboard" || tab === "orders") {
+      fetchOrders();
+    }
     if (tab === "products") {
       fetchProducts();
       fetchCategories();
@@ -59,17 +76,33 @@ const SellerPage = () => {
           <button onClick={() => setTab("products")} className={`px-6 py-2 rounded-full font-bold border-2 transition-colors ${tab === "products" ? "bg-green-600 text-white border-green-600" : "bg-white text-green-700 border-green-300 hover:bg-green-100"}`}>Sản phẩm & Danh mục</button>
         </div>
         <div className="bg-white rounded-xl shadow-lg p-6">
-          {tab === "dashboard" && <SellerDashboard orderCount={mockOrderCount} revenue={mockRevenue} />}
-          {tab === "orders" && <SellerOrderList orders={mockOrders} />}
+          {tab === "dashboard" && <SellerDashboard orderCount={orderCount} revenue={revenue} />}
+          {tab === "orders" && <SellerOrderList orders={orders} />}
           {tab === "products" && (
-            <SellerProductList
-              products={products}
-              categories={categories}
-              onReloadProducts={fetchProducts}
-              onReloadCategories={fetchCategories}
-              loading={loading}
-              error={error}
-            />
+            <>
+              {/* Tab con */}
+              <div className="flex gap-4 mb-6">
+                <button
+                  onClick={() => setSubTab("products")}
+                  className={`px-5 py-2 rounded-full font-bold border-2 transition-colors ${subTab === "products" ? "bg-green-500 text-white border-green-500" : "bg-white text-green-700 border-green-300 hover:bg-green-100"}`}
+                >
+                  Quản lý sản phẩm
+                </button>
+                <button
+                  onClick={() => setSubTab("categories")}
+                  className={`px-5 py-2 rounded-full font-bold border-2 transition-colors ${subTab === "categories" ? "bg-green-500 text-white border-green-500" : "bg-white text-green-700 border-green-300 hover:bg-green-100"}`}
+                >
+                  Quản lý danh mục
+                </button>
+              </div>
+              {subTab === "products" && <SellerProductList />}
+              {subTab === "categories" && (
+                <SellerCategoryList
+                  categories={categories}
+                  onReloadCategories={fetchCategories}
+                />
+              )}
+            </>
           )}
         </div>
       </div>

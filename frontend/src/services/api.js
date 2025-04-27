@@ -27,9 +27,9 @@ api.interceptors.request.use(
 api.interceptors.response.use(
     (response) => response,
     (error) => {
-        if (error.response.status === 401) {
-            localStorage.removeItem('token');
-            window.location.href = '/login';
+        if (error.response && error.response.status === 401) {
+            alert('Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại!');
+            // window.location.href = '/login'; // Không tự động chuyển trang
         }
         return Promise.reject(error);
     }

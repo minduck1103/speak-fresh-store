@@ -65,27 +65,38 @@ exports.createProduct = [
 exports.updateProduct = [
   upload.single('image'),
   asyncHandler(async (req, res, next) => {
+    console.log('DEBUG updateProduct - req.file:', req.file);
+    console.log('DEBUG updateProduct - req.body:', req.body);
+    
     let product = await Product.findById(req.params.id);
     if (!product) {
       return next(new ErrorResponse(`Product not found with id of ${req.params.id}`, 404));
     }
+
     // Nếu có file ảnh mới thì xóa ảnh cũ và cập nhật ảnh mới
     if (req.file) {
       if (product.image && typeof product.image === 'string' && product.image.trim() !== '') {
         const oldPath = path.join(__dirname, '../../frontend/public', product.image);
+        console.log('DEBUG updateProduct - oldPath:', oldPath);
         if (fs.existsSync(oldPath)) {
           fs.unlinkSync(oldPath);
         }
       }
       product.image = `/images/${req.file.filename}`;
+      console.log('DEBUG updateProduct - new image path:', product.image);
     }
+
     // Cập nhật các trường khác
-    product.name = req.body.name;
-    product.price = req.body.price;
-    product.category = req.body.category;
-    product.description = req.body.description;
-    product.stock = req.body.stock;
+    const updateFields = ['name', 'price', 'category', 'description', 'stock'];
+    updateFields.forEach(field => {
+      if (req.body[field] !== undefined) {
+        product[field] = req.body[field];
+      }
+    });
+
     await product.save();
+    console.log('DEBUG updateProduct - saved product:', product);
+    
     res.status(200).json({ success: true, data: product });
   })
 ];

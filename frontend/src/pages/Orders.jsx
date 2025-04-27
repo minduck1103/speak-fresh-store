@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { getMyOrders } from "../services/orderService";
+import { getMyOrders, deleteOrder } from "../services/orderService";
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
   const [selected, setSelected] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [cancelLoading, setCancelLoading] = useState(false);
+  const [cancelSuccess, setCancelSuccess] = useState("");
+  const [showCancelModal, setShowCancelModal] = useState(false);
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -22,6 +25,24 @@ const Orders = () => {
     };
     fetchOrders();
   }, []);
+
+  const handleCancelOrder = async () => {
+    if (!selected) return;
+    setCancelLoading(true);
+    setCancelSuccess("");
+    try {
+      await deleteOrder(selected._id);
+      setCancelSuccess("Đã hủy đơn hàng thành công!");
+      setSelected(null);
+      setOrders(orders.filter(o => o._id !== selected._id));
+    } catch (err) {
+      setCancelSuccess("Không thể hủy đơn hàng. Vui lòng thử lại!");
+    } finally {
+      setCancelLoading(false);
+      setShowCancelModal(false);
+      setTimeout(() => setCancelSuccess(""), 2000);
+    }
+  };
 
   return (
     <div className="bg-green-50 min-h-screen py-10">
@@ -108,6 +129,29 @@ const Orders = () => {
                 </table>
               </div>
               <button onClick={() => setSelected(null)} className="w-full mt-2 bg-green-600 text-white font-bold py-3 rounded-lg hover:bg-green-700 transition-colors text-lg">Đóng</button>
+              <button onClick={() => setShowCancelModal(true)} className="w-full mt-2 bg-red-500 text-white font-bold py-3 rounded-lg hover:bg-red-600 transition-colors text-lg">Hủy đơn hàng</button>
+            </div>
+          </div>
+        )}
+        {/* Modal xác nhận hủy đơn hàng */}
+        {showCancelModal && selected && (
+          <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+            <div className="bg-white rounded-xl shadow-lg p-6 w-full max-w-sm text-center">
+              <h2 className="text-xl font-bold text-red-600 mb-4">Xác nhận hủy đơn hàng</h2>
+              <p className="mb-6">Bạn có chắc chắn muốn hủy đơn hàng <span className="font-bold">{selected._id}</span> không? Thao tác này sẽ xóa toàn bộ dữ liệu đơn hàng.</p>
+              <div className="flex gap-3 justify-center">
+                <button onClick={() => setShowCancelModal(false)} className="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300 font-semibold">Không</button>
+                <button onClick={handleCancelOrder} disabled={cancelLoading} className="px-4 py-2 rounded bg-red-600 hover:bg-red-700 text-white font-semibold">{cancelLoading ? 'Đang hủy...' : 'Hủy đơn hàng'}</button>
+              </div>
+            </div>
+          </div>
+        )}
+        {/* Thông báo hủy thành công */}
+        {cancelSuccess && (
+          <div className="fixed inset-0 flex items-center justify-center z-50" style={{backdropFilter: 'blur(6px)'}}>
+            <div className="bg-white rounded-xl shadow-lg p-6 w-full max-w-xs text-center">
+              <div className="text-3xl text-green-600 mb-2">✔️</div>
+              <div className="text-lg font-bold text-green-700 mb-2">{cancelSuccess}</div>
             </div>
           </div>
         )}
