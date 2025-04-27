@@ -6,6 +6,10 @@ import SellerCategoryList from "./SellerCategoryList";
 import productService from "../../services/productService";
 import categoryService from "../../services/categoryService";
 import { getOrders } from "../../services/orderService";
+import SellerSidebar from "./SellerSidebar";
+import SellerShipping from "./SellerShipping";
+import SellerReport from "./SellerReport";
+import SellerProfile from "./SellerProfile";
 
 const SellerPage = () => {
   const [tab, setTab] = useState("dashboard");
@@ -68,44 +72,66 @@ const SellerPage = () => {
   }, [tab]);
 
   return (
-    <div className="min-h-screen bg-green-50">
-      <div className="max-w-5xl mx-auto py-8">
-        <div className="flex gap-4 justify-center mb-8">
-          <button onClick={() => setTab("dashboard")} className={`px-6 py-2 rounded-full font-bold border-2 transition-colors ${tab === "dashboard" ? "bg-green-600 text-white border-green-600" : "bg-white text-green-700 border-green-300 hover:bg-green-100"}`}>Dashboard</button>
-          <button onClick={() => setTab("orders")} className={`px-6 py-2 rounded-full font-bold border-2 transition-colors ${tab === "orders" ? "bg-green-600 text-white border-green-600" : "bg-white text-green-700 border-green-300 hover:bg-green-100"}`}>Đơn hàng</button>
-          <button onClick={() => setTab("products")} className={`px-6 py-2 rounded-full font-bold border-2 transition-colors ${tab === "products" ? "bg-green-600 text-white border-green-600" : "bg-white text-green-700 border-green-300 hover:bg-green-100"}`}>Sản phẩm & Danh mục</button>
-        </div>
-        <div className="bg-white rounded-xl shadow-lg p-6">
-          {tab === "dashboard" && <SellerDashboard orderCount={orderCount} revenue={revenue} />}
-          {tab === "orders" && <SellerOrderList orders={orders} />}
-          {tab === "products" && (
-            <>
-              {/* Tab con */}
-              <div className="flex gap-4 mb-6">
-                <button
-                  onClick={() => setSubTab("products")}
-                  className={`px-5 py-2 rounded-full font-bold border-2 transition-colors ${subTab === "products" ? "bg-green-500 text-white border-green-500" : "bg-white text-green-700 border-green-300 hover:bg-green-100"}`}
-                >
-                  Quản lý sản phẩm
-                </button>
-                <button
-                  onClick={() => setSubTab("categories")}
-                  className={`px-5 py-2 rounded-full font-bold border-2 transition-colors ${subTab === "categories" ? "bg-green-500 text-white border-green-500" : "bg-white text-green-700 border-green-300 hover:bg-green-100"}`}
-                >
-                  Quản lý danh mục
-                </button>
-              </div>
-              {subTab === "products" && <SellerProductList />}
-              {subTab === "categories" && (
-                <SellerCategoryList
-                  categories={categories}
-                  onReloadCategories={fetchCategories}
-                />
-              )}
-            </>
-          )}
-        </div>
-      </div>
+    <div className="flex min-h-screen bg-green-50">
+      <SellerSidebar tab={tab} setTab={setTab} />
+      <main className="flex-1 p-8 bg-white rounded-l-3xl shadow-lg">
+        {tab === "dashboard" && (
+          <div>
+            <h2 className="text-3xl font-bold text-green-700 mb-6 flex items-center gap-2">📊 Tổng quan</h2>
+            <SellerDashboard orderCount={orderCount} revenue={revenue} />
+          </div>
+        )}
+        {tab === "products" && (
+          <div>
+            <h2 className="text-3xl font-bold text-green-700 mb-6 flex items-center gap-2">🍏 Sản phẩm của tôi</h2>
+            <div className="flex gap-4 mb-6">
+              <button
+                onClick={() => setSubTab("products")}
+                className={`px-5 py-2 rounded-full font-bold border-2 transition-colors ${subTab === "products" ? "bg-green-500 text-white border-green-500" : "bg-white text-green-700 border-green-300 hover:bg-green-100"}`}
+              >
+                Quản lý sản phẩm
+              </button>
+              <button
+                onClick={() => setSubTab("categories")}
+                className={`px-5 py-2 rounded-full font-bold border-2 transition-colors ${subTab === "categories" ? "bg-green-500 text-white border-green-500" : "bg-white text-green-700 border-green-300 hover:bg-green-100"}`}
+              >
+                Quản lý danh mục
+              </button>
+            </div>
+            {subTab === "products" && <SellerProductList />}
+            {subTab === "categories" && (
+              <SellerCategoryList
+                categories={categories}
+                onReloadCategories={fetchCategories}
+              />
+            )}
+          </div>
+        )}
+        {tab === "orders" && (
+          <div>
+            <h2 className="text-3xl font-bold text-green-700 mb-6 flex items-center gap-2">🧾 Đơn hàng</h2>
+            <SellerOrderList orders={orders} />
+          </div>
+        )}
+        {tab === "shipping" && (
+          <div>
+            <h2 className="text-3xl font-bold text-green-700 mb-6 flex items-center gap-2">🚚 Vận chuyển</h2>
+            <SellerShipping />
+          </div>
+        )}
+        {tab === "report" && (
+          <div>
+            <h2 className="text-3xl font-bold text-green-700 mb-6 flex items-center gap-2">📈 Báo cáo</h2>
+            <SellerReport />
+          </div>
+        )}
+        {tab === "profile" && (
+          <div>
+            <h2 className="text-3xl font-bold text-green-700 mb-6 flex items-center gap-2">🏪 Hồ sơ cửa hàng</h2>
+            <SellerProfile />
+          </div>
+        )}
+      </main>
     </div>
   );
 };

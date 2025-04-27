@@ -30,6 +30,12 @@ const productSchema = new mongoose.Schema({
         maxLength: [4, 'Stock cannot exceed 4 characters'],
         default: 1
     },
+    brand: {
+        type: String,
+        required: [true, 'Vui lòng nhập tên người bán (brand)'],
+        enum: ['green', 'familiar'],
+        default: 'green'
+    },
     ratings: {
         type: Number,
         default: 0

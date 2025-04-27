@@ -127,6 +127,9 @@ const SellerProductList = () => {
     }
   };
 
+  // Lọc sản phẩm brand = 'green'
+  const greenProducts = products.filter(p => p.brand === 'green');
+
   return (
     <div className="bg-green-50 min-h-screen py-10 px-4">
       <h2 className="text-2xl font-bold text-green-700 mb-6 flex items-center gap-2">🍉 Quản lý sản phẩm</h2>
@@ -150,10 +153,10 @@ const SellerProductList = () => {
             <tbody>
               {loading ? (
                 <tr><td colSpan={5} className="text-center py-6 text-gray-400">Đang tải...</td></tr>
-              ) : products.length === 0 ? (
+              ) : greenProducts.length === 0 ? (
                 <tr><td colSpan={5} className="text-center py-6 text-gray-400">Không có sản phẩm</td></tr>
               ) : (
-                products.map((p) => (
+                greenProducts.map((p) => (
                   <tr key={p._id} className="border-t border-green-50">
                     <td className="py-2 px-3 font-semibold text-green-700">{p.name}</td>
                     <td className="py-2 px-3">{p.price?.toLocaleString()}₫</td>
