@@ -94,8 +94,9 @@ const ProductDetail = () => {
             </div>
             <span className="text-xs text-gray-500">({product.reviews?.length || 0} đánh giá)</span>
           </div>
-          <div className="flex items-center gap-2 text-green-700 font-semibold">
-            <span>{product.brand || product.category?.name}</span>
+          <div className="flex flex-col gap-1">
+          <div className="flex items-center gap-2 text-green-700 font-semibold ">
+            <span className="text-[30px]">Nhãn hiệu {product.brand || product.category?.name}</span>
             {product.sku && <><span className="text-gray-400 text-xs">|</span><span className="text-gray-500 text-xs">SKU:{product.sku}</span></>}
           </div>
           <div className="flex items-center gap-3 mt-2">
@@ -113,6 +114,7 @@ const ProductDetail = () => {
                 </button>
               ))}
             </div>
+          </div>
           </div>
           <div className="flex items-end gap-3 mt-2">
             <span className="text-2xl font-bold text-green-600">{product.price?.toLocaleString()}₫</span>
@@ -157,13 +159,13 @@ const ProductDetail = () => {
           <div className="text-gray-700 whitespace-pre-line">{product.details}</div>
         </div>
         <div className="md:w-1/3 border-l border-gray-100 pl-8">
-          <h2 className="text-xl font-bold text-green-700 mb-2">Phản hồi từ khách hàng</h2>
-          <div className="flex items-center gap-2 mb-2">
+          <h2 className="text-xl font-bold text-green-700">Phản hồi từ khách hàng</h2>
+          <div className="flex items-center gap-2 ">
             <span className="text-yellow-400 text-lg">★</span>
             <span className="font-bold">{product.ratings || 5.0}</span>
             <span className="text-gray-500 text-sm">trên 5 sao</span>
           </div>
-          <div className="mb-4 text-gray-500 text-xs">Dựa trên {product.reviews?.length || 0} đánh giá</div>
+          <div className=" text-gray-500 text-xs">Dựa trên {product.reviews?.length || 0} đánh giá</div>
           <div className="space-y-2">
             {(product.reviews || []).map((r, idx) => (
               <div key={idx} className="bg-green-50 rounded p-2">

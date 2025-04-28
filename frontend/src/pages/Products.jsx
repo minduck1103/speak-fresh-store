@@ -229,7 +229,7 @@ const Products = () => {
                                                 <img
                                                     src={product.image || (product.images && (product.images[0]?.url || product.images[0])) || '/no-image.png'}
                                                     alt={product.name}
-                                                    className="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-200 no-underline"
+                                                    className="w-full h-40 object-contain group-hover:scale-105 transition-transform duration-200 no-underline"
                                                 />
                                             </div>
                                             <div className="p-4 flex flex-col flex-1">

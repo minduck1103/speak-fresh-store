@@ -41,14 +41,21 @@
 - Stripe for payment processing
 
 ## Screenshots
-- **Home Page**:[Screenshot of Home Page](path/to/home-screenshot.png)
-                [Screenshot of Home Page](path/to/home-screenshot.png)
-                [Screenshot of Home Page](path/to/home-screenshot.png)
-- **Products Page**: [Screenshot of Products Page](path/to/products-screenshot.png)
-- **Cart Page**: [Screenshot of Cart Page](path/to/cart-screenshot.png)
-- **Checkout Page**: [Screenshot of Checkout Page](path/to/checkout-screenshot.png)
-- **Login Page**: [Screenshot of Login Page](path/to/login-screenshot.png)
-- **Register Page**: [Screenshot of Register Page](path/to/register-screenshot.png)
+- **Home Page**:[Screenshot of Home Page](demo/home-page1.png)
+                [Screenshot of Home Page](demo/home-page2.png)
+                [Screenshot of Home Page](demo/home-page3.png)
+                [Screenshot of Home Page](demo/home-page-4.png)
+- **Login Page**: [Screenshot of Checkout Page](demo/login-page.png)
+- **Register Page**: [Screenshot of Checkout Page](demo/register-page.png)
+- **Products Page**:[Screenshot of Products Page](demo/products-page1.png)
+                    [Screenshot of Products Page](demo/products-page2.png)
+- **Products Page**:[Screenshot of Products Page](demo/product-detail-page.png)
+                    [Screenshot of Products Page](demo/product-detail-page1.png)
+- **Cart Page**:[Screenshot of Cart Page](demo/cart-empty-page.png)
+                [Screenshot of Cart Page](demo/cart-page.png)
+- **Orders Page**: [Screenshot of Checkout Page](demo/orders-page.png)
+
+
 
 ## Website Functionality
 The website allows users to browse products, add them to a cart, and proceed to checkout. It includes user authentication, order management, and admin functionalities for managing products and orders.
