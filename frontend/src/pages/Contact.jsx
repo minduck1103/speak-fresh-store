@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -26,7 +26,7 @@ const Contact = () => {
     {
       icon: "📍",
       title: "Địa chỉ",
-      content: "123 Đường Nguyễn Văn A, Quận 1, TP.HCM"
+      content: "Số 5 Công trường Mê Linh, Quận 1, TP.HCM"
     },
     {
       icon: "📞",
@@ -53,7 +53,7 @@ const Contact = () => {
           <img
             src="/src/assets/contact-hero.jpg"
             alt="Contact us background"
-            className="w-full h-full object-cover opacity-20"
+            className="w-full h-full object-cover opacity-60"
           />
         </div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">

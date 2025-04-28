@@ -55,7 +55,7 @@ const About = () => {
           <img
             src="/src/assets/about-hero.jpg"
             alt="Fresh fruits background"
-            className="w-full h-full object-cover opacity-20"
+            className="w-full h-full object-cover opacity-60"
           />
         </div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -149,7 +149,7 @@ const About = () => {
             </div>
             <div className="mt-8 lg:mt-0">
               <img
-                src="/src/assets/mission.jpg"
+                src="/src/assets/banner-mission.jpg"
                 alt="Our mission"
                 className="rounded-lg shadow-lg"
               />
