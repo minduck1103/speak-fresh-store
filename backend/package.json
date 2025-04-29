@@ -1,7 +1,7 @@
 {
-  "name": "fruit-shop-backend",
+  "name": "speakfresh-backend",
   "version": "1.0.0",
-  "description": "Backend for Fruit Shop E-commerce",
+  "description": "Backend for Speak Fresh E-commerce",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
@@ -24,5 +24,8 @@
   },
   "devDependencies": {
     "nodemon": "^2.0.22"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }

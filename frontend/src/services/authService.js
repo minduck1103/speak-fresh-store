@@ -33,6 +33,7 @@ const authService = {
             
             if (response.data.success) {
                 localStorage.setItem('token', response.data.token);
+                localStorage.setItem('user', JSON.stringify(response.data.user));
                 
                 // Update token for subsequent requests
                 axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
@@ -46,6 +47,7 @@ const authService = {
     // Logout
     logout: () => {
         localStorage.removeItem('token');
+        localStorage.removeItem('user');
         delete axiosInstance.defaults.headers.common['Authorization'];
     },
 
@@ -58,6 +60,15 @@ const authService = {
     // Get token
     getToken: () => {
         return localStorage.getItem('token');
+    },
+
+    // Get user role
+    getUserRole: () => {
+        const user = localStorage.getItem('user');
+        if (user) {
+            return JSON.parse(user).role;
+        }
+        return null;
     },
 
     // Update profile

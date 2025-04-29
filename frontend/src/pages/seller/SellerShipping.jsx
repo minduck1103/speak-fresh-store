@@ -28,7 +28,6 @@ const SellerShipping = () => {
 
   return (
     <div className="bg-green-50 min-h-screen py-10 px-4">
-      <h2 className="text-2xl font-bold text-green-700 mb-6 flex items-center gap-2">🚚 Quản lý vận chuyển</h2>
       {error && <div className="text-red-500 mb-4">{error}</div>}
       <div className="bg-white rounded-xl shadow-lg p-6">
         <div className="overflow-x-auto">

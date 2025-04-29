@@ -60,7 +60,7 @@ const Checkout = () => {
         itemsPrice,
         taxPrice: 0,
         shippingPrice: shippingFee,
-        totalPrice
+        totalAmount: totalPrice
       };
       console.log('orderData gửi lên:', orderData);
       await createOrder(orderData);
@@ -90,7 +90,7 @@ const Checkout = () => {
   }
 
   return (
-    <div className="bg-green-50 min-h-screen py-10">
+    <div className="bg-green-50 min-h-screen py-10 mt-20">
       <div className="max-w-3xl mx-auto bg-white rounded-xl shadow-lg p-8">
         <h1 className="text-3xl font-bold text-green-700 mb-6 text-center">Thanh toán đơn hàng</h1>
         {error && <div className="text-red-500 text-center mb-4">{error}</div>}

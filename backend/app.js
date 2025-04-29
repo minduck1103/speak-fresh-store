@@ -9,8 +9,22 @@ const app = express();
 // Logger
 app.use(morgan('dev'));
 
-// Enable CORS - Phải đặt trước các middleware khác
-app.use(cors(corsOptions));
+// CORS configuration
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://speakfresh.vercel.app'  // Thay bằng domain thực tế của bạn
+];
+
+app.use(cors({
+  origin: function(origin, callback) {
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true
+}));
 
 // Body parser
 app.use(express.json());
@@ -27,6 +41,7 @@ app.use('/api/v1/categories', require('./routes/categories'));
 app.use('/api/v1/orders', require('./routes/orders'));
 app.use('/api/v1/shipping', require('./routes/shipping'));
 app.use('/api/v1/reviews', require('./routes/reviews'));
+app.use('/api/v1/delivery', require('./routes/delivery'));
 
 // Error handling middleware
 app.use((err, req, res, next) => {

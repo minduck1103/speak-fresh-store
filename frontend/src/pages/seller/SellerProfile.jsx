@@ -45,7 +45,6 @@ const SellerProfile = () => {
 
   return (
     <div className="bg-green-50 min-h-screen py-10 px-4">
-      <h2 className="text-2xl font-bold text-green-700 mb-6 flex items-center gap-2">🏪 Hồ sơ cửa hàng</h2>
       <div className="bg-white rounded-xl shadow-lg p-6 max-w-xl mx-auto">
         {success && <div className="text-green-600 text-center font-bold mb-4">{success}</div>}
         <div className="flex flex-col items-center mb-6">

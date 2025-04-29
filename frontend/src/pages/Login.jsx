@@ -2,6 +2,22 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import authService from '../services/authService';
 
+const roleToPath = {
+    admin: '/admin',
+    seller: '/seller',
+    delivery: '/delivery',
+    warehouse: '/warehouse',
+    user: '/',
+};
+
+const roleToLabel = {
+    admin: 'admin',
+    seller: 'seller',
+    delivery: 'delivery',
+    warehouse: 'warehouse',
+    user: 'người dùng',
+};
+
 const Login = () => {
     const [formData, setFormData] = useState({
         email: '',
@@ -9,6 +25,8 @@ const Login = () => {
     });
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+    const [modalOpen, setModalOpen] = useState(false);
+    const [role, setRole] = useState('');
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -33,7 +51,14 @@ const Login = () => {
         try {
             const response = await authService.login(formData);
             if (response.success) {
-                navigate('/'); // Chuyển hướng về trang chủ sau khi đăng nhập thành công
+                const userRole = response.user?.role || 'user';
+                setRole(userRole);
+                setModalOpen(true);
+                setTimeout(() => {
+                    setModalOpen(false);
+                    // Điều hướng chính xác theo role
+                    navigate(roleToPath[userRole] || '/');
+                }, 1800);
             } else {
                 setError(response.message || 'Đăng nhập thất bại');
             }
@@ -141,6 +166,16 @@ const Login = () => {
                     </div>
                 </div>
             </div>
+            {/* Modal xác nhận role */}
+            {modalOpen && (
+                <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-10">
+                    <div className="bg-white rounded-lg shadow-lg p-6 max-w-xs w-full text-center border border-green-200">
+                        <div className="text-green-600 text-2xl mb-2">✅</div>
+                        <div className="mb-2 font-semibold">Đăng nhập thành công!</div>
+                        <div>Bạn đang đăng nhập với tư cách là <b>{roleToLabel[role] || role}</b></div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

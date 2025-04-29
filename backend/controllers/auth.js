@@ -202,6 +202,7 @@ const sendTokenResponse = (user, statusCode, res) => {
         httpOnly: true
     };
 
+    // Add secure flag in production
     if (process.env.NODE_ENV === 'production') {
         options.secure = true;
     }
@@ -211,6 +212,12 @@ const sendTokenResponse = (user, statusCode, res) => {
         .cookie('token', token, options)
         .json({
             success: true,
-            token
+            token,
+            user: {
+                id: user._id,
+                name: user.name,
+                email: user.email,
+                role: user.role
+            }
         });
 }; 

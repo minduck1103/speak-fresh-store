@@ -50,7 +50,6 @@ const SellerOrderList = ({ orders = [] }) => {
 
   return (
     <div className="bg-green-50 min-h-screen py-10 px-4">
-      <h2 className="text-2xl font-bold text-green-700 mb-6 flex items-center gap-2"><span role="img" aria-label="fruit">🍏</span> Quản lý đơn hàng</h2>
       <div className="overflow-x-auto">
         <table className="w-full border border-green-200 rounded-lg bg-white">
           <thead className="bg-green-100">

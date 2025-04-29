@@ -5,6 +5,7 @@ import categoryService from '../services/categoryService';
 import cartService from '../services/cartService';
 import { toast } from 'react-toastify';
 import { Link } from 'react-router-dom';
+import bannerBg from '../assets/banner-bg.jpg';
 
 const Products = () => {
     const [products, setProducts] = useState([]);
@@ -128,15 +129,21 @@ const Products = () => {
     return (
         <div className="bg-gradient-to-b from-green-50 to-white min-h-screen py-8">
             {/* Banner */}
-            <div className="relative mb-10 rounded-3xl overflow-hidden shadow-lg">
-                <img 
-                    src="https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" 
-                    alt="Products Banner" 
-                    className="w-full h-72 object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex flex-col items-center justify-center text-white">
-                    <h1 className="text-4xl md:text-5xl font-bold mb-2 drop-shadow-lg">Sản phẩm tươi ngon</h1>
-                    <p className="text-lg md:text-2xl font-medium drop-shadow">Chọn lọc những sản phẩm chất lượng nhất</p>
+            <div className="max-w-7xl mx-auto px-4">
+                <div className="relative mb-10 rounded-3xl overflow-hidden shadow-lg">
+                    <img 
+                        src={bannerBg}
+                        alt="Products Banner" 
+                        className="w-full h-48 md:h-72 object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-black/30 to-black/60 flex flex-col items-end justify-end text-white p-6 md:p-10">
+                        <h1 className="text-3xl md:text-5xl font-bold mb-2 drop-shadow-lg text-right max-w-lg font-serif" style={{ fontFamily: "'Playfair Display', serif" }}>
+                            Sản phẩm tươi ngon
+                        </h1>
+                        <p className="text-base md:text-xl font-medium drop-shadow text-right max-w-lg" style={{ fontFamily: "'Montserrat', sans-serif" }}>
+                            Chọn lọc những sản phẩm chất lượng nhất
+                        </p>
+                    </div>
                 </div>
             </div>
 

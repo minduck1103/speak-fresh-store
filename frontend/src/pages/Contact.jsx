@@ -1,4 +1,7 @@
 import { useState } from 'react';
+import contactHero from '../assets/contact-hero.jpg';
+import { motion } from 'framer-motion';
+import { fadeIn, slideIn, staggerContainer, textVariant, scaleIn } from '../utility/animation';
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -48,48 +51,93 @@ const Contact = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
-      <div className="relative bg-green-600 py-24">
-        <div className="absolute inset-0 overflow-hidden">
-          <img
-            src="/src/assets/contact-hero.jpg"
-            alt="Contact us background"
-            className="w-full h-full object-cover opacity-60"
-          />
+      <motion.div
+        variants={staggerContainer()}
+        initial="hidden"
+        whileInView="show"
+        viewport={{ once: true, amount: 0.25 }}
+        className="bg-gradient-to-b from-green-50 to-white py-8"
+      >
+        <div className="max-w-7xl mx-auto px-4">
+          <motion.div 
+            variants={fadeIn('up', 0.3)}
+            className="relative mb-10 rounded-3xl overflow-hidden shadow-lg"
+          >
+            <img
+              src={contactHero}
+              alt="Contact us background"
+              className="w-full h-48 md:h-72 object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-transparent flex flex-col items-start justify-end text-white p-6 md:p-10">
+              <motion.h1 
+                variants={textVariant(0.5)}
+                className="text-3xl md:text-5xl font-bold mb-2 drop-shadow-lg text-left max-w-lg font-serif"
+                style={{ fontFamily: "'Playfair Display', serif" }}
+              >
+                Liên hệ với chúng tôi
+              </motion.h1>
+              <motion.p 
+                variants={textVariant(0.7)}
+                className="text-base md:text-xl font-medium drop-shadow text-left max-w-lg"
+                style={{ fontFamily: "'Montserrat', sans-serif" }}
+              >
+                Chúng tôi luôn sẵn sàng lắng nghe và hỗ trợ bạn
+              </motion.p>
+            </div>
+          </motion.div>
         </div>
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl font-bold text-white mb-4">
-            Liên hệ với chúng tôi
-          </h1>
-          <p className="text-xl text-green-100 max-w-3xl mx-auto">
-            Chúng tôi luôn sẵn sàng lắng nghe và hỗ trợ bạn
-          </p>
-        </div>
-      </div>
+      </motion.div>
 
       {/* Contact Info Section */}
-      <div className="py-12 bg-white">
+      <motion.div 
+        variants={staggerContainer()}
+        initial="hidden"
+        whileInView="show"
+        viewport={{ once: true, amount: 0.25 }}
+        className="py-12 bg-white"
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {contactInfo.map((info, index) => (
-              <div key={index} className="text-center">
+              <motion.div
+                key={index}
+                variants={scaleIn(0.3 + index * 0.1)}
+                className="text-center"
+              >
                 <div className="text-4xl mb-4">{info.icon}</div>
                 <h3 className="text-lg font-medium text-gray-900 mb-2">{info.title}</h3>
                 <p className="text-gray-600">{info.content}</p>
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>
-      </div>
+      </motion.div>
 
       {/* Contact Form Section */}
-      <div className="py-16 bg-gray-50">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+      <motion.div 
+        variants={staggerContainer()}
+        initial="hidden"
+        whileInView="show"
+        viewport={{ once: true, amount: 0.25 }}
+        className="py-16 bg-gray-50"
+      >
+        <motion.div 
+          variants={fadeIn('up', 0.3)}
+          className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8"
+        >
           <div className="bg-white rounded-lg shadow-lg overflow-hidden">
             <div className="px-6 py-8">
-              <h2 className="text-2xl font-bold text-gray-900 text-center mb-8">
+              <motion.h2 
+                variants={textVariant(0.5)}
+                className="text-2xl font-bold text-gray-900 text-center mb-8"
+              >
                 Gửi tin nhắn cho chúng tôi
-              </h2>
-              <form onSubmit={handleSubmit} className="space-y-6">
+              </motion.h2>
+              <motion.form 
+                variants={fadeIn('up', 0.7)}
+                onSubmit={handleSubmit} 
+                className="space-y-6"
+              >
                 <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
                   <div>
                     <label htmlFor="name" className="block text-sm font-medium text-gray-700">
@@ -184,19 +232,25 @@ const Contact = () => {
                     Gửi tin nhắn
                   </button>
                 </div>
-              </form>
+              </motion.form>
             </div>
           </div>
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
 
       {/* Map Section */}
-      <div className="h-96 bg-gray-200">
+      <motion.div 
+        variants={fadeIn('up', 0.3)}
+        initial="hidden"
+        whileInView="show"
+        viewport={{ once: true, amount: 0.25 }}
+        className="h-96 bg-gray-200"
+      >
         {/* Add Google Maps or other map service here */}
         <div className="w-full h-full flex items-center justify-center text-gray-500">
           Bản đồ Google Maps sẽ được hiển thị ở đây
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 };

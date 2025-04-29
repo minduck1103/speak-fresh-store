@@ -95,7 +95,7 @@ exports.deleteReview = asyncHandler(async (req, res, next) => {
         return next(new ErrorResponse(`Không có quyền xóa đánh giá này`, 401));
     }
     
-    await review.remove();
+    await Review.findByIdAndDelete(req.params.id);
     
     res.status(200).json({
         success: true,
