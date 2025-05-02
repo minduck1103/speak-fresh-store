@@ -1,6 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { FadeUp, FadeRight } from "../../utility/animation";
+import fruitPlate from "../../assets/fruit-plate.png";
 
 const Hero = () => {
   return (
@@ -51,7 +52,7 @@ const Hero = () => {
             className="relative"
           >
             <img
-              src="/src/assets/fruit-plate.png"
+              src={fruitPlate}
               alt="Fresh fruits"
               className="w-full"
             />

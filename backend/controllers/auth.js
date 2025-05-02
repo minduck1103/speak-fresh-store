@@ -38,28 +38,40 @@ exports.register = asyncHandler(async (req, res, next) => {
 // @route   POST /api/v1/auth/login
 // @access  Public
 exports.login = asyncHandler(async (req, res, next) => {
+    console.log('Login request body:', req.body);
     const { email, password } = req.body;
 
     // Validate email & password
     if (!email || !password) {
+        console.log('Missing email or password');
         return next(new ErrorResponse('Please provide an email and password', 400));
     }
 
-    // Check for user
-    const user = await User.findOne({ email }).select('+password');
+    try {
+        // Check for user
+        console.log('Finding user with email:', email);
+        const user = await User.findOne({ email }).select('+password');
 
-    if (!user) {
-        return next(new ErrorResponse('Invalid credentials', 401));
+        if (!user) {
+            console.log('User not found with email:', email);
+            return next(new ErrorResponse('Invalid credentials', 401));
+        }
+
+        // Check if password matches
+        console.log('Checking password match');
+        const isMatch = await user.matchPassword(password);
+
+        if (!isMatch) {
+            console.log('Password does not match');
+            return next(new ErrorResponse('Invalid credentials', 401));
+        }
+
+        console.log('Login successful for user:', user.email);
+        sendTokenResponse(user, 200, res);
+    } catch (error) {
+        console.error('Login error:', error);
+        return next(new ErrorResponse('Server error during login', 500));
     }
-
-    // Check if password matches
-    const isMatch = await user.matchPassword(password);
-
-    if (!isMatch) {
-        return next(new ErrorResponse('Invalid credentials', 401));
-    }
-
-    sendTokenResponse(user, 200, res);
 });
 
 // @desc    Log user out / clear cookie
@@ -192,32 +204,44 @@ exports.resetPassword = asyncHandler(async (req, res, next) => {
 
 // Get token from model, create cookie and send response
 const sendTokenResponse = (user, statusCode, res) => {
-    // Create token
-    const token = user.getSignedJwtToken();
+    try {
+        console.log('Generating JWT token for user:', user.email);
+        // Create token
+        const token = user.getSignedJwtToken();
+        console.log('JWT token generated successfully');
 
-    const options = {
-        expires: new Date(
-            Date.now() + process.env.JWT_COOKIE_EXPIRE * 24 * 60 * 60 * 1000
-        ),
-        httpOnly: true
-    };
+        const options = {
+            expires: new Date(
+                Date.now() + process.env.JWT_COOKIE_EXPIRE * 24 * 60 * 60 * 1000
+            ),
+            httpOnly: true
+        };
 
-    // Add secure flag in production
-    if (process.env.NODE_ENV === 'production') {
-        options.secure = true;
-    }
+        // Add secure flag in production
+        if (process.env.NODE_ENV === 'production') {
+            options.secure = true;
+        }
 
-    res
-        .status(statusCode)
-        .cookie('token', token, options)
-        .json({
-            success: true,
-            token,
-            user: {
-                id: user._id,
-                name: user.name,
-                email: user.email,
-                role: user.role
-            }
+        console.log('Sending token response');
+        res
+            .status(statusCode)
+            .cookie('token', token, options)
+            .json({
+                success: true,
+                token,
+                user: {
+                    id: user._id,
+                    name: user.name,
+                    email: user.email,
+                    role: user.role
+                }
+            });
+        console.log('Token response sent successfully');
+    } catch (error) {
+        console.error('Error in sendTokenResponse:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Error generating authentication token'
         });
+    }
 }; 

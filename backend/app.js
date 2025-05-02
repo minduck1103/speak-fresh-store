@@ -1,8 +1,35 @@
 const express = require('express');
+const dotenv = require('dotenv');
 const cors = require('cors');
 const corsOptions = require('./config/cors');
 const cookieParser = require('cookie-parser');
 const morgan = require('morgan');
+const fileupload = require('express-fileupload');
+const path = require('path');
+const errorHandler = require('./middleware/error');
+const connectDB = require('./config/db');
+
+// Load env vars
+dotenv.config({ path: './config/.env' });
+
+// Check required environment variables
+const requiredEnvVars = [
+    'MONGODB_URI',
+    'JWT_SECRET',
+    'JWT_EXPIRE',
+    'JWT_COOKIE_EXPIRE'
+];
+
+const missingEnvVars = requiredEnvVars.filter(envVar => !process.env[envVar]);
+
+if (missingEnvVars.length > 0) {
+    console.error('Missing required environment variables:', missingEnvVars);
+    console.error('Please check your .env file or environment configuration');
+    process.exit(1);
+}
+
+// Connect to database
+connectDB();
 
 const app = express();
 
@@ -12,7 +39,7 @@ app.use(morgan('dev'));
 // CORS configuration
 const allowedOrigins = [
   'http://localhost:5173',
-  'https://speakfresh.vercel.app'  // Thay bằng domain thực tế của bạn
+  'https://speak-fresh-frontend.vercel.app'
 ];
 
 app.use(cors({

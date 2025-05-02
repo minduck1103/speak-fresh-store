@@ -1,6 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { FadeLeft, FadeRight } from "../../utility/animation";
+import bannerBg from "../../assets/banner-bg.jpg";
 
 const Banner3 = () => {
   return (
@@ -12,7 +13,7 @@ const Banner3 = () => {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
-          src="/src/assets/banner-bg.jpg"
+          src={bannerBg}
           alt="Mixed fruits"
           className="absolute inset-0 w-full h-full object-cover"
         />

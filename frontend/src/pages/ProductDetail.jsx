@@ -54,7 +54,7 @@ const ProductDetail = () => {
   if (!product) return null;
 
   return (
-    <div className="bg-gray-50 min-h-screen py-8">
+    <div className="bg-gray-50 min-h-screen pt-28 pb-8">
       <div className="max-w-5xl mx-auto bg-white rounded-xl shadow-lg p-8 flex flex-col md:flex-row gap-8">
         {/* Gallery */}
         <div className="flex flex-col md:w-1/2 items-center">
@@ -62,7 +62,7 @@ const ProductDetail = () => {
             <img
               src={selectedImage || product.image || product.images?.[0]?.url || product.images?.[0] || '/no-image.png'}
               alt="Sản phẩm"
-              className="w-full max-w-md h-80 object-cover rounded-lg border-2 border-green-200 shadow"
+              className="w-full max-w-md h-80 object-contain rounded-lg border-2 border-green-200 shadow bg-white"
             />
             <div className="flex gap-2 mt-4">
               {(product.images || []).map((img, idx) => (
@@ -70,7 +70,7 @@ const ProductDetail = () => {
                   key={idx}
                   src={img.url || img}
                   alt="thumb"
-                  className={`w-16 h-16 object-cover rounded border-2 cursor-pointer transition-all duration-200 ${selectedImage === (img.url || img) ? "border-green-500" : "border-gray-200"}`}
+                  className={`w-16 h-16 object-contain rounded border-2 cursor-pointer transition-all duration-200 bg-white ${selectedImage === (img.url || img) ? "border-green-500" : "border-gray-200"}`}
                   onClick={() => setSelectedImage(img.url || img)}
                 />
               ))}

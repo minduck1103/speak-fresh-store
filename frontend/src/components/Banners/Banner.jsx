@@ -1,4 +1,5 @@
 import React from "react";
+import fruitsSplash from "../../assets/fruits-splash.png";
 
 const Banner = () => {
   return (
@@ -6,7 +7,7 @@ const Banner = () => {
       <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
         <div className="relative h-[300px] md:h-[400px] overflow-hidden">
           <img
-            src="/src/assets/fruits-splash.png"
+            src={fruitsSplash}
             alt="Fruits splash"
             className="w-full h-full object-contain"
           />

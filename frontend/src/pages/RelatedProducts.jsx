@@ -26,11 +26,11 @@ const RelatedProducts = ({ currentProduct }) => {
       <h2 className="text-2xl font-bold text-green-700 mb-6">Sản phẩm liên quan</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {related.map((product) => (
-          <Link to={`/products/${product._id}`} key={product._id} className="block bg-white rounded-xl shadow p-4 hover:shadow-lg transition">
+          <Link to={`/products/${product._id}`} key={product._id} className="block bg-white rounded-xl shadow p-4 hover:shadow-lg transition no-underline">
             <img
               src={product.image || (product.images && (product.images[0]?.url || product.images[0])) || '/no-image.png'}
               alt={product.name}
-              className="w-full h-40 object-cover rounded mb-3"
+              className="w-full h-40 object-contain rounded mb-3 bg-white"
             />
             <h3 className="text-base font-bold text-green-700 line-clamp-2 mb-1">{product.name}</h3>
             <div className="flex items-center gap-2 mb-1">

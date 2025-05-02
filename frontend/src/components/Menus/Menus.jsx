@@ -1,6 +1,10 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { FadeUp } from "../../utility/animation";
+import apple from "../../assets/fruits/apple.png";
+import orange from "../../assets/fruits/orange.png";
+import avocado from "../../assets/fruits/avocado.png";
+import cherry from "../../assets/fruits/cherry.png";
 
 const Menus = () => {
   const fruits = [
@@ -8,25 +12,25 @@ const Menus = () => {
       id: 1,
       name: "Táo đỏ tươi",
       price: "110.000/kg",
-      image: "/src/assets/fruits/apple.png"
+      image: apple
     },
     {
       id: 2,
       name: "Cam tươi",
       price: "100.000/kg",
-      image: "/src/assets/fruits/orange.png"
+      image: orange
     },
     {
       id: 3,
       name: "Bơ tươi",
       price: "50.000/kg",
-      image: "/src/assets/fruits/avocado.png"
+      image: avocado
     },
     {
       id: 4,
       name: "Cherry tươi",
       price: "280.000/kg",
-      image: "/src/assets/fruits/cherry.png"
+      image: cherry
     }
   ];
 
