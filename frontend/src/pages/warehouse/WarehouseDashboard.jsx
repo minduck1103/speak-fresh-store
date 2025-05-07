@@ -10,10 +10,10 @@ import Reports from './Reports';
 
 const TABS = [
   { key: 'stats', label: 'Tổng quan', icon: <FaAppleAlt /> },
-  { key: 'inventory', label: 'Quản lý hàng tồn kho', icon: '📦' },
+  { key: 'inventory', label: 'Hàng tồn kho', icon: '📦' },
   { key: 'storage', label: 'Vị trí lưu trữ', icon: '📍' },
-  { key: 'importexport', label: 'Nhập/Xuất kho', icon: '🔄' },
-  { key: 'picking', label: 'Soạn hàng & Xác nhận', icon: '✅' },
+  { key: 'importexport', label: 'Nhập/Xuất hàng', icon: '🔄' },
+  { key: 'picking', label: 'Xuất kho hàng', icon: '✅' },
   { key: 'reports', label: 'Báo cáo', icon: '📊' },
 ];
 
@@ -21,7 +21,7 @@ const WarehouseDashboard = () => {
   const [activeTab, setActiveTab] = useState('stats');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-green-100">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 to-green-100" style={{paddingTop: '80px'}}>
       <div className="max-w-[1440px] w-full mx-auto px-2 md:px-8">
         <div className="flex">
           {/* Hamburger button for mobile */}

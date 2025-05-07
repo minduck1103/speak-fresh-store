@@ -5,7 +5,13 @@ const {
     createOrder,
     updateOrder,
     deleteOrder,
-    getMyOrders
+    getMyOrders,
+    confirmOrder,
+    rejectOrder,
+    deliveryConfirmOrder,
+    markDelivered,
+    markFailed,
+    cancelOrder
 } = require('../controllers/orders');
 
 const router = express.Router();
@@ -23,5 +29,12 @@ router.route('/:id')
     .get(protect, getOrder)
     .put(protect, authorize('admin'), updateOrder)
     .delete(protect, deleteOrder);
+
+router.put('/:id/confirm', protect, authorize('seller'), confirmOrder);
+router.put('/:id/reject', protect, authorize('seller'), rejectOrder);
+router.put('/:id/delivery-confirm', protect, authorize('delivery'), deliveryConfirmOrder);
+router.put('/:id/delivered', protect, authorize('delivery'), markDelivered);
+router.put('/:id/failed', protect, authorize('delivery'), markFailed);
+router.put('/:id/cancel', protect, cancelOrder);
 
 module.exports = router; 

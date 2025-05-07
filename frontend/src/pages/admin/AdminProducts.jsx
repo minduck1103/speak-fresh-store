@@ -22,6 +22,8 @@ const AdminProducts = () => {
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [productImageFile, setProductImageFile] = useState(null);
+  const [searchProduct, setSearchProduct] = useState("");
+  const [searchCategory, setSearchCategory] = useState("");
 
   useEffect(() => {
     fetchAll();
@@ -32,8 +34,8 @@ const AdminProducts = () => {
     setLoading(true);
     try {
       const [prodRes, catRes] = await Promise.all([
-        api.get("/products"),
-        api.get("/categories")
+        api.get("/api/v1/products"),
+        api.get("/api/v1/categories")
       ]);
       let prods = Array.isArray(prodRes.data) ? prodRes.data : prodRes.data.data || [];
       let cats = Array.isArray(catRes.data) ? catRes.data : catRes.data.data || [];
@@ -93,9 +95,9 @@ const AdminProducts = () => {
       formData.append("description", productForm.description);
       if (productImageFile) formData.append("image", productImageFile);
       if (editingProduct) {
-        await api.put(`/products/${editingProduct._id}`, formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+        await api.put(`/api/v1/products/${editingProduct._id}`, formData, { headers: { 'Content-Type': 'multipart/form-data' } });
       } else {
-        await api.post(`/products`, formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+        await api.post(`/api/v1/products`, formData, { headers: { 'Content-Type': 'multipart/form-data' } });
       }
       setShowProductModal(false);
       fetchAll();
@@ -113,7 +115,7 @@ const AdminProducts = () => {
   const confirmDeleteProduct = async () => {
     setDeleting(true);
     try {
-      await api.delete(`/products/${deleteTarget._id}`);
+      await api.delete(`/api/v1/products/${deleteTarget._id}`);
       setShowDeleteModal(false);
       fetchAll();
     } catch {
@@ -145,9 +147,9 @@ const AdminProducts = () => {
     setSaving(true);
     try {
       if (editingCategory) {
-        await api.put(`/categories/${editingCategory._id}`, categoryForm);
+        await api.put(`/api/v1/categories/${editingCategory._id}`, categoryForm);
       } else {
-        await api.post(`/categories`, categoryForm);
+        await api.post(`/api/v1/categories`, categoryForm);
       }
       setShowCategoryModal(false);
       fetchAll();
@@ -165,7 +167,7 @@ const AdminProducts = () => {
   const confirmDeleteCategory = async () => {
     setDeleting(true);
     try {
-      await api.delete(`/categories/${deleteTarget._id}`);
+      await api.delete(`/api/v1/categories/${deleteTarget._id}`);
       setShowDeleteModal(false);
       fetchAll();
     } catch {
@@ -189,7 +191,16 @@ const AdminProducts = () => {
         <div className="overflow-x-auto bg-white rounded-2xl shadow-lg p-6 border border-green-100">
           <div className="flex justify-between mb-4">
             <h2 className="text-xl font-bold text-green-700">Danh sách sản phẩm</h2>
-            <button onClick={openAddProduct} className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded font-bold shadow">+ Thêm sản phẩm</button>
+            <div className="flex gap-4 items-center">
+              <input
+                type="text"
+                placeholder="Tìm kiếm..."
+                value={searchProduct}
+                onChange={e => setSearchProduct(e.target.value)}
+                className="border border-green-300 rounded-lg px-4 py-2 focus:outline-none focus:border-green-500"
+              />
+              <button onClick={openAddProduct} className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded font-bold shadow">+ Thêm sản phẩm</button>
+            </div>
           </div>
           <table className="w-full text-left rounded-xl overflow-hidden">
             <thead>
@@ -202,7 +213,7 @@ const AdminProducts = () => {
               </tr>
             </thead>
             <tbody>
-              {products.map(p => (
+              {products.filter(p => p.name.toLowerCase().includes(searchProduct.toLowerCase())).map(p => (
                 <tr key={p._id} className="border-b hover:bg-green-50 transition">
                   <td className="py-2 px-3 font-semibold text-green-700">{p.name}</td>
                   <td className="py-2 px-3">
@@ -227,7 +238,16 @@ const AdminProducts = () => {
         <div className="overflow-x-auto bg-white rounded-2xl shadow-lg p-6 border border-green-100">
           <div className="flex justify-between mb-4">
             <h2 className="text-xl font-bold text-green-700">Danh sách danh mục</h2>
-            <button onClick={openAddCategory} className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded font-bold shadow">+ Thêm danh mục</button>
+            <div className="flex gap-4 items-center">
+              <input
+                type="text"
+                placeholder="Tìm kiếm danh mục..."
+                value={searchCategory}
+                onChange={e => setSearchCategory(e.target.value)}
+                className="border border-green-300 rounded-lg px-4 py-2 focus:outline-none focus:border-green-500"
+              />
+              <button onClick={openAddCategory} className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded font-bold shadow">+ Thêm danh mục</button>
+            </div>
           </div>
           <table className="w-full text-left rounded-xl overflow-hidden">
             <thead>
@@ -238,7 +258,7 @@ const AdminProducts = () => {
               </tr>
             </thead>
             <tbody>
-              {categories.map(c => (
+              {categories.filter(c => c.name.toLowerCase().includes(searchCategory.toLowerCase())).map(c => (
                 <tr key={c._id} className="border-b hover:bg-green-50 transition">
                   <td className="py-2 px-3 font-semibold text-green-700">{c.name}</td>
                   <td className="py-2 px-3">{c.description}</td>

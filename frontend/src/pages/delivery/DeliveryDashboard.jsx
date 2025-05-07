@@ -121,7 +121,7 @@ const DeliveryDashboard = () => {
 
   const fetchOrders = async () => {
     try {
-      const response = await api.get('/delivery/orders');
+      const response = await api.get('/api/v1/delivery/orders');
       setOrders(response.data.data || []);
     } catch (error) {
       console.error('Error fetching orders:', error);
@@ -130,7 +130,7 @@ const DeliveryDashboard = () => {
 
   const fetchStats = async () => {
     try {
-      const response = await api.get('/delivery/stats');
+      const response = await api.get('/api/v1/delivery/stats');
       setStats(response.data.data || {});
     } catch (error) {
       console.error('Error fetching stats:', error);
@@ -139,7 +139,7 @@ const DeliveryDashboard = () => {
 
   const fetchNotifications = async () => {
     try {
-      const response = await api.get('/delivery/notifications');
+      const response = await api.get('/api/v1/delivery/notifications');
       setNotifications(response.data.data || []);
     } catch (error) {
       console.error('Error fetching notifications:', error);
@@ -150,7 +150,7 @@ const DeliveryDashboard = () => {
 
   const fetchHistory = async () => {
     try {
-      const response = await api.get('/delivery/orders?history=true');
+      const response = await api.get('/api/v1/delivery/orders?history=true');
       setHistory(response.data.data || []);
     } catch (error) {
       setHistory([]);
@@ -159,7 +159,7 @@ const DeliveryDashboard = () => {
 
   const handleAcceptOrder = async (orderId) => {
     try {
-      await api.put(`/delivery/orders/${orderId}/accept`);
+      await api.put(`/api/v1/delivery/orders/${orderId}/accept`);
       message.success('Đã nhận đơn hàng thành công');
       fetchOrders();
       fetchStats();
@@ -170,7 +170,7 @@ const DeliveryDashboard = () => {
 
   const handleRejectOrder = async (orderId) => {
     try {
-      await api.put(`/delivery/orders/${orderId}/reject`);
+      await api.put(`/api/v1/delivery/orders/${orderId}/reject`);
       message.success('Đã từ chối đơn hàng thành công');
       fetchOrders();
       fetchStats();
@@ -181,7 +181,7 @@ const DeliveryDashboard = () => {
 
   const handleUpdateStatus = async (orderId, status) => {
     try {
-      await api.put(`/delivery/orders/${orderId}/status`, { status });
+      await api.put(`/api/v1/delivery/orders/${orderId}/status`, { status });
       message.success('Đã cập nhật trạng thái đơn hàng thành công');
       fetchOrders();
       fetchStats();
@@ -192,7 +192,7 @@ const DeliveryDashboard = () => {
 
   const handleConfirmCOD = async (orderId) => {
     try {
-      await api.put(`/delivery/orders/${orderId}/cod`);
+      await api.put(`/api/v1/delivery/orders/${orderId}/cod`);
       message.success('Đã xác nhận thanh toán COD thành công');
       fetchOrders();
       fetchStats();

@@ -10,7 +10,6 @@ import SellerSidebar from "./SellerSidebar";
 import SellerShipping from "./SellerShipping";
 import SellerReport from "./SellerReport";
 import SellerProfile from "./SellerProfile";
-import Footer from "../../components/Footer/Footer";
 
 const SellerPage = () => {
   const [tab, setTab] = useState("dashboard");
@@ -19,6 +18,7 @@ const SellerPage = () => {
   const [orders, setOrders] = useState([]);
   const [orderCount, setOrderCount] = useState(0);
   const [revenue, setRevenue] = useState(0);
+  const [orderTab, setOrderTab] = useState('confirm'); // 'confirm' hoặc 'list'
 
   const fetchProducts = async () => {
     try {
@@ -40,12 +40,13 @@ const SellerPage = () => {
   const fetchOrders = async () => {
     try {
       const res = await getOrders();
-      const orderList = res.data || [];
+      // Nếu res.data là object, lấy res.data.data hoặc []
+      const orderList = Array.isArray(res.data) ? res.data : (res.data?.data || []);
       setOrders(orderList);
       setOrderCount(orderList.length);
       setRevenue(orderList.reduce((sum, o) => sum + (o.totalPrice || 0), 0));
     } catch (err) {
-      // setError("Không thể tải đơn hàng"); // Không dùng error
+      setOrders([]); // Đảm bảo luôn là mảng
     }
   };
 
@@ -60,12 +61,12 @@ const SellerPage = () => {
   }, [tab]);
 
   return (
-    <div className="bg-green-50 flex flex-col">
+    <div className="bg-green-50 flex flex-col "style={{paddingTop: '80px'}}>
       <div>
         <div className="max-w-[1440px] w-full mx-auto px-2 md:px-8">
           <div className="flex">
       <SellerSidebar tab={tab} setTab={setTab} />
-            <main className="p-8 bg-white rounded-l-3xl shadow-lg w-full">
+            <main className="p-8 bg-white rounded-l-3xl shadow-lg w-full" style={{paddingTop: '80px'}}>
         {tab === "dashboard" && (
           <div>
             <h2 className="text-3xl font-bold text-green-700 mb-6 flex items-center gap-2">📊 Tổng quan</h2>
@@ -101,7 +102,22 @@ const SellerPage = () => {
         {tab === "orders" && (
           <div>
             <h2 className="text-3xl font-bold text-green-700 mb-6 flex items-center gap-2">🧾 Đơn hàng</h2>
-            <SellerOrderList orders={orders} />
+            <div className="flex gap-4 mb-6">
+              <button
+                onClick={() => setOrderTab('confirm')}
+                className={`px-5 py-2 rounded-full font-bold border-2 transition-colors ${orderTab === 'confirm' ? "bg-green-500 text-white border-green-500" : "bg-white text-green-700 border-green-300 hover:bg-green-100"}`}
+              >
+                Xác nhận đơn hàng
+              </button>
+              <button
+                onClick={() => setOrderTab('list')}
+                className={`px-5 py-2 rounded-full font-bold border-2 transition-colors ${orderTab === 'list' ? "bg-green-500 text-white border-green-500" : "bg-white text-green-700 border-green-300 hover:bg-green-100"}`}
+              >
+                Đơn hàng đã xác nhận
+              </button>
+            </div>
+            {orderTab === 'confirm' && <SellerOrderList orders={orders.filter(o => o.status === 'Chờ xác nhận')} confirmMode onReloadOrders={fetchOrders} />}
+            {orderTab === 'list' && <SellerOrderList orders={orders.filter(o => ['Chờ lấy hàng','Đang giao','Đã giao','Không thành công','Đã hủy'].includes(o.status))} onReloadOrders={fetchOrders} />}
           </div>
         )}
         {tab === "shipping" && (
@@ -126,7 +142,6 @@ const SellerPage = () => {
           </div>
         </div>
       </div>
-      <Footer />
     </div>
   );
 };

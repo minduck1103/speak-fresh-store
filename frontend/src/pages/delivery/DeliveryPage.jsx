@@ -2,36 +2,47 @@ import React, { useState } from "react";
 import { FaBars, FaTimes, FaTachometerAlt, FaTruck } from "react-icons/fa";
 import DeliveryDashboard from "./DeliveryDashboard";
 import DeliveryOrderList from "./DeliveryOrderList";
-import Footer from "../../components/Footer/Footer";
+import api from "../../services/api";
 
 const SIDEBAR = [
   { key: "dashboard", label: "Dashboard", icon: <FaTachometerAlt /> },
   { key: "orders", label: "Đơn hàng", icon: <FaTruck /> },
 ];
 
-const mockTotalOrders = 20;
-const mockStatusCounts = {
-  "Đang xử lý": 5,
-  "Đang giao": 8,
-  "Đã giao": 6,
-  "Đã hủy": 1,
-};
-const mockOrders = [
-  { _id: 1, customer: { name: "Nguyễn Văn A", phoneNo: "0123456789", address: "123 Đường A", city: "Hà Nội" }, createdAt: "2024-04-25T10:00:00Z", status: "Đang giao", totalPrice: 250000, items: [ { name: "Táo", quantity: 2, price: 50000 }, { name: "Chuối", quantity: 3, price: 50000 } ] },
-  { _id: 2, customer: { name: "Trần Thị B", phoneNo: "0987654321", address: "456 Đường B", city: "HCM" }, createdAt: "2024-04-24T09:00:00Z", status: "Đã giao", totalPrice: 500000, items: [ { name: "Cam", quantity: 5, price: 100000 } ] },
-];
-
 const DeliveryPage = () => {
   const [tab, setTab] = useState("dashboard");
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [orderTab, setOrderTab] = useState('confirm'); // 'confirm' hoặc 'list'
+  const [orders, setOrders] = useState([]);
 
-  const handleUpdateStatus = (order) => {
-    // TODO: Thực hiện cập nhật trạng thái đơn hàng (gọi API)
-    alert(`Cập nhật trạng thái cho đơn hàng ${order._id}`);
+  // Fetch orders thực tế
+  const fetchOrders = async () => {
+    try {
+      const res = await api.get('/api/v1/orders');
+      const orderList = Array.isArray(res.data) ? res.data : (res.data?.data || []);
+      setOrders(orderList);
+    } catch {
+      setOrders([]);
+    }
+  };
+
+  React.useEffect(() => {
+    if (tab === 'orders') fetchOrders();
+  }, [tab]);
+
+  // Tính toán số liệu thực tế từ orders
+  const totalOrders = orders.length;
+  const statusCounts = {
+    'Chờ xác nhận': orders.filter(o => o.status === 'Chờ xác nhận').length,
+    'Chờ lấy hàng': orders.filter(o => o.status === 'Chờ lấy hàng').length,
+    'Đang giao': orders.filter(o => o.status === 'Đang giao').length,
+    'Đã giao': orders.filter(o => o.status === 'Đã giao').length,
+    'Đã hủy': orders.filter(o => o.status === 'Đã hủy').length,
+    'Không thành công': orders.filter(o => o.status === 'Không thành công').length,
   };
 
   return (
-    <div className="bg-green-50 min-h-screen flex flex-col">
+    <div className="bg-green-50 min-h-screen flex flex-col" style={{paddingTop: '80px'}}>
       <div>
         <div className="max-w-[1440px] w-full mx-auto px-2 md:px-8">
           <div className="flex">
@@ -77,15 +88,33 @@ const DeliveryPage = () => {
                   {/* Ẩn nút tab trên mobile vì đã có sidebar */}
         </div>
                 <div className="bg-white rounded-xl shadow-lg p-6 mt-8 md:mt-0">
-          {tab === "dashboard" && <DeliveryDashboard totalOrders={mockTotalOrders} statusCounts={mockStatusCounts} />}
-          {tab === "orders" && <DeliveryOrderList orders={mockOrders} onUpdateStatus={handleUpdateStatus} />}
+          {tab === "dashboard" && <DeliveryDashboard totalOrders={totalOrders} statusCounts={statusCounts} />}
+          {tab === "orders" && (
+            <>
+              <div className="flex gap-4 mb-6">
+                <button
+                  onClick={() => setOrderTab('confirm')}
+                  className={`px-5 py-2 rounded-full font-bold border-2 transition-colors ${orderTab === 'confirm' ? "bg-green-500 text-white border-green-500" : "bg-white text-green-700 border-green-300 hover:bg-green-100"}`}
+                >
+                  Xác nhận đơn hàng
+                </button>
+                <button
+                  onClick={() => setOrderTab('list')}
+                  className={`px-5 py-2 rounded-full font-bold border-2 transition-colors ${orderTab === 'list' ? "bg-green-500 text-white border-green-500" : "bg-white text-green-700 border-green-300 hover:bg-green-100"}`}
+                >
+                  Đơn hàng đang giao/đã giao
+                </button>
+              </div>
+              {orderTab === 'confirm' && <DeliveryOrderList orders={orders.filter(o => o.status === 'Chờ lấy hàng')} confirmMode onReloadOrders={fetchOrders} />}
+              {orderTab === 'list' && <DeliveryOrderList orders={orders.filter(o => ['Đang giao','Đã giao','Không thành công'].includes(o.status))} onReloadOrders={fetchOrders} />}
+            </>
+          )}
         </div>
       </div>
             </div>
           </div>
         </div>
       </div>
-      <Footer />
     </div>
   );
 };

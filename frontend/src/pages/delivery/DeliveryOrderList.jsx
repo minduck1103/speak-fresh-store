@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import api from "../../services/api";
+import PropTypes from 'prop-types';
 
 const statusOptions = [
   { value: '', label: 'Tất cả' },
@@ -8,9 +10,53 @@ const statusOptions = [
   { value: 'Đã hủy', label: 'Đã hủy' },
 ];
 
-const DeliveryOrderList = ({ orders = [], onUpdateStatus }) => {
+const DeliveryOrderList = ({ orders = [], confirmMode = false, onReloadOrders }) => {
   const [selected, setSelected] = useState(null);
   const [statusFilter, setStatusFilter] = useState('');
+  const [updating, setUpdating] = useState(false);
+  const [successMsg, setSuccessMsg] = useState("");
+
+  const handleConfirmPickup = async (id) => {
+    setUpdating(true);
+    try {
+      await api.put(`/api/v1/orders/${id}/delivery-confirm`);
+      setSuccessMsg("Đã xác nhận lấy hàng!");
+      if (onReloadOrders) onReloadOrders();
+    } catch {
+      setSuccessMsg("Không thể xác nhận lấy hàng!");
+      setTimeout(() => setSuccessMsg(""), 2000);
+    } finally {
+      setUpdating(false);
+    }
+  };
+
+  const handleMarkDelivered = async (id) => {
+    setUpdating(true);
+    try {
+      await api.put(`/api/v1/orders/${id}/delivered`);
+      setSuccessMsg("Đã cập nhật trạng thái: Đã giao!");
+      if (onReloadOrders) onReloadOrders();
+    } catch {
+      setSuccessMsg("Không thể cập nhật trạng thái!");
+      setTimeout(() => setSuccessMsg(""), 2000);
+    } finally {
+      setUpdating(false);
+    }
+  };
+
+  const handleMarkFailed = async (id) => {
+    setUpdating(true);
+    try {
+      await api.put(`/api/v1/orders/${id}/failed`);
+      setSuccessMsg("Đã cập nhật trạng thái: Không thành công!");
+      if (onReloadOrders) onReloadOrders();
+    } catch {
+      setSuccessMsg("Không thể cập nhật trạng thái!");
+      setTimeout(() => setSuccessMsg(""), 2000);
+    } finally {
+      setUpdating(false);
+    }
+  };
 
   const filteredOrders = statusFilter
     ? orders.filter((o) => o.status === statusFilter)
@@ -50,15 +96,22 @@ const DeliveryOrderList = ({ orders = [], onUpdateStatus }) => {
               filteredOrders.map((o, idx) => (
                 <tr key={o._id || idx} className="border-t border-green-50">
                   <td className="py-2 px-3 font-semibold text-green-700">{o._id}</td>
-                  <td className="py-2 px-3">{o.customer?.name || 'Ẩn danh'}</td>
+                  <td className="py-2 px-3">{o.shippingInfo?.name || 'Ẩn danh'}</td>
                   <td className="py-2 px-3">{o.createdAt?.slice(0,10)}</td>
                   <td className="py-2 px-3">
                     <span className={`px-2 py-1 rounded text-xs font-bold ${o.status === 'Đã giao' ? 'bg-green-200 text-green-700' : o.status === 'Đang giao' ? 'bg-blue-100 text-blue-700' : o.status === 'Đã hủy' ? 'bg-red-100 text-red-600' : 'bg-yellow-100 text-yellow-700'}`}>{o.status || 'Đang xử lý'}</span>
                   </td>
-                  <td className="py-2 px-3 text-green-600 font-bold">{o.totalPrice?.toLocaleString()}₫</td>
+                  <td className="py-2 px-3 text-green-600 font-bold">{o.totalAmount?.toLocaleString()}₫</td>
                   <td className="py-2 px-3 flex gap-2">
-                    <button onClick={() => setSelected(o)} className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 transition-colors">Xem</button>
-                    <button onClick={() => onUpdateStatus(o)} className="bg-yellow-400 text-green-900 px-3 py-1 rounded hover:bg-yellow-500 transition-colors font-bold">Cập nhật trạng thái</button>
+                    {confirmMode ? (
+                      <button onClick={() => handleConfirmPickup(o._id)} className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 transition-colors" disabled={updating}>Xác nhận lấy hàng</button>
+                    ) : o.status === 'Đang giao' ? (
+                      <>
+                        <button onClick={() => handleMarkDelivered(o._id)} className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 transition-colors" disabled={updating}>Đã giao</button>
+                        <button onClick={() => handleMarkFailed(o._id)} className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition-colors" disabled={updating}>Không thành công</button>
+                      </>
+                    ) : null}
+                    <button onClick={() => setSelected(o)} className="bg-green-100 text-green-700 px-3 py-1 rounded hover:bg-green-200 transition-colors">Xem</button>
                   </td>
                 </tr>
               ))
@@ -76,12 +129,12 @@ const DeliveryOrderList = ({ orders = [], onUpdateStatus }) => {
               <div className="text-gray-700">Ngày đặt: <span className="font-semibold">{selected.createdAt?.slice(0,10)}</span></div>
             </div>
             <div className="mb-3 text-gray-700">Trạng thái: <span className={`font-bold px-2 py-1 rounded ${selected.status === 'Đã giao' ? 'bg-green-200 text-green-700' : selected.status === 'Đang giao' ? 'bg-blue-100 text-blue-700' : selected.status === 'Đã hủy' ? 'bg-red-100 text-red-600' : 'bg-yellow-100 text-yellow-700'}`}>{selected.status || 'Đang xử lý'}</span></div>
-            <div className="mb-3 text-gray-700">Tổng tiền: <span className="font-bold text-2xl text-green-600">{selected.totalPrice?.toLocaleString()}₫</span></div>
+            <div className="mb-3 text-gray-700">Tổng tiền: <span className="font-bold text-2xl text-green-600">{selected.totalAmount?.toLocaleString()}₫</span></div>
             <div className="mb-3 text-gray-700">Thông tin khách hàng:</div>
             <div className="mb-4 bg-green-50 rounded-lg p-3 border border-green-100">
-              <div><span className="font-semibold">Tên:</span> {selected.customer?.name}</div>
-              <div><span className="font-semibold">SĐT:</span> {selected.customer?.phoneNo}</div>
-              <div><span className="font-semibold">Địa chỉ:</span> {selected.customer?.address}, {selected.customer?.city}</div>
+              <div><span className="font-semibold">Tên:</span> {selected.shippingInfo?.name}</div>
+              <div><span className="font-semibold">SĐT:</span> {selected.shippingInfo?.phoneNo}</div>
+              <div><span className="font-semibold">Địa chỉ:</span> {selected.shippingInfo?.address}, {selected.shippingInfo?.city}</div>
             </div>
             <div className="mb-2 text-gray-700 font-semibold">Sản phẩm:</div>
             <div className="overflow-x-auto">
@@ -112,6 +165,12 @@ const DeliveryOrderList = ({ orders = [], onUpdateStatus }) => {
       )}
     </div>
   );
+};
+
+DeliveryOrderList.propTypes = {
+  orders: PropTypes.array,
+  confirmMode: PropTypes.bool,
+  onReloadOrders: PropTypes.func
 };
 
 export default DeliveryOrderList; 

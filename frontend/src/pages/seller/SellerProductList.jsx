@@ -176,8 +176,8 @@ const SellerProductList = () => {
       </div>
       {/* Modal thêm/sửa sản phẩm */}
       {showModal && (
-        <div className="fixed inset-0 flex items-center justify-center z-50" style={{backdropFilter: 'blur(6px)'}}>
-          <form onSubmit={handleProductSubmit} className="bg-white rounded-xl shadow-lg p-8 w-full max-w-md relative border-2 border-green-200">
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-40 overflow-auto">
+          <form onSubmit={handleProductSubmit} className="bg-white rounded-xl shadow-lg p-8 w-full max-w-md relative border-2 border-green-200 max-h-[90vh] overflow-y-auto" style={{top: '50%', left: '50%', transform: 'translate(-50%, -50%)', position: 'fixed'}}>
             <button type="button" onClick={() => setShowModal(false)} className="absolute top-3 right-3 text-gray-400 hover:text-green-600 text-3xl font-bold">×</button>
             <h2 className="text-xl font-bold text-green-700 mb-4 text-center">{editingProduct ? 'Sửa sản phẩm' : 'Thêm sản phẩm'}</h2>
             {formError && <div className="text-red-500 mb-2 text-center">{formError}</div>}
@@ -197,21 +197,21 @@ const SellerProductList = () => {
               </select>
             </div>
             <div className="mb-4">
-              <label className="block text-green-700 font-semibold mb-1">Mô tả sản phẩm</label>
-              <textarea name="description" value={productForm.description} onChange={handleProductFormChange} required className="w-full border border-green-300 rounded-lg px-4 py-2 focus:outline-none focus:border-green-500" rows={3} />
+              <label className="block text-green-700 font-semibold mb-1">Mô tả</label>
+              <textarea name="description" value={productForm.description} onChange={handleProductFormChange} required className="w-full border border-green-300 rounded-lg px-4 py-2 focus:outline-none focus:border-green-500" />
             </div>
             <div className="mb-4">
               <label className="block text-green-700 font-semibold mb-1">Số lượng kho</label>
-              <input name="stock" type="number" value={productForm.stock} onChange={handleProductFormChange} required min={0} className="w-full border border-green-300 rounded-lg px-4 py-2 focus:outline-none focus:border-green-500" />
+              <input name="stock" type="number" value={productForm.stock} onChange={handleProductFormChange} required className="w-full border border-green-300 rounded-lg px-4 py-2 focus:outline-none focus:border-green-500" />
             </div>
-            <div className="mb-4">
-              <label className="block text-green-700 font-semibold mb-1">Ảnh sản phẩm</label>
-              <input type="file" accept="image/*" onChange={handleProductImageChange} className="w-full" />
-              {(productImageFile || productForm.image) && (
-                <img src={productImageFile ? URL.createObjectURL(productImageFile) : productForm.image} alt="Preview" className="w-24 h-24 object-cover rounded mt-2 mx-auto" />
-              )}
+            <div className="mb-6">
+              <label className="block text-green-700 font-semibold mb-1">Ảnh sản phẩm {editingProduct ? '(bỏ qua nếu không đổi ảnh)' : ''}</label>
+              <input name="image" type="file" accept="image/*" onChange={handleProductImageChange} className="w-full border border-green-300 rounded-lg px-4 py-2 focus:outline-none focus:border-green-500 bg-white" />
             </div>
-            <button type="submit" className="w-full bg-green-600 text-white font-bold py-3 rounded-lg hover:bg-green-700 transition-colors text-lg">{editingProduct ? 'Cập nhật' : 'Thêm mới'}</button>
+            <div className="flex gap-3 justify-end">
+              <button type="button" onClick={() => setShowModal(false)} className="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300 font-semibold">Hủy</button>
+              <button type="submit" disabled={loading} className="px-4 py-2 rounded bg-green-600 hover:bg-green-700 text-white font-semibold disabled:opacity-60">{loading ? 'Đang lưu...' : 'Lưu'}</button>
+            </div>
           </form>
         </div>
       )}

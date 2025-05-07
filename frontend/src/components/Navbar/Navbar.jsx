@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import authService from "../../services/authService";
 import cartService from "../../services/cartService";
@@ -25,6 +25,8 @@ const Navbar = () => {
   const [cartCount, setCartCount] = useState(0);
   const [userRole, setUserRole] = useState('');
   const navigate = useNavigate();
+  const location = useLocation();
+  const [lastWarehousePath, setLastWarehousePath] = useState(null);
 
   useEffect(() => {
     const isAuth = authService.isAuthenticated();
@@ -38,11 +40,16 @@ const Navbar = () => {
     window.addEventListener('cartUpdated', updateCartCount);
     window.addEventListener('storage', handleStorageChange);
 
+    // Nếu đang ở các trang đặc biệt, lưu lại path
+    if (["/warehouse", "/seller", "/admin", "/delivery"].some(prefix => location.pathname.startsWith(prefix))) {
+      setLastWarehousePath(location.pathname);
+    }
+
     return () => {
       window.removeEventListener('cartUpdated', updateCartCount);
       window.removeEventListener('storage', handleStorageChange);
     };
-  }, []);
+  }, [location]);
 
   const handleStorageChange = (e) => {
     if (e.key === 'cart_items') {
@@ -74,6 +81,15 @@ const Navbar = () => {
     e.preventDefault();
     const userRole = authService.getUserRole() || 'user';
     navigate(roleToHomePath[userRole]);
+  };
+
+  const handleHomeClick = (e) => {
+    e.preventDefault();
+    if (lastWarehousePath) {
+      navigate(lastWarehousePath);
+    } else {
+      navigate('/');
+    }
   };
 
   const renderDropdownMenu = () => {
@@ -140,6 +156,7 @@ const Navbar = () => {
           <Link 
             to="/" 
             className="text-gray-700 hover:text-green-500 transition-colors no-underline"
+            onClick={handleHomeClick}
           >
             Trang chủ
           </Link>
@@ -177,7 +194,14 @@ const Navbar = () => {
           {isAuthenticated ? (
             <div className="relative">
               <button
-                onClick={() => setShowDropdown(!showDropdown)}
+                onClick={() => {
+                  // Nếu đang ở các trang đặc biệt thì luôn show dropdown
+                  if (["/warehouse", "/seller", "/admin", "/delivery"].some(prefix => location.pathname.startsWith(prefix))) {
+                    setShowDropdown(true);
+                  } else {
+                    setShowDropdown(!showDropdown);
+                  }
+                }}
                 className="text-gray-700 hover:text-green-500 transition-colors flex items-center focus:outline-none"
               >
                 👤

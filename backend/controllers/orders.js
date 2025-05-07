@@ -14,18 +14,18 @@ exports.createOrder = asyncHandler(async (req, res, next) => {
         itemsPrice,
         taxPrice,
         shippingPrice,
-        totalPrice
+        totalAmount
     } = req.body;
 
     const order = await Order.create({
-        orderItems,
+        items: orderItems,
         user: req.user.id,
         shippingInfo,
-        paymentInfo,
+        paymentMethod: (paymentInfo?.method || 'COD').toUpperCase(),
         itemsPrice,
         taxPrice,
         shippingPrice,
-        totalPrice
+        totalAmount
     });
 
     res.status(201).json({
@@ -38,8 +38,9 @@ exports.createOrder = asyncHandler(async (req, res, next) => {
 // @route   GET /api/v1/orders
 // @access  Private/Admin
 exports.getOrders = asyncHandler(async (req, res, next) => {
-    const orders = await Order.find();
-
+    const orders = await Order.find().populate('items.product', 'name image price');
+    console.log('[GET ORDERS] Số lượng:', orders.length);
+    orders.forEach(o => console.log(`[GET ORDERS] ID: ${o._id}, status: ${o.status}`));
     res.status(200).json({
         success: true,
         count: orders.length,
@@ -51,7 +52,7 @@ exports.getOrders = asyncHandler(async (req, res, next) => {
 // @route   GET /api/v1/orders/:id
 // @access  Private
 exports.getOrder = asyncHandler(async (req, res, next) => {
-    const order = await Order.findById(req.params.id);
+    const order = await Order.findById(req.params.id).populate('items.product', 'name image price');
 
     if (!order) {
         return next(
@@ -79,7 +80,7 @@ exports.getOrder = asyncHandler(async (req, res, next) => {
 // @route   GET /api/v1/orders/myorders
 // @access  Private
 exports.getMyOrders = asyncHandler(async (req, res, next) => {
-    const orders = await Order.find({ user: req.user.id });
+    const orders = await Order.find({ user: req.user.id }).populate('items.product', 'name image price');
 
     res.status(200).json({
         success: true,
@@ -143,4 +144,68 @@ exports.deleteOrder = asyncHandler(async (req, res, next) => {
         success: true,
         data: {}
     });
+});
+
+// Seller xác nhận đơn hàng
+exports.confirmOrder = asyncHandler(async (req, res, next) => {
+    const order = await Order.findById(req.params.id);
+    if (!order) return next(new ErrorResponse('Không tìm thấy đơn hàng', 404));
+    if (order.status !== 'Chờ xác nhận') return next(new ErrorResponse('Chỉ xác nhận đơn hàng ở trạng thái Chờ xác nhận', 400));
+    if (req.body.totalAmount) order.totalAmount = req.body.totalAmount;
+    order.status = 'Chờ lấy hàng';
+    await order.save();
+    console.log(`[CONFIRM ORDER] ID: ${order._id}, status: ${order.status}`);
+    res.json({ success: true, data: order });
+});
+
+// Seller từ chối đơn hàng
+exports.rejectOrder = asyncHandler(async (req, res, next) => {
+    const order = await Order.findById(req.params.id);
+    if (!order) return next(new ErrorResponse('Không tìm thấy đơn hàng', 404));
+    if (order.status !== 'Chờ xác nhận') return next(new ErrorResponse('Chỉ từ chối đơn hàng ở trạng thái Chờ xác nhận', 400));
+    order.status = 'Đã từ chối';
+    await order.save();
+    res.json({ success: true, data: order });
+});
+
+// Delivery xác nhận lấy hàng
+exports.deliveryConfirmOrder = asyncHandler(async (req, res, next) => {
+    const order = await Order.findById(req.params.id);
+    if (!order) return next(new ErrorResponse('Không tìm thấy đơn hàng', 404));
+    if (order.status !== 'Chờ lấy hàng') return next(new ErrorResponse('Chỉ xác nhận đơn hàng ở trạng thái Chờ lấy hàng', 400));
+    order.status = 'Đang giao';
+    await order.save();
+    res.json({ success: true, data: order });
+});
+
+// Delivery cập nhật đã giao
+exports.markDelivered = asyncHandler(async (req, res, next) => {
+    const order = await Order.findById(req.params.id);
+    if (!order) return next(new ErrorResponse('Không tìm thấy đơn hàng', 404));
+    if (order.status !== 'Đang giao') return next(new ErrorResponse('Chỉ cập nhật đơn hàng đang giao', 400));
+    order.status = 'Đã giao';
+    order.deliveredAt = new Date();
+    await order.save();
+    res.json({ success: true, data: order });
+});
+
+// Delivery cập nhật không thành công
+exports.markFailed = asyncHandler(async (req, res, next) => {
+    const order = await Order.findById(req.params.id);
+    if (!order) return next(new ErrorResponse('Không tìm thấy đơn hàng', 404));
+    if (order.status !== 'Đang giao') return next(new ErrorResponse('Chỉ cập nhật đơn hàng đang giao', 400));
+    order.status = 'Không thành công';
+    await order.save();
+    res.json({ success: true, data: order });
+});
+
+// User hủy đơn hàng
+exports.cancelOrder = asyncHandler(async (req, res, next) => {
+    const order = await Order.findById(req.params.id);
+    if (!order) return next(new ErrorResponse('Không tìm thấy đơn hàng', 404));
+    if (order.status !== 'Chờ lấy hàng') return next(new ErrorResponse('Chỉ hủy đơn hàng ở trạng thái Chờ lấy hàng', 400));
+    if (order.user.toString() !== req.user.id) return next(new ErrorResponse('Bạn không có quyền hủy đơn này', 403));
+    order.status = 'Đã hủy';
+    await order.save();
+    res.json({ success: true, data: order });
 }); 

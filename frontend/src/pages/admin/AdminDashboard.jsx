@@ -13,7 +13,7 @@ const StatCard = ({ icon, label, value, loading }) => (
 
 const NotificationPanel = ({ notifications }) => (
   <div className="bg-white rounded-xl p-4 shadow-md">
-    <h3 className="font-bold text-green-700 mb-2">Thông báo & Cảnh báo</h3>
+    <h3 className="font-bold text-green-700 mb-2">Thông báo mới</h3>
     <ul className="text-sm text-gray-700 space-y-1">
       {notifications.map((notification, index) => (
         <li key={index}>{notification}</li>
@@ -52,7 +52,7 @@ const ReviewApprovalPanel = ({ pendingReviews, onApprove, onReject, loading }) =
             </div>
           </li>
         ))}
-      </ul>
+    </ul>
     )}
   </div>
 );
@@ -161,11 +161,11 @@ const AdminDashboard = () => {
   };
 
   return (
-    <div>
+  <div>
       <h1 className="text-3xl font-bold text-green-700 mb-6 flex items-center gap-2">
         🍏 Tổng quan hệ thống
       </h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
         <StatCard icon="👤" label="Khách hàng" value={stats.customers} loading={loading} />
         <StatCard icon="🧾" label="Đơn hàng mới" value={stats.newOrders} loading={loading} />
         <StatCard icon="🍉" label="Sản phẩm đang bán" value={stats.products} loading={loading} />
@@ -182,8 +182,8 @@ const AdminDashboard = () => {
           value={stats.lowStockProducts} 
           loading={loading} 
         />
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    </div>
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <NotificationPanel notifications={notifications} />
         <ReviewApprovalPanel 
           pendingReviews={pendingReviews}
@@ -192,8 +192,8 @@ const AdminDashboard = () => {
           loading={reviewsLoading}
         />
       </div>
-    </div>
-  );
+  </div>
+);
 };
 
 export default AdminDashboard; 

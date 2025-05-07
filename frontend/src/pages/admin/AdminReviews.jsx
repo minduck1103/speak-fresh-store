@@ -17,12 +17,13 @@ const AdminReviews = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [showDeleteSuccess, setShowDeleteSuccess] = useState(false);
+  const [searchReview, setSearchReview] = useState("");
 
   const fetchReviews = useCallback(async () => {
     setReviewLoading(true);
     setReviewError("");
     try {
-      const res = await api.get("/reviews");
+      const res = await api.get("/api/v1/reviews");
       setReviews(res.data.data || []);
     } catch (err) {
       setReviewError("Không thể tải danh sách đánh giá");
@@ -46,7 +47,7 @@ const AdminReviews = () => {
 
   const fetchReviewProducts = useCallback(async () => {
     try {
-      const res = await api.get("/products");
+      const res = await api.get("/api/v1/products");
       let prods = Array.isArray(res.data) ? res.data : res.data.data || [];
       setReviewProducts(prods);
     } catch {}
@@ -108,10 +109,10 @@ const AdminReviews = () => {
     setReviewMessage("");
     try {
       if (editingReview) {
-        await api.put(`/reviews/${editingReview._id}`, reviewForm);
+        await api.put(`/api/v1/reviews/${editingReview._id}`, reviewForm);
         setReviewMessage("Cập nhật đánh giá thành công!");
       } else {
-        await api.post(`/products/${reviewForm.product}/reviews`, reviewForm);
+        await api.post(`/api/v1/products/${reviewForm.product}/reviews`, reviewForm);
         setReviewMessage("Thêm đánh giá thành công!");
       }
       fetchReviews();
@@ -136,7 +137,7 @@ const AdminReviews = () => {
   const confirmDeleteReview = async () => {
     if (!deleteTarget) return;
     try {
-      await api.delete(`/reviews/${deleteTarget._id}`);
+      await api.delete(`/api/v1/reviews/${deleteTarget._id}`);
       fetchReviews();
       setShowDeleteModal(false);
       setShowDeleteSuccess(true);
@@ -152,12 +153,21 @@ const AdminReviews = () => {
     <div>
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-green-700 flex items-center gap-2">⭐ Quản lý đánh giá sản phẩm</h1>
-        <button
-          onClick={openAddReview}
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-        >
-          + Thêm đánh giá
-        </button>
+        <div className="flex gap-4 items-center">
+          <input
+            type="text"
+            placeholder="Tìm kiếm..."
+            value={searchReview}
+            onChange={e => setSearchReview(e.target.value)}
+            className="border border-green-300 rounded-lg px-4 py-2 focus:outline-none focus:border-green-500"
+          />
+          <button
+            onClick={openAddReview}
+            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            + Thêm đánh giá
+          </button>
+        </div>
       </div>
       {reviewLoading ? (
         <div className="text-center py-10">Đang tải đánh giá...</div>
@@ -178,7 +188,16 @@ const AdminReviews = () => {
                 </tr>
               </thead>
               <tbody>
-                {reviews.map(r => (
+                {reviews.filter(r => {
+                  const user = reviewUsers.find(u => u._id === (r.user?._id || r.user));
+                  const product = reviewProducts.find(p => p._id === (r.product?._id || r.product));
+                  return (
+                    (user && user.name && user.name.toLowerCase().includes(searchReview.toLowerCase())) ||
+                    (product && product.name && product.name.toLowerCase().includes(searchReview.toLowerCase())) ||
+                    (r.name && r.name.toLowerCase().includes(searchReview.toLowerCase())) ||
+                    (r.comment && r.comment.toLowerCase().includes(searchReview.toLowerCase()))
+                  );
+                }).map(r => (
                   <tr key={r._id} className="border-b hover:bg-green-50">
                     <td className="py-3 px-4">{reviewUsers.find(u => u._id === (r.user?._id || r.user))?.name || r.name || r.user}</td>
                     <td className="py-3 px-4">{reviewProducts.find(p => p._id === (r.product?._id || r.product))?.name || r.product}</td>

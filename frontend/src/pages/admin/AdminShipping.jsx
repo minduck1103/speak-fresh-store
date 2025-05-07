@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import api from "../../services/api";
 
 const AdminShipping = () => {
@@ -25,6 +25,7 @@ const AdminShipping = () => {
   const [reviewProducts, setReviewProducts] = useState([]);
   const [reviewMessage, setReviewMessage] = useState("");
   const [reviewSaving, setReviewSaving] = useState(false);
+  const [searchShipping, setSearchShipping] = useState("");
 
   useEffect(() => {
     fetchShippingFees();
@@ -34,7 +35,7 @@ const AdminShipping = () => {
     setLoading(true);
     setError("");
     try {
-      const res = await api.get("/shipping");
+      const res = await api.get("/api/v1/shipping");
       setShippingFees(res.data.data || []);
     } catch (err) {
       setError("Không thể tải danh sách phí vận chuyển");
@@ -65,7 +66,7 @@ const AdminShipping = () => {
     e.preventDefault();
     setMessage("");
     try {
-      await api.put(`/shipping/${selected._id}`, formData);
+      await api.put(`/api/v1/shipping/${selected._id}`, formData);
       setEditing(false);
       fetchShippingFees();
       setMessage("Cập nhật phí vận chuyển thành công!");
@@ -85,7 +86,7 @@ const AdminShipping = () => {
     setMessage("");
     setAddLoading(true);
     try {
-      await api.post('/shipping', addForm);
+      await api.post('/api/v1/shipping', addForm);
       setShowAddModal(false);
       setAddForm({ districtName: '', shippingFee: 0 });
       fetchShippingFees();
@@ -112,7 +113,7 @@ const AdminShipping = () => {
 
   const fetchReviewUsers = useCallback(async () => {
     try {
-      const res = await api.get("/users");
+      const res = await api.get("/api/v1/users");
       let users = res.data;
       if (users && typeof users === 'object') {
         if (Array.isArray(users.data)) users = users.data;
@@ -120,7 +121,7 @@ const AdminShipping = () => {
         else if (Array.isArray(users.results)) users = users.results;
       }
       setReviewUsers(Array.isArray(users) ? users : []);
-    } catch {}
+    } catch (err) { console.error(err); }
   }, []);
 
   const fetchReviewProducts = useCallback(async () => {
@@ -128,7 +129,7 @@ const AdminShipping = () => {
       const res = await api.get("/products");
       let prods = Array.isArray(res.data) ? res.data : res.data.data || [];
       setReviewProducts(prods);
-    } catch {}
+    } catch (err) { console.error(err); }
   }, []);
 
   useEffect(() => {
@@ -207,7 +208,14 @@ const AdminShipping = () => {
         <h1 className="text-2xl font-bold text-green-700 flex items-center gap-2">
           🚚 Quản lý phí vận chuyển
         </h1>
-        <div className="flex gap-2">
+        <div className="flex gap-4 items-center">
+          <input
+            type="text"
+            placeholder="Tìm kiếm..."
+            value={searchShipping}
+            onChange={e => setSearchShipping(e.target.value)}
+            className="border border-green-300 rounded-lg px-4 py-2 focus:outline-none focus:border-green-500"
+          />
           <button
             onClick={() => setShowAddModal(true)}
             className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
@@ -233,7 +241,11 @@ const AdminShipping = () => {
                 </tr>
               </thead>
               <tbody>
-                {shippingFees.map((shipping) => (
+                {shippingFees.filter(s =>
+                  s._id.toLowerCase().includes(searchShipping.toLowerCase()) ||
+                  (s.recipientName && s.recipientName.toLowerCase().includes(searchShipping.toLowerCase())) ||
+                  (s.address && s.address.toLowerCase().includes(searchShipping.toLowerCase()))
+                ).map((shipping) => (
                   <tr key={shipping._id} className="border-b hover:bg-green-50">
                     <td className="py-3 px-4">{shipping.districtName}</td>
                     <td className="py-3 px-4">

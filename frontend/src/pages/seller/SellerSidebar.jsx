@@ -5,8 +5,7 @@ const menu = [
   { key: "dashboard", label: "Tổng quan", icon: "📊" },
   { key: "products", label: "Sản phẩm", icon: "🍏" },
   { key: "orders", label: "Đơn hàng", icon: "🧾" },
-  { key: "shipping", label: "Vận chuyển", icon: "🚚" },
-  { key: "report", label: "Báo cáo", icon: "📈" },
+    { key: "report", label: "Báo cáo", icon: "📈" },
   { key: "profile", label: "Hồ sơ", icon: "🏪" }
 ];
 
@@ -35,12 +34,7 @@ const SellerSidebar = ({ tab, setTab }) => {
         `}
         style={open ? {} : {}}
       >
-        <div className="flex items-center justify-between mb-8 px-6">
-          <h1 className="text-2xl font-extrabold tracking-wide">Seller Center</h1>
-          <button className="md:hidden text-white ml-2" onClick={() => setOpen(false)} aria-label="Đóng menu">
-            <FaTimes size={22} />
-          </button>
-        </div>
+        
         <nav className="flex-1 flex flex-col gap-2">
       {menu.map(item => (
         <button

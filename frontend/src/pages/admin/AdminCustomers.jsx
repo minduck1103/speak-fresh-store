@@ -48,7 +48,7 @@ const AdminCustomers = () => {
     try {
       setLoading(true);
       setError(null);
-      const response = await api.get("/users");
+      const response = await api.get("/api/v1/users");
       let users = response.data;
       if (users && typeof users === 'object') {
         if (Array.isArray(users.data)) {
