@@ -127,7 +127,7 @@ const Products = () => {
     }
 
     return (
-        <div className="bg-gradient-to-b from-green-50 to-white min-h-screen py-8">
+        <div className="bg-gradient-to-b from-green-50 to-white min-h-screen py-8 pt-24">
             {/* Banner */}
             <div className="max-w-7xl mx-auto px-4">
                 <div className="relative mb-10 rounded-3xl overflow-hidden shadow-lg">

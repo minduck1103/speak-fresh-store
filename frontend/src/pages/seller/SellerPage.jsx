@@ -61,7 +61,7 @@ const SellerPage = () => {
   }, [tab]);
 
   return (
-    <div className="bg-green-50 flex flex-col "style={{paddingTop: '80px'}}>
+    <div className="bg-green-50 flex flex-col pt-20">
       <div>
         <div className="max-w-[1440px] w-full mx-auto px-2 md:px-8">
           <div className="flex">

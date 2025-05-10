@@ -31,7 +31,7 @@ const EditAccount = () => {
   };
 
   return (
-    <div className="bg-green-50 min-h-screen py-10">
+    <div className="bg-green-50 min-h-screen py-10 pt-32">
       <div className="max-w-xl mx-auto bg-white rounded-xl shadow-lg p-8">
         <h1 className="text-3xl font-bold text-green-700 mb-6 text-center">Chỉnh sửa thông tin tài khoản</h1>
         <form onSubmit={handleSubmit} className="space-y-6">

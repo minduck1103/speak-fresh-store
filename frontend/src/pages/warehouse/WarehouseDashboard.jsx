@@ -21,7 +21,7 @@ const WarehouseDashboard = () => {
   const [activeTab, setActiveTab] = useState('stats');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-green-100" style={{paddingTop: '80px'}}>
+    <div className="min-h-screen bg-gradient-to-br from-green-50 to-green-100 pt-20">
       <div className="max-w-[1440px] w-full mx-auto px-2 md:px-8">
         <div className="flex">
           {/* Hamburger button for mobile */}
