@@ -3,17 +3,13 @@ import { FaAppleAlt, FaBars, FaTimes } from 'react-icons/fa';
 import QuickStats from './QuickStats';
 import ChartsAlerts from './ChartsAlerts';
 import InventoryManagement from './InventoryManagement';
-import StorageLocation from './StorageLocation';
 import ImportExportManagement from './ImportExportManagement';
-import PickingList from './PickingList';
 import Reports from './Reports';
 
 const TABS = [
   { key: 'stats', label: 'Tổng quan', icon: <FaAppleAlt /> },
   { key: 'inventory', label: 'Hàng tồn kho', icon: '📦' },
-  { key: 'storage', label: 'Vị trí lưu trữ', icon: '📍' },
-  { key: 'importexport', label: 'Nhập/Xuất hàng', icon: '🔄' },
-  { key: 'picking', label: 'Xuất kho hàng', icon: '✅' },
+  { key: 'importexport', label: 'Nhập/Xuất đơn', icon: '🔄' },
   { key: 'reports', label: 'Báo cáo', icon: '📊' },
 ];
 
@@ -70,9 +66,7 @@ const WarehouseDashboard = () => {
               <div className="w-full max-w-7xl px-2 md:px-8">
                 {activeTab === 'stats' && <><QuickStats /><ChartsAlerts /></>}
                 {activeTab === 'inventory' && <InventoryManagement />}
-                {activeTab === 'storage' && <StorageLocation />}
                 {activeTab === 'importexport' && <ImportExportManagement />}
-                {activeTab === 'picking' && <PickingList />}
                 {activeTab === 'reports' && <Reports />}
               </div>
             </main>

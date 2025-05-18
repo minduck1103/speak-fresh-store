@@ -42,7 +42,7 @@ const Cart = () => {
 
   if (cartItems.length === 0) {
     return (
-      <div className="max-w-7xl mx-auto px-4 py-8">
+      <div className="max-w-7xl mx-auto px-4 py-60">
         <div className="text-center py-16">
           <span className="text-6xl">🛒</span>
           <h2 className="text-2xl font-semibold mt-4 mb-2">Giỏ hàng trống</h2>
@@ -59,7 +59,7 @@ const Cart = () => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8 pt-32 mb-44" >
+    <div className="max-w-7xl mx-auto px-4 py-8 pt-32 mb-44 pt-[180px]" >
       <h1 className="text-2xl font-bold mb-8 text-gray-800">Giỏ hàng của bạn</h1>
       
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

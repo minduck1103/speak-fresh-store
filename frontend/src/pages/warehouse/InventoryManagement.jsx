@@ -1,64 +1,81 @@
-import { useState } from 'react';
-import { FaBoxes, FaPlus, FaSearch } from 'react-icons/fa';
+import { useState, useEffect } from 'react';
+import api from '../../services/api';
+
+const LOCATIONS = ['Kệ A1', 'Kệ B2', 'Kệ C3', 'Kệ D4', 'Kệ E5'];
 
 const InventoryManagement = () => {
-  const [search, setSearch] = useState('');
+  const [orders, setOrders] = useState([]);
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [modalOpen, setModalOpen] = useState(false);
+
+  useEffect(() => {
+    api.get('/api/v1/orders').then(res => {
+      let data = Array.isArray(res.data) ? res.data : res.data.data || [];
+      // Gán vị trí random cho mỗi đơn hàng
+      data = data.map(order => ({ ...order, location: LOCATIONS[Math.floor(Math.random() * LOCATIONS.length)] }));
+      setOrders(data);
+    });
+  }, []);
+
+  const handleDetail = (order) => {
+    setSelectedOrder(order);
+    setModalOpen(true);
+  };
+
   return (
     <section className="bg-white rounded-xl shadow p-6 mb-8">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
-        <h2 className="text-lg font-bold text-green-700 flex items-center gap-2"><FaBoxes /> Danh sách sản phẩm trong kho</h2>
-        <div className="flex gap-2">
-          <input
-            type="text"
-            placeholder="Tìm kiếm sản phẩm..."
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-            className="border border-green-300 rounded-lg px-4 py-2 focus:outline-none focus:border-green-500"
-          />
-          <button className="bg-green-500 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-green-600"><FaSearch />Tìm kiếm</button>
-          <button className="bg-green-100 text-green-700 px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-green-200"><FaPlus />Thêm sản phẩm</button>
-        </div>
-      </div>
+      <h2 className="text-lg font-bold text-green-700 mb-4">Danh sách đơn hàng trong kho</h2>
       <div className="overflow-x-auto">
         <table className="min-w-full text-sm">
           <thead>
             <tr className="bg-green-100 text-green-700">
-              <th className="p-2">Hình ảnh</th>
-              <th className="p-2">Tên sản phẩm</th>
-              <th className="p-2">Mã SP</th>
-              <th className="p-2">Số lượng tồn</th>
+              <th className="p-2">Mã đơn hàng</th>
               <th className="p-2">Vị trí</th>
-              <th className="p-2">Giá nhập</th>
-              <th className="p-2">Giá bán</th>
               <th className="p-2">Thao tác</th>
             </tr>
           </thead>
           <tbody>
-            {/* Dữ liệu mẫu */}
-            <tr className="border-b">
-              <td className="p-2"><img src="/fruit-apple.png" alt="Táo" className="w-12 h-12 object-contain" /></td>
-              <td className="p-2">Táo Fuji</td>
-              <td className="p-2">SP001</td>
-              <td className="p-2">120</td>
-              <td className="p-2">Kệ A1</td>
-              <td className="p-2">₫20,000</td>
-              <td className="p-2">₫30,000</td>
-              <td className="p-2"><button className="text-green-600 hover:underline">Chi tiết</button></td>
-            </tr>
-            <tr className="border-b">
-              <td className="p-2"><img src="/fruit-banana.png" alt="Chuối" className="w-12 h-12 object-contain" /></td>
-              <td className="p-2">Chuối</td>
-              <td className="p-2">SP002</td>
-              <td className="p-2">80</td>
-              <td className="p-2">Kệ B2</td>
-              <td className="p-2">₫10,000</td>
-              <td className="p-2">₫15,000</td>
-              <td className="p-2"><button className="text-green-600 hover:underline">Chi tiết</button></td>
-            </tr>
-            {/* ...Thêm dữ liệu mẫu khác nếu cần */}
+            {orders.filter(order => order.status === 'Đang giao').map(order => (
+              <tr key={order._id} className="border-b">
+                <td className="p-2">{order._id}</td>
+                <td className="p-2">{order.location}</td>
+                <td className="p-2">
+                  <button className="text-green-600 hover:underline" onClick={() => handleDetail(order)}>Chi tiết</button>
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>
+      {/* Modal chi tiết đơn hàng */}
+      {modalOpen && selectedOrder && (
+        <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl shadow-lg p-6 w-full max-w-lg relative">
+            <button className="absolute top-2 right-2 text-green-700" onClick={() => setModalOpen(false)}>Đóng</button>
+            <h3 className="text-xl font-bold mb-4 text-green-700">Chi tiết đơn hàng</h3>
+            <div className="mb-2"><b>Mã đơn hàng:</b> {selectedOrder._id}</div>
+            <div className="mb-2"><b>Trạng thái:</b> {selectedOrder.status}</div>
+            <div className="mb-2"><b>Ngày tạo:</b> {selectedOrder.createdAt ? new Date(selectedOrder.createdAt).toLocaleString() : ''}</div>
+            <div className="mb-2"><b>Vị trí lưu trữ:</b> {selectedOrder.location}</div>
+            <div className="mb-2"><b>Danh sách sản phẩm:</b></div>
+            <ul className="mb-2 pl-4 list-disc">
+              {selectedOrder.items && selectedOrder.items.length > 0 ? selectedOrder.items.map((item, idx) => (
+                <li key={idx}>
+                  {item.product && item.product.name ? item.product.name : 'Sản phẩm'}
+                  {item.qty ? ` - SL: ${item.qty}` : ''}
+                  {item.price ? ` - Giá: ${item.price.toLocaleString()}₫` : ''}
+                </li>
+              )) : <li>Không có sản phẩm</li>}
+            </ul>
+            {selectedOrder.shippingInfo && (
+              <div className="mb-2"><b>Thông tin giao hàng:</b> {selectedOrder.shippingInfo.name} - {selectedOrder.shippingInfo.phone} - {selectedOrder.shippingInfo.address}</div>
+            )}
+            {selectedOrder.user && (
+              <div className="mb-2"><b>Mã khách hàng:</b> {selectedOrder.user}</div>
+            )}
+          </div>
+        </div>
+      )}
     </section>
   );
 };

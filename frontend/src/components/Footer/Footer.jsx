@@ -1,4 +1,5 @@
 import React from "react";
+import footerBg from '../../assets/footer-bg.jpg';
 
 const Footer = () => {
   return (
@@ -6,7 +7,7 @@ const Footer = () => {
       {/* Background Image */}
       <div className="absolute inset-0 bg-black bg-opacity-80">
         <img
-          src="/src/assets/footer-bg.jpg"
+          src={footerBg}
           alt="Footer background"
           className="w-full h-full object-cover opacity-20"
         />

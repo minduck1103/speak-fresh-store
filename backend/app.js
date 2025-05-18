@@ -29,7 +29,7 @@ if (missingEnvVars.length > 0) {
 }
 
 // Connect to database
-connectDB();
+// connectDB();
 
 const app = express();
 
