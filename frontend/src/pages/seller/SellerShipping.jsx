@@ -11,14 +11,13 @@ const SellerShipping = () => {
       setLoading(true);
       try {
         const res = await getOrders();
-        // Lọc đơn hàng có sản phẩm brand = 'green'
         const greenOrders = (res.data || []).filter(order =>
           (order.orderItems || []).some(item => item.brand === 'green')
         );
         setOrders(greenOrders);
         setError("");
       } catch {
-        setError("Không thể tải đơn hàng");
+        setError("Cannot load orders");
       } finally {
         setLoading(false);
       }
@@ -34,18 +33,18 @@ const SellerShipping = () => {
           <table className="w-full border border-green-200 rounded-lg">
             <thead className="bg-green-100">
               <tr>
-                <th className="py-2 px-3">Mã đơn</th>
-                <th className="py-2 px-3">Khách hàng</th>
-                <th className="py-2 px-3">Địa chỉ giao</th>
-                <th className="py-2 px-3">Trạng thái</th>
-                <th className="py-2 px-3">Ngày đặt</th>
+                <th className="py-2 px-3">Order ID</th>
+                <th className="py-2 px-3">Customer</th>
+                <th className="py-2 px-3">Shipping Address</th>
+                <th className="py-2 px-3">Status</th>
+                <th className="py-2 px-3">Order Date</th>
               </tr>
             </thead>
             <tbody>
               {loading ? (
-                <tr><td colSpan={5} className="text-center py-6 text-gray-400">Đang tải...</td></tr>
+                <tr><td colSpan={5} className="text-center py-6 text-gray-400">Loading...</td></tr>
               ) : orders.length === 0 ? (
-                <tr><td colSpan={5} className="text-center py-6 text-gray-400">Không có đơn hàng</td></tr>
+                <tr><td colSpan={5} className="text-center py-6 text-gray-400">No orders</td></tr>
               ) : (
                 orders.map((o, idx) => (
                   <tr key={o._id || idx} className="border-t border-green-50">
@@ -53,7 +52,7 @@ const SellerShipping = () => {
                     <td className="py-2 px-3">{o.shippingInfo?.name || o.shippingInfo?.phoneNo || 'Ẩn danh'}</td>
                     <td className="py-2 px-3">{o.shippingInfo?.address}, {o.shippingInfo?.city}</td>
                     <td className="py-2 px-3">
-                      <span className={`px-2 py-1 rounded text-xs font-bold ${o.orderStatus === 'Delivered' || o.orderStatus === 'Đã giao' ? 'bg-green-200 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>{o.orderStatus || 'Đang xử lý'}</span>
+                      <span className={`px-2 py-1 rounded text-xs font-bold ${o.orderStatus === 'Delivered' || o.orderStatus === 'Delivered' ? 'bg-green-200 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>{o.orderStatus || 'Pending'}</span>
                     </td>
                     <td className="py-2 px-3">{o.createdAt?.slice(0,10)}</td>
                   </tr>

@@ -1,9 +1,12 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { FadeLeft, FadeRight } from "../../utility/animation";
+import { useTranslation } from 'react-i18next';
 import bannerBg from "../../assets/banner-bg.jpg";
 
 const Banner3 = () => {
+  const { t } = useTranslation();
+
   return (
     <div className="max-w-7xl mx-auto px-4 py-16">
       <div className="relative h-[500px] bg-gray-100 rounded-2xl overflow-hidden grid grid-cols-2">
@@ -19,28 +22,28 @@ const Banner3 = () => {
         />
 
         {/* Right side - Content */}
-        <motion.div 
+        <motion.div
           variants={FadeLeft(0.5)}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
           className="absolute inset-y-0 right-0 w-full max-w-md md:max-w-lg lg:max-w-xl p-8 sm:p-16 flex flex-col justify-center z-10"
-        > 
+        >
           {/* Nội dung text */}
           <div className="relative">
             <h2 className="text-4xl font-bold mb-6 text-gray-900">
-              Trái cây tươi <br /> Có ngay hôm nay!
+              {t('home.banners.fresh_today_title', { ns: 'pages' })}
             </h2>
             <p className="text-gray-700 mb-8">
-              Cần trái cây tươi ngon cho hôm nay? Speak Fresh cung cấp đa dạng lựa chọn, giao nhanh chóng tại TP.HCM để bạn thưởng thức ngay. 
+              {t('home.banners.fresh_today_description', { ns: 'pages' })}
             </p>
-            <motion.button 
+            <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className="bg-red-500 text-white px-6 py-3 rounded-full flex items-center hover:bg-red-600 transition-colors"
             >
               <span className="mr-2">🛍️</span>
-              Đặt Hàng Ngay
+              {t('buttons.order_now', { ns: 'common' })}
             </motion.button>
           </div>
         </motion.div>

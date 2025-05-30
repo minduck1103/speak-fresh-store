@@ -1,8 +1,10 @@
 import React from "react";
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 import { FadeUp, FadeLeft } from "../../utility/animation";
 
 const Banner1 = () => {
+  const { t } = useTranslation();
   return (
     <div className="bg-orange-50 py-16">
       <div className="max-w-7xl mx-auto px-4">
@@ -13,19 +15,18 @@ const Banner1 = () => {
             whileInView="visible"
             viewport={{ once: true }}
           >
-            <motion.h2 
+            <motion.h2
               variants={FadeLeft(0.4)}
               className="text-3xl font-bold mb-4"
             >
-              Trái cây tươi ngon
-              <span className="text-orange-500"> mỗi ngày</span>
+              {t('home.banners.fresh_daily', { ns: 'pages' })}
+              <span className="text-orange-500"> {t('home.banners.fresh_daily_highlight', { ns: 'pages' })}</span>
             </motion.h2>
-            <motion.p 
+            <motion.p
               variants={FadeLeft(0.5)}
               className="text-gray-600 mb-8"
             >
-              Chúng tôi cam kết mang đến những sản phẩm trái cây tươi ngon nhất,
-              được tuyển chọn kỹ lưỡng từ các vườn trái cây uy tín.
+              {t('home.banners.fresh_daily_desc', { ns: 'pages' })}
             </motion.p>
             <motion.button
               whileHover={{ scale: 1.05 }}
@@ -33,7 +34,7 @@ const Banner1 = () => {
               className="bg-red-500 text-white px-6 py-3 rounded-full flex items-center hover:bg-red-600"
             >
               <span className="mr-2">🎁</span>
-              Khám phá ngay
+              {t('home.banners.explore_now', { ns: 'pages' })}
             </motion.button>
           </motion.div>
           <motion.div
@@ -55,4 +56,4 @@ const Banner1 = () => {
   );
 };
 
-export default Banner1; 
+export default Banner1;

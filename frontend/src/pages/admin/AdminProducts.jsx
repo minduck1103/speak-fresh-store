@@ -79,11 +79,11 @@ const AdminProducts = () => {
   };
   const saveProduct = async (e) => {
     e.preventDefault();
-    if (!productForm.name.trim()) return setFormError("Tên sản phẩm không được để trống");
-    if (!productForm.price || Number(productForm.price) <= 0) return setFormError("Giá sản phẩm phải lớn hơn 0");
-    if (!productForm.category) return setFormError("Vui lòng chọn danh mục");
-    if (!productForm.description.trim()) return setFormError("Vui lòng nhập mô tả sản phẩm");
-    if (!editingProduct && !productImageFile) return setFormError("Vui lòng chọn ảnh sản phẩm");
+    if (!productForm.name.trim()) return setFormError("Product name cannot be empty");
+    if (!productForm.price || Number(productForm.price) <= 0) return setFormError("Product price must be greater than 0");
+    if (!productForm.category) return setFormError("Please select category");
+    if (!productForm.description.trim()) return setFormError("Please enter product description");
+    if (!editingProduct && !productImageFile) return setFormError("Please select product image");
     setFormError("");
     setSaving(true);
     try {
@@ -102,7 +102,7 @@ const AdminProducts = () => {
       setShowProductModal(false);
       fetchAll();
     } catch {
-      setFormError("Có lỗi xảy ra khi lưu sản phẩm");
+      setFormError("An error occurred while saving the product");
     } finally {
       setSaving(false);
     }
@@ -119,7 +119,7 @@ const AdminProducts = () => {
       setShowDeleteModal(false);
       fetchAll();
     } catch {
-      setFormError("Không thể xóa sản phẩm");
+      setFormError("Unable to delete product");
     } finally {
       setDeleting(false);
     }
@@ -180,36 +180,36 @@ const AdminProducts = () => {
   // UI
   return (
     <div>
-      <h1 className="text-3xl font-extrabold text-green-700 mb-6 flex items-center gap-2 drop-shadow">🍏 Quản lý sản phẩm & danh mục</h1>
+      <h1 className="text-3xl font-extrabold text-green-700 mb-6 flex items-center gap-2 drop-shadow">🍏 Manage Products & Categories</h1>
       <div className="flex gap-4 mb-4">
-        <button className={`px-4 py-2 rounded font-bold ${tab === "products" ? "bg-green-600 text-white" : "bg-green-100 text-green-700"}`} onClick={() => setTab("products")}>Sản phẩm</button>
-        <button className={`px-4 py-2 rounded font-bold ${tab === "categories" ? "bg-green-600 text-white" : "bg-green-100 text-green-700"}`} onClick={() => setTab("categories")}>Danh mục</button>
+        <button className={`px-4 py-2 rounded font-bold ${tab === "products" ? "bg-green-600 text-white" : "bg-green-100 text-green-700"}`} onClick={() => setTab("products")}>Products</button>
+        <button className={`px-4 py-2 rounded font-bold ${tab === "categories" ? "bg-green-600 text-white" : "bg-green-100 text-green-700"}`} onClick={() => setTab("categories")}>Categories</button>
       </div>
       {loading ? (
-        <div className="text-center py-10">Đang tải dữ liệu...</div>
+        <div className="text-center py-10">Loading...</div>
       ) : tab === "products" ? (
         <div className="overflow-x-auto bg-white rounded-2xl shadow-lg p-6 border border-green-100">
           <div className="flex justify-between mb-4">
-            <h2 className="text-xl font-bold text-green-700">Danh sách sản phẩm</h2>
+            <h2 className="text-xl font-bold text-green-700">Product List</h2>
             <div className="flex gap-4 items-center">
               <input
                 type="text"
-                placeholder="Tìm kiếm..."
+                placeholder="find..."
                 value={searchProduct}
                 onChange={e => setSearchProduct(e.target.value)}
                 className="border border-green-300 rounded-lg px-4 py-2 focus:outline-none focus:border-green-500"
               />
-              <button onClick={openAddProduct} className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded font-bold shadow">+ Thêm sản phẩm</button>
+              <button onClick={openAddProduct} className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded font-bold shadow">+ Add Product</button>
             </div>
           </div>
           <table className="w-full text-left rounded-xl overflow-hidden">
             <thead>
               <tr className="bg-green-100 text-green-800">
-                <th className="py-2 px-3">Tên sản phẩm</th>
-                <th className="py-2 px-3">Danh mục</th>
-                <th className="py-2 px-3">Giá</th>
-                <th className="py-2 px-3">Kho</th>
-                <th className="py-2 px-3 text-center">Hành động</th>
+                <th className="py-2 px-3">Product Name</th>
+                <th className="py-2 px-3">Category</th>
+                <th className="py-2 px-3">Price</th>
+                <th className="py-2 px-3">Stock</th>
+                <th className="py-2 px-3 text-center">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -226,8 +226,8 @@ const AdminProducts = () => {
                     <span className={`px-2 py-1 rounded-full text-xs font-bold ${p.stock > 0 ? 'bg-green-200 text-green-800' : 'bg-red-100 text-red-600'}`}>{p.stock > 0 ? p.stock : 'Hết hàng'}</span>
                   </td>
                   <td className="py-2 px-3 text-center flex gap-2 justify-center">
-                    <button onClick={() => openEditProduct(p)} className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded shadow text-xs">Sửa</button>
-                    <button onClick={() => openDeleteProduct(p)} className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded shadow text-xs">Xóa</button>
+                    <button onClick={() => openEditProduct(p)} className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded shadow text-xs">Edit</button>
+                    <button onClick={() => openDeleteProduct(p)} className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded shadow text-xs">Delete</button>
                   </td>
                 </tr>
               ))}
@@ -237,11 +237,11 @@ const AdminProducts = () => {
       ) : (
         <div className="overflow-x-auto bg-white rounded-2xl shadow-lg p-6 border border-green-100">
           <div className="flex justify-between mb-4">
-            <h2 className="text-xl font-bold text-green-700">Danh sách danh mục</h2>
+            <h2 className="text-xl font-bold text-green-700">Category List</h2>
             <div className="flex gap-4 items-center">
               <input
                 type="text"
-                placeholder="Tìm kiếm danh mục..."
+                placeholder="find..."
                 value={searchCategory}
                 onChange={e => setSearchCategory(e.target.value)}
                 className="border border-green-300 rounded-lg px-4 py-2 focus:outline-none focus:border-green-500"
@@ -252,9 +252,9 @@ const AdminProducts = () => {
           <table className="w-full text-left rounded-xl overflow-hidden">
             <thead>
               <tr className="bg-green-100 text-green-800">
-                <th className="py-2 px-3">Tên danh mục</th>
-                <th className="py-2 px-3">Mô tả</th>
-                <th className="py-2 px-3 text-center">Hành động</th>
+                <th className="py-2 px-3">Category Name</th>
+                <th className="py-2 px-3">Description</th>
+                <th className="py-2 px-3 text-center">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -277,38 +277,38 @@ const AdminProducts = () => {
       {showProductModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
           <form onSubmit={saveProduct} className="bg-white rounded-xl shadow-lg p-8 w-full max-w-md animate-fadeIn" encType="multipart/form-data">
-            <h2 className="text-xl font-bold mb-4 text-green-700">{editingProduct ? 'Sửa sản phẩm' : 'Thêm sản phẩm'}</h2>
+            <h2 className="text-xl font-bold mb-4 text-green-700">{editingProduct ? 'Edit Product' : 'Add Product'}</h2>
             {formError && <div className="text-red-500 mb-2 text-center">{formError}</div>}
             <div className="mb-4">
-              <label className="block font-semibold mb-1">Tên sản phẩm</label>
+              <label className="block font-semibold mb-1">Product Name</label>
               <input name="name" value={productForm.name} onChange={handleProductFormChange} required className="w-full border border-green-300 rounded-lg px-4 py-2 focus:outline-none focus:border-green-500" />
             </div>
             <div className="mb-4">
-              <label className="block font-semibold mb-1">Giá</label>
+              <label className="block font-semibold mb-1">Price</label>
               <input name="price" type="number" value={productForm.price} onChange={handleProductFormChange} required className="w-full border border-green-300 rounded-lg px-4 py-2 focus:outline-none focus:border-green-500" />
             </div>
             <div className="mb-4">
-              <label className="block font-semibold mb-1">Danh mục</label>
+              <label className="block font-semibold mb-1">Category</label>
               <select name="category" value={productForm.category} onChange={handleProductFormChange} required className="w-full border border-green-300 rounded-lg px-4 py-2 focus:outline-none focus:border-green-500">
-                <option value="">Chọn danh mục</option>
+                <option value="">Select category</option>
                 {categories.map(c => <option key={c._id} value={c._id}>{c.name}</option>)}
               </select>
             </div>
             <div className="mb-4">
-              <label className="block font-semibold mb-1">Mô tả</label>
+              <label className="block font-semibold mb-1">Description</label>
               <textarea name="description" value={productForm.description} onChange={handleProductFormChange} required className="w-full border border-green-300 rounded-lg px-4 py-2 focus:outline-none focus:border-green-500" />
             </div>
             <div className="mb-6">
-              <label className="block font-semibold mb-1">Kho</label>
+              <label className="block font-semibold mb-1">Stock</label>
               <input name="stock" type="number" value={productForm.stock} onChange={handleProductFormChange} required className="w-full border border-green-300 rounded-lg px-4 py-2 focus:outline-none focus:border-green-500" />
             </div>
             <div className="mb-6">
-              <label className="block font-semibold mb-1">Ảnh sản phẩm {editingProduct ? '(bỏ qua nếu không đổi ảnh)' : ''}</label>
+              <label className="block font-semibold mb-1">Product Image {editingProduct ? '(skip if no change)' : ''}</label>
               <input name="image" type="file" accept="image/*" onChange={handleProductImageChange} className="w-full border border-green-300 rounded-lg px-4 py-2 focus:outline-none focus:border-green-500 bg-white" />
             </div>
             <div className="flex gap-3 justify-end">
-              <button type="button" onClick={() => setShowProductModal(false)} className="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300 font-semibold">Hủy</button>
-              <button type="submit" disabled={saving} className="px-4 py-2 rounded bg-green-600 hover:bg-green-700 text-white font-semibold disabled:opacity-60">{saving ? 'Đang lưu...' : 'Lưu'}</button>
+              <button type="button" onClick={() => setShowProductModal(false)} className="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300 font-semibold">Cancel</button>
+              <button type="submit" disabled={saving} className="px-4 py-2 rounded bg-green-600 hover:bg-green-700 text-white font-semibold disabled:opacity-60">{saving ? 'Saving...' : 'Save'}</button>
             </div>
           </form>
         </div>
@@ -318,19 +318,19 @@ const AdminProducts = () => {
       {showCategoryModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
           <form onSubmit={saveCategory} className="bg-white rounded-xl shadow-lg p-8 w-full max-w-md animate-fadeIn">
-            <h2 className="text-xl font-bold mb-4 text-green-700">{editingCategory ? 'Sửa danh mục' : 'Thêm danh mục'}</h2>
+            <h2 className="text-xl font-bold mb-4 text-green-700">{editingCategory ? 'Edit Category' : 'Add Category'}</h2>
             {formError && <div className="text-red-500 mb-2 text-center">{formError}</div>}
             <div className="mb-4">
-              <label className="block font-semibold mb-1">Tên danh mục</label>
+              <label className="block font-semibold mb-1">Category Name</label>
               <input name="name" value={categoryForm.name} onChange={handleCategoryFormChange} required className="w-full border border-green-300 rounded-lg px-4 py-2 focus:outline-none focus:border-green-500" />
             </div>
             <div className="mb-6">
-              <label className="block font-semibold mb-1">Mô tả</label>
+              <label className="block font-semibold mb-1">Description</label>
               <textarea name="description" value={categoryForm.description} onChange={handleCategoryFormChange} className="w-full border border-green-300 rounded-lg px-4 py-2 focus:outline-none focus:border-green-500" />
             </div>
             <div className="flex gap-3 justify-end">
-              <button type="button" onClick={() => setShowCategoryModal(false)} className="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300 font-semibold">Hủy</button>
-              <button type="submit" disabled={saving} className="px-4 py-2 rounded bg-green-600 hover:bg-green-700 text-white font-semibold disabled:opacity-60">{saving ? 'Đang lưu...' : 'Lưu'}</button>
+              <button type="button" onClick={() => setShowCategoryModal(false)} className="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300 font-semibold">Cancel</button>
+              <button type="submit" disabled={saving} className="px-4 py-2 rounded bg-green-600 hover:bg-green-700 text-white font-semibold disabled:opacity-60">{saving ? 'Saving...' : 'Save'}</button>
             </div>
           </form>
         </div>
@@ -340,10 +340,10 @@ const AdminProducts = () => {
       {showDeleteModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
           <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-sm animate-fadeIn">
-            <h2 className="text-xl font-bold mb-4 text-red-600">Xác nhận xóa</h2>
-            <p className="mb-6">Bạn có chắc chắn muốn xóa <span className="font-bold">{deleteType === 'product' ? deleteTarget?.name : deleteTarget?.name}</span> không?</p>
+            <h2 className="text-xl font-bold mb-4 text-red-600">Confirm Delete</h2>
+            <p className="mb-6">Are you sure you want to delete <span className="font-bold">{deleteType === 'product' ? deleteTarget?.name : deleteTarget?.name}</span>?</p>
             <div className="flex gap-3 justify-end">
-              <button onClick={() => setShowDeleteModal(false)} className="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300 font-semibold">Hủy</button>
+              <button onClick={() => setShowDeleteModal(false)} className="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300 font-semibold">Cancel</button>
               <button onClick={deleteType === 'product' ? confirmDeleteProduct : confirmDeleteCategory} disabled={deleting} className="px-4 py-2 rounded bg-red-600 hover:bg-red-700 text-white font-semibold disabled:opacity-60">{deleting ? 'Đang xóa...' : 'Xóa'}</button>
             </div>
           </div>

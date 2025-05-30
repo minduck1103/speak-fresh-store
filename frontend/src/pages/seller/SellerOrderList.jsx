@@ -21,7 +21,7 @@ const SellerOrderList = ({ orders = [], confirmMode = false, onReloadOrders }) =
       // Tìm đơn hàng cần xác nhận
       const orderToConfirm = orders.find(order => order._id === id);
       if (!orderToConfirm) {
-        throw new Error('Không tìm thấy đơn hàng');
+        throw new Error('Order not found');
       }
 
       // Debug log
@@ -37,16 +37,16 @@ const SellerOrderList = ({ orders = [], confirmMode = false, onReloadOrders }) =
       // Gửi request với totalAmount
       const response = await api.put(`/api/v1/orders/${id}/confirm`, {
         totalAmount: totalAmount,
-        status: "accepted"  // Thêm trạng thái mới
+        status: "accepted"  // Add new status
       });
       
       console.log('Confirm response:', response);
       
-      setSuccessMsg("Đã xác nhận đơn hàng!");
+      setSuccessMsg("Order confirmed!");
       if (onReloadOrders) onReloadOrders();
     } catch (error) {
       console.error('Error confirming order:', error);
-      setSuccessMsg(error.response?.data?.error || "Không thể xác nhận đơn hàng!");
+      setSuccessMsg(error.response?.data?.error || "Cannot confirm order!");
       setTimeout(() => setSuccessMsg(""), 2000);
     } finally {
       setUpdating(false);
@@ -57,10 +57,10 @@ const SellerOrderList = ({ orders = [], confirmMode = false, onReloadOrders }) =
     setUpdating(true);
     try {
       await api.put(`/api/v1/orders/${id}/reject`);
-      setSuccessMsg("Đã từ chối đơn hàng!");
+      setSuccessMsg("Order rejected!");
       if (onReloadOrders) onReloadOrders();
     } catch {
-      setSuccessMsg("Không thể từ chối đơn hàng!");
+      setSuccessMsg("Cannot reject order!");
       setTimeout(() => setSuccessMsg(""), 2000);
     } finally {
       setUpdating(false);
@@ -78,10 +78,10 @@ const SellerOrderList = ({ orders = [], confirmMode = false, onReloadOrders }) =
       await api.delete(`/api/v1/orders/${deleteTarget._id}`);
       setShowDeleteModal(false);
       setDeleteTarget(null);
-      setSuccessMsg("Đã xóa đơn hàng thành công!");
+      setSuccessMsg("Order deleted successfully!");
       setTimeout(() => window.location.reload(), 1200);
     } catch {
-      setSuccessMsg("Không thể xóa đơn hàng!");
+      setSuccessMsg("Cannot delete order!");
       setTimeout(() => setSuccessMsg(""), 2000);
     }
   };
@@ -92,17 +92,17 @@ const SellerOrderList = ({ orders = [], confirmMode = false, onReloadOrders }) =
         <table className="w-full border border-green-200 rounded-lg bg-white">
           <thead className="bg-green-100">
             <tr>
-              <th className="py-2 px-3">Mã đơn</th>
-              <th className="py-2 px-3">Khách hàng</th>
-              <th className="py-2 px-3">Ngày đặt</th>
-              <th className="py-2 px-3">Trạng thái</th>
-              <th className="py-2 px-3">Tổng tiền</th>
-              <th className="py-2 px-3">Hành động</th>
+              <th className="py-2 px-3">Order ID</th>
+              <th className="py-2 px-3">Customer</th>
+              <th className="py-2 px-3">Order Date</th>
+              <th className="py-2 px-3">Status</th>
+              <th className="py-2 px-3">Total Amount</th>
+              <th className="py-2 px-3">Actions</th>
             </tr>
           </thead>
           <tbody>
             {displayOrders.length === 0 ? (
-              <tr><td colSpan={6} className="text-center py-6 text-gray-400">Không có đơn hàng</td></tr>
+              <tr><td colSpan={6} className="text-center py-6 text-gray-400">No orders</td></tr>
             ) : (
               displayOrders.map((o, idx) => {
                 console.log('DEBUG order row:', o);
@@ -125,13 +125,13 @@ const SellerOrderList = ({ orders = [], confirmMode = false, onReloadOrders }) =
                     <td className="py-2 px-3 flex gap-2">
                       {confirmMode ? (
                         <>
-                          <button onClick={() => handleConfirm(o._id)} className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 transition-colors" disabled={updating}>Xác nhận</button>
-                          <button onClick={() => handleReject(o._id)} className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition-colors" disabled={updating}>Từ chối</button>
+                          <button onClick={() => handleConfirm(o._id)} className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 transition-colors" disabled={updating}>Confirm</button>
+                          <button onClick={() => handleReject(o._id)} className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition-colors" disabled={updating}>Reject</button>
                         </>
                       ) : (
                         <>
-                          <button onClick={() => setSelected(o)} className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 transition-colors">Xem</button>
-                          <button onClick={() => openDeleteModal(o)} className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition-colors">Xóa</button>
+                          <button onClick={() => setSelected(o)} className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 transition-colors">View</button>
+                          <button onClick={() => openDeleteModal(o)} className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition-colors">Delete</button>
                         </>
                       )}
                     </td>
@@ -147,29 +147,29 @@ const SellerOrderList = ({ orders = [], confirmMode = false, onReloadOrders }) =
         <div className="fixed inset-0 flex items-center justify-center z-50" style={{backdropFilter: 'blur(6px)'}}>
           <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-lg relative border-2 border-green-200">
             <button onClick={() => setSelected(null)} className="absolute top-3 right-3 text-gray-400 hover:text-green-600 text-3xl font-bold">×</button>
-            <h2 className="text-2xl font-bold text-green-700 mb-4 text-center">Chi tiết đơn hàng</h2>
+            <h2 className="text-2xl font-bold text-green-700 mb-4 text-center">Order Details</h2>
             <div className="mb-3 flex flex-col md:flex-row md:justify-between gap-2">
-              <div className="text-gray-700">Mã đơn: <span className="font-semibold text-green-700">{typeof selected._id === 'object' && selected._id.$oid ? selected._id.$oid : selected._id}</span></div>
-              <div className="text-gray-700">Ngày đặt: <span className="font-semibold">{selected.createdAt?.slice(0,10)}</span></div>
+              <div className="text-gray-700">Order ID: <span className="font-semibold text-green-700">{typeof selected._id === 'object' && selected._id.$oid ? selected._id.$oid : selected._id}</span></div>
+              <div className="text-gray-700">Order Date: <span className="font-semibold">{selected.createdAt?.slice(0,10)}</span></div>
             </div>
-            <div className="mb-3 text-gray-700">Trạng thái: <span className="font-bold px-2 py-1 rounded bg-green-100 text-green-700">{selected.status || selected.orderStatus}</span></div>
-            <div className="mb-3 text-gray-700">Tổng tiền: <span className="font-bold text-2xl text-green-600">{(selected.totalAmount || selected.totalPrice || 0).toLocaleString()}₫</span></div>
-            <div className="mb-3 text-gray-700">Thông tin khách hàng:</div>
+            <div className="mb-3 text-gray-700">Status: <span className="font-bold px-2 py-1 rounded bg-green-100 text-green-700">{selected.status || selected.orderStatus}</span></div>
+            <div className="mb-3 text-gray-700">Total Amount: <span className="font-bold text-2xl text-green-600">{(selected.totalAmount || selected.totalPrice || 0).toLocaleString()}₫</span></div>
+            <div className="mb-3 text-gray-700">Customer Information:</div>
             <div className="mb-4 bg-green-50 rounded-lg p-3 border border-green-100">
-              <div><span className="font-semibold">Tên/SĐT:</span> {selected.shippingInfo?.name || selected.shippingInfo?.phoneNo}</div>
-              <div><span className="font-semibold">SĐT:</span> {selected.shippingInfo?.phoneNo}</div>
-              <div><span className="font-semibold">Địa chỉ:</span> {selected.shippingInfo?.address}, {selected.shippingInfo?.city}</div>
+              <div><span className="font-semibold">Name/Phone:</span> {selected.shippingInfo?.name || selected.shippingInfo?.phoneNo}</div>
+              <div><span className="font-semibold">Phone:</span> {selected.shippingInfo?.phoneNo}</div>
+              <div><span className="font-semibold">Address:</span> {selected.shippingInfo?.address}, {selected.shippingInfo?.city}</div>
             </div>
-            <div className="mb-2 text-gray-700 font-semibold">Sản phẩm:</div>
+            <div className="mb-2 text-gray-700 font-semibold">Products:</div>
             <div className="overflow-x-auto">
               <table className="w-full text-sm border border-green-100 rounded-lg mb-4">
                 <thead className="bg-green-100">
                   <tr>
-                    <th className="py-2 px-2">Ảnh</th>
-                    <th className="py-2 px-2">Tên</th>
-                    <th className="py-2 px-2">SL</th>
-                    <th className="py-2 px-2">Giá</th>
-                    <th className="py-2 px-2">Tổng phụ</th>
+                    <th className="py-2 px-2">Image</th>
+                    <th className="py-2 px-2">Name</th>
+                    <th className="py-2 px-2">Quantity</th>
+                    <th className="py-2 px-2">Price</th>
+                    <th className="py-2 px-2">Total</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -186,7 +186,7 @@ const SellerOrderList = ({ orders = [], confirmMode = false, onReloadOrders }) =
               </table>
             </div>
             {successMsg && <div className="text-green-600 text-center font-bold my-2">{successMsg}</div>}
-            <button onClick={() => setSelected(null)} className="w-full mt-2 bg-green-600 text-white font-bold py-3 rounded-lg hover:bg-green-700 transition-colors text-lg">Đóng</button>
+            <button onClick={() => setSelected(null)} className="w-full mt-2 bg-green-600 text-white font-bold py-3 rounded-lg hover:bg-green-700 transition-colors text-lg">Close</button>
           </div>
         </div>
       )}
@@ -195,11 +195,11 @@ const SellerOrderList = ({ orders = [], confirmMode = false, onReloadOrders }) =
         <div className="fixed inset-0 flex items-center justify-center z-50" style={{backdropFilter: 'blur(6px)'}}>
           <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-sm text-center border-2 border-red-200">
             <button type="button" onClick={() => setShowDeleteModal(false)} className="absolute top-3 right-3 text-gray-400 hover:text-red-600 text-3xl font-bold">×</button>
-            <h2 className="text-xl font-bold text-red-700 mb-4">Xác nhận xóa đơn hàng</h2>
-            <p className="mb-6">Bạn có chắc chắn muốn xóa đơn hàng <span className="font-bold">{deleteTarget._id}</span> không?</p>
+            <h2 className="text-xl font-bold text-red-700 mb-4">Confirm Delete Order</h2>
+            <p className="mb-6">Are you sure you want to delete the order <span className="font-bold">{deleteTarget._id}</span>?</p>
             <div className="flex gap-4 justify-center">
-              <button onClick={() => setShowDeleteModal(false)} className="bg-gray-500 text-white px-6 py-2 rounded hover:bg-gray-600 font-bold">Hủy</button>
-              <button onClick={handleDeleteOrder} className="bg-red-500 text-white px-6 py-2 rounded hover:bg-red-600 font-bold">Xóa</button>
+              <button onClick={() => setShowDeleteModal(false)} className="bg-gray-500 text-white px-6 py-2 rounded hover:bg-gray-600 font-bold">Cancel</button>
+              <button onClick={handleDeleteOrder} className="bg-red-500 text-white px-6 py-2 rounded hover:bg-red-600 font-bold">Delete</button>
             </div>
           </div>
         </div>

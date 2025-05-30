@@ -1,7 +1,9 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import footerBg from '../../assets/footer-bg.jpg';
 
 const Footer = () => {
+  const { t } = useTranslation();
   return (
     <footer className="relative bg-gray-900 text-white">
       {/* Background Image */}
@@ -25,14 +27,13 @@ const Footer = () => {
                 <span className="text-green-500 ml-1">🍃</span>
               </span>
               <p className="text-gray-300">
-                Chúng tôi cam kết mang đến những sản phẩm trái cây tươi ngon nhất, 
-                được tuyển chọn kỹ lưỡng từ các vườn trái cây uy tín.
+                {t('footer.description')}
               </p>
             </div>
 
             {/* Contact Section */}
             <div className="flex-1 min-w-[300px] max-w-sm">
-              <h3 className="text-lg font-semibold mb-4">Liên hệ</h3>
+              <h3 className="text-lg font-semibold mb-4">{t('footer.contact_info')}</h3>
               <div className="space-y-2 text-gray-300">
                 <p>📍 123 Đường ABC, Quận XYZ, TP.HCM</p>
                 <p>📞 1900 1234 567</p>
@@ -43,7 +44,7 @@ const Footer = () => {
 
             {/* Social Links Section */}
             <div className="flex-1 min-w-[300px] max-w-sm">
-              <h3 className="text-lg font-semibold mb-4">Kết nối với chúng tôi</h3>
+              <h3 className="text-lg font-semibold mb-4">{t('footer.follow_us')}</h3>
               <div className="flex space-x-6">
                 <a href="#" className="text-gray-300 hover:text-white transition-colors">
                   <span className="sr-only">Instagram</span>
@@ -72,7 +73,7 @@ const Footer = () => {
         <div className="relative border-t border-gray-800">
           <div className="max-w-7xl mx-auto px-4 py-4">
             <p className="text-center text-gray-400">
-              © 2025 PEAK FRESH. Đã đăng ký bản quyền.
+              {t('footer.copyright')}
             </p>
           </div>
         </div>

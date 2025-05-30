@@ -69,25 +69,25 @@ const SellerPage = () => {
             <main className="p-8 bg-white rounded-l-3xl shadow-lg w-full" style={{paddingTop: '80px'}}>
         {tab === "dashboard" && (
           <div>
-            <h2 className="text-3xl font-bold text-green-700 mb-6 flex items-center gap-2">📊 Tổng quan</h2>
+            <h2 className="text-3xl font-bold text-green-700 mb-6 flex items-center gap-2">📊 Dashboard</h2>
             <SellerDashboard orderCount={orderCount} revenue={revenue} />
           </div>
         )}
         {tab === "products" && (
           <div>
-            <h2 className="text-3xl font-bold text-green-700 mb-6 flex items-center gap-2">🍏 Sản phẩm</h2>
+            <h2 className="text-3xl font-bold text-green-700 mb-6 flex items-center gap-2">🍏 Products</h2>
             <div className="flex gap-4 mb-6">
               <button
                 onClick={() => setSubTab("products")}
                 className={`px-5 py-2 rounded-full font-bold border-2 transition-colors ${subTab === "products" ? "bg-green-500 text-white border-green-500" : "bg-white text-green-700 border-green-300 hover:bg-green-100"}`}
               >
-                Quản lý sản phẩm
+                Manage Products
               </button>
               <button
                 onClick={() => setSubTab("categories")}
                 className={`px-5 py-2 rounded-full font-bold border-2 transition-colors ${subTab === "categories" ? "bg-green-500 text-white border-green-500" : "bg-white text-green-700 border-green-300 hover:bg-green-100"}`}
               >
-                Quản lý danh mục
+                Manage Categories
               </button>
             </div>
             {subTab === "products" && <SellerProductList />}
@@ -101,40 +101,40 @@ const SellerPage = () => {
         )}
         {tab === "orders" && (
           <div>
-            <h2 className="text-3xl font-bold text-green-700 mb-6 flex items-center gap-2">🧾 Đơn hàng</h2>
+            <h2 className="text-3xl font-bold text-green-700 mb-6 flex items-center gap-2">🧾 Orders</h2>
             <div className="flex gap-4 mb-6">
               <button
                 onClick={() => setOrderTab('confirm')}
                 className={`px-5 py-2 rounded-full font-bold border-2 transition-colors ${orderTab === 'confirm' ? "bg-green-500 text-white border-green-500" : "bg-white text-green-700 border-green-300 hover:bg-green-100"}`}
               >
-                Xác nhận đơn hàng
+                Confirm Orders
               </button>
               <button
                 onClick={() => setOrderTab('list')}
                 className={`px-5 py-2 rounded-full font-bold border-2 transition-colors ${orderTab === 'list' ? "bg-green-500 text-white border-green-500" : "bg-white text-green-700 border-green-300 hover:bg-green-100"}`}
               >
-                Đơn hàng đã xác nhận
+                Confirmed Orders
               </button>
             </div>
-            {orderTab === 'confirm' && <SellerOrderList orders={orders.filter(o => o.status === 'Chờ xác nhận')} confirmMode onReloadOrders={fetchOrders} />}
-            {orderTab === 'list' && <SellerOrderList orders={orders.filter(o => ['Chờ lấy hàng','Đang giao','Đã giao','Không thành công','Đã hủy'].includes(o.status))} onReloadOrders={fetchOrders} />}
+            {orderTab === 'confirm' && <SellerOrderList orders={orders.filter(o => o.status === 'pending')} confirmMode onReloadOrders={fetchOrders} />}
+            {orderTab === 'list' && <SellerOrderList orders={orders.filter(o => ['waiting_pickup','delivering','delivered','failed','cancelled'].includes(o.status))} onReloadOrders={fetchOrders} />}
           </div>
         )}
         {tab === "shipping" && (
           <div>
-            <h2 className="text-3xl font-bold text-green-700 mb-6 flex items-center gap-2">🚚 Vận chuyển</h2>
+            <h2 className="text-3xl font-bold text-green-700 mb-6 flex items-center gap-2">🚚 Shipping</h2>
             <SellerShipping />
           </div>
         )}
         {tab === "report" && (
           <div>
-            <h2 className="text-3xl font-bold text-green-700 mb-6 flex items-center gap-2">📈 Báo cáo</h2>
+            <h2 className="text-3xl font-bold text-green-700 mb-6 flex items-center gap-2">📈 Report</h2>
             <SellerReport />
           </div>
         )}
         {tab === "profile" && (
           <div>
-            <h2 className="text-3xl font-bold text-green-700 mb-6 flex items-center gap-2">🏪 Hồ sơ</h2>
+            <h2 className="text-3xl font-bold text-green-700 mb-6 flex items-center gap-2">🏪 Profile</h2>
             <SellerProfile />
           </div>
         )}

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import authService from '../services/authService';
 
 const roleToPath = {
@@ -10,15 +11,16 @@ const roleToPath = {
     user: '/',
 };
 
-const roleToLabel = {
-    admin: 'admin',
-    seller: 'seller',
-    delivery: 'delivery',
-    warehouse: 'warehouse',
-    user: 'người dùng',
-};
-
 const Login = () => {
+    const { t } = useTranslation();
+
+    const roleToLabel = {
+        admin: t('roles.admin'),
+        seller: t('roles.seller'),
+        delivery: t('roles.delivery'),
+        warehouse: t('roles.warehouse'),
+        user: t('roles.user'),
+    };
     const [formData, setFormData] = useState({
         email: '',
         password: ''
@@ -60,10 +62,10 @@ const Login = () => {
                     navigate(roleToPath[userRole] || '/');
                 }, 1800);
             } else {
-                setError(response.message || 'Đăng nhập thất bại');
+                setError(response.message || t('messages.login_failed', { ns: 'pages' }));
             }
         } catch (err) {
-            setError(err.message || 'Email hoặc mật khẩu không đúng');
+            setError(err.message || t('messages.login_failed', { ns: 'pages' }));
         } finally {
             setLoading(false);
         }
@@ -79,7 +81,7 @@ const Login = () => {
                             <span className="text-orange-400">FRESH</span>
                             <span className="text-green-500 ml-1">🍃</span>
                         </h2>
-                        <p className="mt-2 text-gray-600">Đăng nhập vào tài khoản của bạn</p>
+                        <p className="mt-2 text-gray-600">{t('login.subtitle', { ns: 'pages' })}</p>
                     </div>
 
                     {error && (
@@ -91,7 +93,7 @@ const Login = () => {
                     <form className="space-y-6" onSubmit={handleSubmit}>
                         <div>
                             <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                                Email
+                                {t('login.email', { ns: 'pages' })}
                             </label>
                             <div className="mt-1">
                                 <input
@@ -102,14 +104,14 @@ const Login = () => {
                                     value={formData.email}
                                     onChange={handleChange}
                                     className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-green-500 focus:border-green-500"
-                                    placeholder="you@example.com"
+                                    placeholder={t('login.email_placeholder', { ns: 'pages' })}
                                 />
                             </div>
                         </div>
 
                         <div>
                             <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                                Mật khẩu
+                                {t('login.password', { ns: 'pages' })}
                             </label>
                             <div className="mt-1">
                                 <input
@@ -120,7 +122,7 @@ const Login = () => {
                                     value={formData.password}
                                     onChange={handleChange}
                                     className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-green-500 focus:border-green-500"
-                                    placeholder="••••••••"
+                                    placeholder={t('login.password_placeholder', { ns: 'pages' })}
                                 />
                             </div>
                         </div>
@@ -134,13 +136,13 @@ const Login = () => {
                                     className="h-4 w-4 text-green-500 focus:ring-green-500 border-gray-300 rounded"
                                 />
                                 <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700">
-                                    Ghi nhớ đăng nhập
+                                    {t('login.remember_me', { ns: 'pages' })}
                                 </label>
                             </div>
 
                             <div className="text-sm">
                                 <Link to="/forgot-password" className="font-medium text-green-600 hover:text-green-500">
-                                    Quên mật khẩu?
+                                    {t('login.forgot_password', { ns: 'pages' })}
                                 </Link>
                             </div>
                         </div>
@@ -151,16 +153,16 @@ const Login = () => {
                                 disabled={loading}
                                 className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
                             >
-                                {loading ? 'Đang đăng nhập...' : 'Đăng nhập'}
+                                {loading ? t('messages.logging_in', { ns: 'pages' }) : t('login.login_button', { ns: 'pages' })}
                             </button>
                         </div>
                     </form>
 
                     <div className="mt-6 text-center">
                         <p className="text-sm text-gray-600">
-                            Chưa có tài khoản?{' '}
+                            {t('login.no_account', { ns: 'pages' })}{' '}
                             <Link to="/register" className="font-medium text-green-600 hover:text-green-500">
-                                Đăng ký ngay
+                                {t('login.register_here', { ns: 'pages' })}
                             </Link>
                         </p>
                     </div>
@@ -171,8 +173,8 @@ const Login = () => {
                 <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-10">
                     <div className="bg-white rounded-lg shadow-lg p-6 max-w-xs w-full text-center border border-green-200">
                         <div className="text-green-600 text-2xl mb-2">✅</div>
-                        <div className="mb-2 font-semibold">Đăng nhập thành công!</div>
-                        <div>Bạn đang đăng nhập với tư cách là <b>{roleToLabel[role] || role}</b></div>
+                        <div className="mb-2 font-semibold">{t('messages.login_success', { ns: 'pages' })}</div>
+                        <div dangerouslySetInnerHTML={{ __html: t('messages.login_as', { ns: 'pages', role: roleToLabel[role] || role }) }}></div>
                     </div>
                 </div>
             )}
@@ -180,4 +182,4 @@ const Login = () => {
     );
 };
 
-export default Login; 
+export default Login;

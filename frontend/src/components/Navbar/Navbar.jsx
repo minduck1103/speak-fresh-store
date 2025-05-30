@@ -1,7 +1,9 @@
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import authService from "../../services/authService";
 import cartService from "../../services/cartService";
+import LanguageSwitcher from "../LanguageSwitcher/LanguageSwitcher";
 
 const roleToHomePath = {
   admin: '/admin',
@@ -11,15 +13,16 @@ const roleToHomePath = {
   user: '/',
 };
 
-const roleToLabel = {
-  admin: 'Quản trị viên',
-  seller: 'Người bán',
-  delivery: 'Người giao hàng',
-  warehouse: 'Nhân viên kho',
-  user: 'Khách hàng',
-};
-
 const Navbar = () => {
+  const { t } = useTranslation();
+
+  const roleToLabel = {
+    admin: t('roles.admin'),
+    seller: t('roles.seller'),
+    delivery: t('roles.delivery'),
+    warehouse: t('roles.warehouse'),
+    user: t('roles.user'),
+  };
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const [cartCount, setCartCount] = useState(0);
@@ -101,20 +104,20 @@ const Navbar = () => {
             className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 no-underline"
             onClick={() => setShowDropdown(false)}
           >
-            Thông tin tài khoản
+            {t('user.account_info')}
           </Link>
           <Link
             to="/orders"
             className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 no-underline"
             onClick={() => setShowDropdown(false)}
           >
-            Quản lý đơn hàng
+            {t('user.order_management')}
           </Link>
           <button
             onClick={handleLogout}
             className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
           >
-            Đăng xuất
+            {t('user.logout')}
           </button>
         </div>
       );
@@ -130,13 +133,13 @@ const Navbar = () => {
           className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 no-underline"
           onClick={() => setShowDropdown(false)}
         >
-          Thông tin tài khoản
+          {t('user.account_info')}
         </Link>
         <button
           onClick={handleLogout}
           className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
         >
-          Đăng xuất
+          {t('user.logout')}
         </button>
       </div>
     );
@@ -153,33 +156,33 @@ const Navbar = () => {
           </a>
         </div>
         <div className="hidden md:flex items-center space-x-5">
-          <Link 
-            to="/" 
+          <Link
+            to="/"
             className="text-gray-700 hover:text-green-500 transition-colors no-underline"
             onClick={handleHomeClick}
           >
-            Trang chủ
+            {t('navigation.home')}
           </Link>
-          <Link 
-            to="/products" 
+          <Link
+            to="/products"
             className="text-gray-700 hover:text-green-500 transition-colors no-underline"
           >
-            Sản phẩm
+            {t('navigation.products')}
           </Link>
-          <Link 
-            to="/about" 
+          <Link
+            to="/about"
             className="text-gray-700 hover:text-green-500 transition-colors no-underline"
           >
-              Giới thiệu
+            {t('navigation.about')}
           </Link>
-          <Link 
-            to="/contacts" 
+          <Link
+            to="/contacts"
             className="text-gray-700 hover:text-green-500 transition-colors no-underline"
           >
-            Liên hệ
+            {t('navigation.contact')}
           </Link>
-          <Link 
-            to="/cart" 
+          <Link
+            to="/cart"
             onClick={handleCartClick}
             className="text-gray-700 hover:text-green-500 transition-colors flex items-center relative no-underline"
           >
@@ -190,7 +193,10 @@ const Navbar = () => {
               </span>
             )}
           </Link>
-          
+
+          {/* Language Switcher */}
+          <LanguageSwitcher />
+
           {isAuthenticated ? (
             <div className="relative">
               <button
@@ -206,12 +212,12 @@ const Navbar = () => {
               >
                 👤
               </button>
-              
+
               {showDropdown && renderDropdownMenu()}
             </div>
           ) : (
-            <Link 
-              to="/login" 
+            <Link
+              to="/login"
               className="text-gray-700 hover:text-green-500 transition-colors flex items-center no-underline"
             >
               👤

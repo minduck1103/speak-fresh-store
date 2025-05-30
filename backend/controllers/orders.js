@@ -149,21 +149,20 @@ exports.deleteOrder = asyncHandler(async (req, res, next) => {
 // Seller xác nhận đơn hàng
 exports.confirmOrder = asyncHandler(async (req, res, next) => {
     const order = await Order.findById(req.params.id);
-    if (!order) return next(new ErrorResponse('Không tìm thấy đơn hàng', 404));
-    if (order.status !== 'Chờ xác nhận') return next(new ErrorResponse('Chỉ xác nhận đơn hàng ở trạng thái Chờ xác nhận', 400));
+    if (!order) return next(new ErrorResponse('Order not found', 404));
+    if (order.status !== 'pending') return next(new ErrorResponse('Only confirm pending orders', 400));
     if (req.body.totalAmount) order.totalAmount = req.body.totalAmount;
-    order.status = 'Chờ lấy hàng';
+    order.status = 'waiting_pickup';
     await order.save();
-    console.log(`[CONFIRM ORDER] ID: ${order._id}, status: ${order.status}`);
     res.json({ success: true, data: order });
 });
 
 // Seller từ chối đơn hàng
 exports.rejectOrder = asyncHandler(async (req, res, next) => {
     const order = await Order.findById(req.params.id);
-    if (!order) return next(new ErrorResponse('Không tìm thấy đơn hàng', 404));
-    if (order.status !== 'Chờ xác nhận') return next(new ErrorResponse('Chỉ từ chối đơn hàng ở trạng thái Chờ xác nhận', 400));
-    order.status = 'Đã từ chối';
+    if (!order) return next(new ErrorResponse('Order not found', 404));
+    if (order.status !== 'pending') return next(new ErrorResponse('Only reject pending orders', 400));
+    order.status = 'rejected';
     await order.save();
     res.json({ success: true, data: order });
 });
@@ -171,30 +170,30 @@ exports.rejectOrder = asyncHandler(async (req, res, next) => {
 // Delivery xác nhận lấy hàng
 exports.deliveryConfirmOrder = asyncHandler(async (req, res, next) => {
     const order = await Order.findById(req.params.id);
-    if (!order) return next(new ErrorResponse('Không tìm thấy đơn hàng', 404));
-    if (order.status !== 'Chờ lấy hàng') return next(new ErrorResponse('Chỉ xác nhận đơn hàng ở trạng thái Chờ lấy hàng', 400));
-    order.status = 'Đang giao';
+    if (!order) return next(new ErrorResponse('Order not found', 404));
+    if (order.status !== 'waiting_pickup') return next(new ErrorResponse('Only confirm waiting_pickup orders', 400));
+    order.status = 'delivering';
     await order.save();
     res.json({ success: true, data: order });
 });
 
-// Delivery cập nhật đã giao
+// Delivery cập nhật delivered
 exports.markDelivered = asyncHandler(async (req, res, next) => {
     const order = await Order.findById(req.params.id);
-    if (!order) return next(new ErrorResponse('Không tìm thấy đơn hàng', 404));
-    if (order.status !== 'Đang giao') return next(new ErrorResponse('Chỉ cập nhật đơn hàng đang giao', 400));
-    order.status = 'Đã giao';
+    if (!order) return next(new ErrorResponse('Order not found', 404));
+    if (order.status !== 'delivering') return next(new ErrorResponse('Only update delivering orders', 400));
+    order.status = 'delivered';
     order.deliveredAt = new Date();
     await order.save();
     res.json({ success: true, data: order });
 });
 
-// Delivery cập nhật không thành công
+// Delivery cập nhật failed
 exports.markFailed = asyncHandler(async (req, res, next) => {
     const order = await Order.findById(req.params.id);
-    if (!order) return next(new ErrorResponse('Không tìm thấy đơn hàng', 404));
-    if (order.status !== 'Đang giao') return next(new ErrorResponse('Chỉ cập nhật đơn hàng đang giao', 400));
-    order.status = 'Không thành công';
+    if (!order) return next(new ErrorResponse('Order not found', 404));
+    if (order.status !== 'delivering') return next(new ErrorResponse('Only update delivering orders', 400));
+    order.status = 'failed';
     await order.save();
     res.json({ success: true, data: order });
 });
@@ -202,10 +201,10 @@ exports.markFailed = asyncHandler(async (req, res, next) => {
 // User hủy đơn hàng
 exports.cancelOrder = asyncHandler(async (req, res, next) => {
     const order = await Order.findById(req.params.id);
-    if (!order) return next(new ErrorResponse('Không tìm thấy đơn hàng', 404));
-    if (order.status !== 'Chờ lấy hàng') return next(new ErrorResponse('Chỉ hủy đơn hàng ở trạng thái Chờ lấy hàng', 400));
-    if (order.user.toString() !== req.user.id) return next(new ErrorResponse('Bạn không có quyền hủy đơn này', 403));
-    order.status = 'Đã hủy';
+    if (!order) return next(new ErrorResponse('Order not found', 404));
+    if (order.status !== 'waiting_pickup') return next(new ErrorResponse('Only cancel waiting_pickup orders', 400));
+    if (order.user.toString() !== req.user.id) return next(new ErrorResponse('You are not allowed to cancel this order', 403));
+    order.status = 'cancelled';
     await order.save();
     res.json({ success: true, data: order });
 }); 

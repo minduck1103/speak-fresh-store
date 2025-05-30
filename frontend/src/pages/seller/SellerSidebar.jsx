@@ -2,11 +2,11 @@ import React, { useState } from "react";
 import { FaBars, FaTimes } from "react-icons/fa";
 
 const menu = [
-  { key: "dashboard", label: "Tổng quan", icon: "📊" },
-  { key: "products", label: "Sản phẩm", icon: "🍏" },
-  { key: "orders", label: "Đơn hàng", icon: "🧾" },
-    { key: "report", label: "Báo cáo", icon: "📈" },
-  { key: "profile", label: "Hồ sơ", icon: "🏪" }
+  { key: "dashboard", label: "Dashboard", icon: "📊" },
+  { key: "products", label: "Products", icon: "🍏" },
+  { key: "orders", label: "Orders", icon: "🧾" },
+    { key: "report", label: "Report", icon: "📈" },
+  { key: "profile", label: "Profile", icon: "🏪" }
 ];
 
 const SellerSidebar = ({ tab, setTab }) => {
@@ -17,7 +17,7 @@ const SellerSidebar = ({ tab, setTab }) => {
       <button
         className="md:hidden fixed top-4 left-4 z-40 p-2 bg-green-700 text-white rounded-lg shadow-lg"
         onClick={() => setOpen(true)}
-        aria-label="Mở menu"
+        aria-label="Open menu"
       >
         <FaBars size={22} />
       </button>

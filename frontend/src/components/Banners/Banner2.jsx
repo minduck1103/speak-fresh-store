@@ -1,23 +1,25 @@
 import React from "react";
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 import { FadeUp } from "../../utility/animation";
 
 const Banner2 = () => {
+  const { t } = useTranslation();
   const features = [
     {
       icon: "🌱",
-      title: "Nguồn gốc Tự nhiên",
-      description: "Trái cây được trồng và thu hoạch từ những vùng đất màu mỡ, đảm bảo nguồn gốc xuất xứ rõ ràng."
+      title: t('home.banners.quality_features.natural_origin', { ns: 'pages' }),
+      description: t('home.banners.quality_features.natural_desc', { ns: 'pages' })
     },
     {
       icon: "✨",
-      title: "Cam kết Chất lượng",
-      description: "Mỗi sản phẩm đều trải qua quy trình kiểm định nghiêm ngặt, đảm bảo độ tươi ngon và an toàn."
+      title: t('home.banners.quality_features.quality_commitment', { ns: 'pages' }),
+      description: t('home.banners.quality_features.quality_desc', { ns: 'pages' })
     },
     {
       icon: "🚛",
-      title: "Từ Nông trại đến Bàn ăn",
-      description: "Rút ngắn chuỗi cung ứng, đưa trái cây tươi ngon từ nông trại đến tận tay người tiêu dùng."
+      title: t('home.banners.quality_features.farm_to_table', { ns: 'pages' }),
+      description: t('home.banners.quality_features.farm_desc', { ns: 'pages' })
     }
   ];
 
@@ -32,16 +34,16 @@ const Banner2 = () => {
           className="text-center mb-12"
         >
           <h2 className="text-3xl font-bold">
-          🌿NGUỒN GỐC CHẤT LƯỢNG🛡️
+            {t('home.banners.quality_commitment', { ns: 'pages' })}
           </h2>
           <p className="text-gray-600 mt-4">
-            Cam kết mang đến những sản phẩm tươi ngon nhất cho gia đình bạn
+            {t('home.banners.quality_description', { ns: 'pages' })}
           </p>
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {features.map((feature, index) => (
-            <motion.div 
+            <motion.div
               key={index}
               variants={FadeUp(0.4 + index * 0.1)}
               initial="hidden"
@@ -73,7 +75,7 @@ const Banner2 = () => {
             whileTap={{ scale: 0.95 }}
             className="bg-red-500 text-white px-8 py-3 rounded-full hover:bg-red-600 transition-colors duration-300"
           >
-            Tìm hiểu thêm
+            {t('home.banners.learn_more', { ns: 'pages' })}
           </motion.button>
         </motion.div>
       </div>

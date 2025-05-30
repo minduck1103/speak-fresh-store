@@ -7,10 +7,10 @@ import ImportExportManagement from './ImportExportManagement';
 import Reports from './Reports';
 
 const TABS = [
-  { key: 'stats', label: 'Tổng quan', icon: <FaAppleAlt /> },
-  { key: 'inventory', label: 'Hàng tồn kho', icon: '📦' },
-  { key: 'importexport', label: 'Nhập/Xuất đơn', icon: '🔄' },
-  { key: 'reports', label: 'Báo cáo', icon: '📊' },
+  { key: 'stats', label: 'Overview', icon: <FaAppleAlt /> },
+  { key: 'inventory', label: 'Inventory', icon: '📦' },
+  { key: 'importexport', label: 'Import/Export', icon: '🔄' },
+  { key: 'reports', label: 'Reports', icon: '📊' },
 ];
 
 const WarehouseDashboard = () => {
@@ -24,7 +24,7 @@ const WarehouseDashboard = () => {
           <button
             className="md:hidden fixed top-4 left-4 z-40 p-2 bg-green-700 text-white rounded-lg shadow-lg"
             onClick={() => setSidebarOpen(true)}
-            aria-label="Mở menu"
+            aria-label="Open menu"
           >
             <FaBars size={22} />
           </button>
@@ -40,7 +40,7 @@ const WarehouseDashboard = () => {
           >
             <div className="flex items-center justify-between mb-8 px-6">
               <span className="text-2xl font-bold text-green-700 flex items-center gap-2"><FaAppleAlt className="text-green-600" /> Warehouse</span>
-              <button className="md:hidden text-green-700 ml-2" onClick={() => setSidebarOpen(false)} aria-label="Đóng menu">
+              <button className="md:hidden text-green-700 ml-2" onClick={() => setSidebarOpen(false)} aria-label="Close menu">
                 <FaTimes size={22} />
               </button>
             </div>
@@ -60,7 +60,7 @@ const WarehouseDashboard = () => {
           <div className="flex-1 flex flex-col min-h-screen">
             <header className="mb-8 flex items-center gap-4 pt-8 px-4 md:px-0">
               <FaAppleAlt className="text-4xl text-green-600" />
-              <h1 className="text-3xl font-bold text-green-700">Dashboard Kho - Warehouse</h1>
+              <h1 className="text-3xl font-bold text-green-700">Warehouse Dashboard</h1>
             </header>
             <main className="flex-1 w-full flex flex-col items-center">
               <div className="w-full max-w-7xl px-2 md:px-8">

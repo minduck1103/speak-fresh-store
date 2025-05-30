@@ -6,16 +6,16 @@ import api from "../../services/api";
 
 const SIDEBAR = [
   { key: "dashboard", label: "Dashboard", icon: <FaTachometerAlt /> },
-  { key: "orders", label: "Đơn hàng", icon: <FaTruck /> },
+  { key: "orders", label: "Orders", icon: <FaTruck /> },
 ];
 
 const DeliveryPage = () => {
   const [tab, setTab] = useState("dashboard");
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [orderTab, setOrderTab] = useState('confirm'); // 'confirm' hoặc 'list'
+  const [orderTab, setOrderTab] = useState('confirm'); // 'confirm' or 'list'
   const [orders, setOrders] = useState([]);
 
-  // Fetch orders thực tế
+  // Fetch orders
   const fetchOrders = async () => {
     try {
       const res = await api.get('/api/v1/orders');
@@ -30,15 +30,15 @@ const DeliveryPage = () => {
     if (tab === 'orders') fetchOrders();
   }, [tab]);
 
-  // Tính toán số liệu thực tế từ orders
+  // Calculate data from orders
   const totalOrders = orders.length;
   const statusCounts = {
-    'Chờ xác nhận': orders.filter(o => o.status === 'Chờ xác nhận').length,
-    'Chờ lấy hàng': orders.filter(o => o.status === 'Chờ lấy hàng').length,
-    'Đang giao': orders.filter(o => o.status === 'Đang giao').length,
-    'Đã giao': orders.filter(o => o.status === 'Đã giao').length,
-    'Đã hủy': orders.filter(o => o.status === 'Đã hủy').length,
-    'Không thành công': orders.filter(o => o.status === 'Không thành công').length,
+    'pending': orders.filter(o => o.status === 'pending').length,
+    'waiting_pickup': orders.filter(o => o.status === 'waiting_pickup').length,
+    'delivering': orders.filter(o => o.status === 'delivering').length,
+    'delivered': orders.filter(o => o.status === 'delivered').length,
+    'cancelled': orders.filter(o => o.status === 'cancelled').length,
+    'failed': orders.filter(o => o.status === 'failed').length,
   };
 
   return (
@@ -50,7 +50,7 @@ const DeliveryPage = () => {
             <button
               className="md:hidden fixed top-4 left-4 z-40 p-2 bg-green-700 text-white rounded-lg shadow-lg"
               onClick={() => setSidebarOpen(true)}
-              aria-label="Mở menu"
+              aria-label="Open menu"
             >
               <FaBars size={22} />
             </button>
@@ -65,7 +65,7 @@ const DeliveryPage = () => {
             >
               <div className="flex items-center justify-between mb-8 px-6">
                 <span className="text-2xl font-bold text-green-700 flex items-center gap-2"><FaTruck className="text-green-600" /> Delivery</span>
-                <button className="md:hidden text-green-700 ml-2" onClick={() => setSidebarOpen(false)} aria-label="Đóng menu">
+                <button className="md:hidden text-green-700 ml-2" onClick={() => setSidebarOpen(false)} aria-label="Close menu">
                   <FaTimes size={22} />
                 </button>
               </div>
@@ -96,17 +96,17 @@ const DeliveryPage = () => {
                   onClick={() => setOrderTab('confirm')}
                   className={`px-5 py-2 rounded-full font-bold border-2 transition-colors ${orderTab === 'confirm' ? "bg-green-500 text-white border-green-500" : "bg-white text-green-700 border-green-300 hover:bg-green-100"}`}
                 >
-                  Xác nhận đơn hàng
+                  Confirm order
                 </button>
                 <button
                   onClick={() => setOrderTab('list')}
                   className={`px-5 py-2 rounded-full font-bold border-2 transition-colors ${orderTab === 'list' ? "bg-green-500 text-white border-green-500" : "bg-white text-green-700 border-green-300 hover:bg-green-100"}`}
                 >
-                  Đơn hàng đang giao/đã giao
+                  Orders delivering/delivered
                 </button>
               </div>
-              {orderTab === 'confirm' && <DeliveryOrderList orders={orders.filter(o => o.status === 'Chờ lấy hàng')} confirmMode onReloadOrders={fetchOrders} />}
-              {orderTab === 'list' && <DeliveryOrderList orders={orders.filter(o => ['Đang giao','Đã giao','Không thành công'].includes(o.status))} onReloadOrders={fetchOrders} />}
+              {orderTab === 'confirm' && <DeliveryOrderList orders={orders.filter(o => o.status === 'waiting_pickup')} confirmMode onReloadOrders={fetchOrders} />}
+              {orderTab === 'list' && <DeliveryOrderList orders={orders.filter(o => ['delivering','delivered','failed'].includes(o.status))} onReloadOrders={fetchOrders} />}
             </>
           )}
         </div>

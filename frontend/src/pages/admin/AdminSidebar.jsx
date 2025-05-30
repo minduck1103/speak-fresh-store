@@ -2,52 +2,82 @@ import React, { useState } from "react";
 import { FaBars, FaTimes } from "react-icons/fa";
 
 const TABS = [
-  { key: "dashboard", label: "Tổng quan", icon: "🍏" },
-  { key: "customers", label: "Khách hàng", icon: "👤" },
-  { key: "products", label: "Sản phẩm", icon: "🍉" },
-  { key: "orders", label: "Đơn hàng", icon: "🧾" },
-  { key: "shipping", label: "Vận chuyển", icon: "🚚" },
-  { key: "reviews", label: "Đánh giá", icon: "⭐" },
-  { key: "reports", label: "Báo cáo", icon: "📊" },
-  { key: "settings", label: "Cấu hình", icon: "⚙️" },
+  { key: "dashboard", label: "Dashboard", icon: "🍏" },
+  { key: "customers", label: "Customers", icon: "👤" },
+  { key: "products", label: "Products", icon: "🍉" },
+  { key: "orders", label: "Orders", icon: "🧾" },
+  { key: "shipping", label: "Shipping", icon: "🚚" },
+  { key: "reviews", label: "Reviews", icon: "⭐" },
+  { key: "reports", label: "Reports", icon: "📊" },
+  { key: "settings", label: "Settings", icon: "⚙️" },
 ];
 
 const AdminSidebar = ({ tab, setTab }) => {
   const [open, setOpen] = useState(false);
+
   return (
     <>
       {/* Hamburger button for mobile */}
       <button
-        className="md:hidden fixed top-4 left-4 z-40 p-2 bg-green-700 text-white rounded-lg shadow-lg"
+        className="md:hidden fixed top-4 left-4 z-50 p-2 bg-green-700 text-white rounded-lg shadow-lg"
         onClick={() => setOpen(true)}
-        aria-label="Mở menu"
+        aria-label="Menu"
       >
         <FaBars size={22} />
       </button>
-      {/* Overlay */}
+
+      {/* Dark overlay for mobile */}
       {open && (
-        <div className="fixed inset-0 bg-black/30 z-30 md:hidden" onClick={() => setOpen(false)}></div>
+        <div 
+          className="fixed inset-0 bg-black/30 z-40 md:hidden" 
+          onClick={() => setOpen(false)}
+        />
       )}
+
       {/* Sidebar */}
       <aside
-        className={`fixed z-40 md:static top-0 left-0 md:h-auto bg-green-700 text-white flex flex-col py-8 rounded-r-3xl shadow-lg transition-all duration-200
-        ${open ? 'w-64' : 'w-0 md:w-64'} overflow-hidden md:overflow-visible`}
+        className={`
+          fixed md:relative z-40 h-full md:h-auto bg-green-700 text-white 
+          transition-all duration-200 ease-in-out 
+          ${open ? 'translate-x-0 w-64' : '-translate-x-full md:translate-x-0 md:w-64'} 
+          rounded-r-3xl shadow-lg overflow-hidden md:overflow-visible
+        `}
       >
-
-        <nav className="flex-1 flex flex-col gap-1">
-    {TABS.map(t => (
-      <button
-        key={t.key}
-        className={`flex items-center gap-3 px-6 py-3 text-lg rounded-l-full transition-colors mb-2 ${tab === t.key ? "bg-green-100 text-green-700 font-bold" : "hover:bg-green-600"}`}
-              onClick={() => { setTab(t.key); setOpen(false); }}
-      >
-        <span>{t.icon}</span> {t.label}
-      </button>
-    ))}
+        <div className="flex items-center justify-between p-6 border-b border-green-600">
+          <h2 className="text-xl font-bold">Admin Panel</h2>
+          <button 
+            className="md:hidden text-white" 
+            onClick={() => setOpen(false)}
+          >
+            <FaTimes size={22} />
+          </button>
+        </div>
+        
+        <nav className="flex flex-col gap-1 p-4">
+          {TABS.map(tabItem => (
+            <button
+              key={tabItem.key}
+              className={`
+                flex items-center gap-3 px-6 py-3 text-lg rounded-lg 
+                transition-all duration-200 
+                ${tab === tabItem.key 
+                  ? "bg-white text-green-700 font-bold shadow-md" 
+                  : "hover:bg-green-600/50"
+                }
+              `}
+              onClick={() => { 
+                setTab(tabItem.key); 
+                setOpen(false); 
+              }}
+            >
+              <span>{tabItem.icon}</span> 
+              {tabItem.label}
+            </button>
+          ))}
         </nav>
-  </aside>
+      </aside>
     </>
-);
+  );
 };
 
-export default AdminSidebar; 
+export default AdminSidebar;

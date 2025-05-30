@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Card, Form, InputGroup, Button, Pagination, Badge } from 'react-bootstrap';
+import { useTranslation } from 'react-i18next';
 import productService from '../services/productService';
 import categoryService from '../services/categoryService';
 import cartService from '../services/cartService';
+import productTranslationService from '../services/productTranslationService';
 import { toast } from 'react-toastify';
 import { Link } from 'react-router-dom';
 import bannerBg from '../assets/banner-bg.jpg';
 
 const Products = () => {
+    const { t, i18n } = useTranslation();
     const [products, setProducts] = useState([]);
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -19,6 +22,11 @@ const Products = () => {
     const [maxPrice, setMaxPrice] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const productsPerPage = 9;
+
+    // Update translation service when language changes
+    useEffect(() => {
+        productTranslationService.setLanguage(i18n.language);
+    }, [i18n.language]);
 
     useEffect(() => {
         fetchProducts();
@@ -35,7 +43,7 @@ const Products = () => {
             setCategories(categoriesResponse.data || []);
             setError(null);
         } catch (err) {
-            setError('Không thể tải sản phẩm');
+            setError(t('messages.error', { ns: 'pages' }));
         } finally {
             setLoading(false);
         }
@@ -44,10 +52,10 @@ const Products = () => {
     const handleAddToCart = (product) => {
         try {
             cartService.addToCart(product);
-            toast.success('Sản phẩm đã được thêm vào giỏ hàng');
+            toast.success(t('messages.add_to_cart_success', { ns: 'pages' }));
             window.dispatchEvent(new Event('cartUpdated'));
         } catch (err) {
-            toast.error('Không thể thêm sản phẩm vào giỏ hàng');
+            toast.error(t('messages.add_to_cart_error', { ns: 'pages' }));
         }
     };
 
@@ -60,7 +68,7 @@ const Products = () => {
 
     // Filter and sort products
     const filteredProducts = products
-        .filter(product => 
+        .filter(product =>
             product.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
             (selectedCategory === 'all' || product.category === selectedCategory)
         )
@@ -104,7 +112,7 @@ const Products = () => {
             <div className="max-w-7xl mx-auto px-4 py-8">
                 <div className="text-center">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500 mx-auto"></div>
-                    <p className="mt-4 text-gray-600">Đang tải sản phẩm...</p>
+                    <p className="mt-4 text-gray-600">{t('messages.loading', { ns: 'pages' })}</p>
                 </div>
             </div>
         );
@@ -119,7 +127,7 @@ const Products = () => {
                         onClick={fetchProducts}
                         className="mt-4 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600"
                     >
-                        Thử lại
+                        {t('buttons.retry', { ns: 'common' })}
                     </button>
                 </div>
             </div>
@@ -131,17 +139,17 @@ const Products = () => {
             {/* Banner */}
             <div className="max-w-7xl mx-auto px-4">
                 <div className="relative mb-10 rounded-3xl overflow-hidden shadow-lg">
-                    <img 
+                    <img
                         src={bannerBg}
-                        alt="Products Banner" 
+                        alt="Products Banner"
                         className="w-full h-48 md:h-72 object-cover"
                     />
                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-black/30 to-black/60 flex flex-col items-end justify-end text-white p-6 md:p-10">
                         <h1 className="text-3xl md:text-5xl font-bold mb-2 drop-shadow-lg text-right max-w-lg font-serif" style={{ fontFamily: "'Playfair Display', serif" }}>
-                            Sản phẩm tươi ngon
+                            {t('products.banner_title', { ns: 'pages' })}
                         </h1>
                         <p className="text-base md:text-xl font-medium drop-shadow text-right max-w-lg" style={{ fontFamily: "'Montserrat', sans-serif" }}>
-                            Chọn lọc những sản phẩm chất lượng nhất
+                            {t('products.banner_subtitle', { ns: 'pages' })}
                         </p>
                     </div>
                 </div>
@@ -152,33 +160,33 @@ const Products = () => {
                     {/* Sidebar */}
                     <div className="md:w-1/4 w-full">
                         <div className="bg-white rounded-2xl shadow p-6 mb-6 border border-green-100">
-                            <h3 className="text-xl font-bold text-green-700 mb-4">Bộ lọc</h3>
+                            <h3 className="text-xl font-bold text-green-700 mb-4">{t('products.filter', { ns: 'pages' })}</h3>
                             <div className="mb-4">
-                                <label className="block text-green-700 font-semibold mb-1">Danh mục</label>
+                                <label className="block text-green-700 font-semibold mb-1">{t('products.category', { ns: 'pages' })}</label>
                                 <select
                                     value={selectedCategory}
                                     onChange={e => setSelectedCategory(e.target.value)}
                                     className="w-full border border-green-300 rounded-lg px-4 py-2 focus:outline-none focus:border-green-500"
                                 >
-                                    <option value="all">Tất cả danh mục</option>
+                                    <option value="all">{t('products.all_categories', { ns: 'pages' })}</option>
                                     {categories.map(category => (
                                         <option key={category._id} value={category._id}>{category.name}</option>
                                     ))}
                                 </select>
                             </div>
                             <div className="mb-4">
-                                <label className="block text-green-700 font-semibold mb-1">Khoảng giá</label>
+                                <label className="block text-green-700 font-semibold mb-1">{t('products.price_range', { ns: 'pages' })}</label>
                                 <div className="flex gap-2">
                                     <input
                                         type="number"
-                                        placeholder="Từ"
+                                        placeholder={t('products.price_from', { ns: 'pages' })}
                                         value={minPrice}
                                         onChange={e => setMinPrice(e.target.value)}
                                         className="w-1/2 border border-green-300 rounded-lg px-3 py-2 focus:outline-none focus:border-green-500"
                                     />
                                     <input
                                         type="number"
-                                        placeholder="Đến"
+                                        placeholder={t('products.price_to', { ns: 'pages' })}
                                         value={maxPrice}
                                         onChange={e => setMaxPrice(e.target.value)}
                                         className="w-1/2 border border-green-300 rounded-lg px-3 py-2 focus:outline-none focus:border-green-500"
@@ -189,7 +197,7 @@ const Products = () => {
                                 className="w-full mt-2 py-2 rounded-lg bg-gray-200 text-green-700 font-bold hover:bg-green-100 transition-colors"
                                 onClick={handleClearFilters}
                             >
-                                Xóa bộ lọc
+                                {t('products.clear_filters', { ns: 'pages' })}
                             </button>
                         </div>
                     </div>
@@ -199,12 +207,12 @@ const Products = () => {
                         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
                             <div className="flex items-center gap-3">
                                 <span className="inline-block w-2 h-8 bg-green-500 rounded-full"></span>
-                                <h2 className="text-2xl md:text-3xl font-extrabold text-green-600 tracking-tight drop-shadow-sm" style={{letterSpacing: '0.01em'}}>Danh sách sản phẩm</h2>
+                                <h2 className="text-2xl md:text-3xl font-extrabold text-green-600 tracking-tight drop-shadow-sm" style={{letterSpacing: '0.01em'}}>{t('products.title', { ns: 'pages' })}</h2>
                             </div>
                             <div className="flex gap-2 w-full md:w-auto">
                                 <input
                                     type="text"
-                                    placeholder="Tìm kiếm sản phẩm..."
+                                    placeholder={t('products.search_placeholder', { ns: 'pages' })}
                                     value={searchQuery}
                                     onChange={e => setSearchQuery(e.target.value)}
                                     className="flex-1 border border-green-300 rounded-lg px-4 py-2 focus:outline-none focus:border-green-500"
@@ -214,10 +222,10 @@ const Products = () => {
                                     onChange={e => setSortBy(e.target.value)}
                                     className="border border-green-300 rounded-lg px-4 py-2 focus:outline-none focus:border-green-500"
                                 >
-                                    <option value="name-asc">Tên A-Z</option>
-                                    <option value="name-desc">Tên Z-A</option>
-                                    <option value="price-asc">Giá tăng dần</option>
-                                    <option value="price-desc">Giá giảm dần</option>
+                                    <option value="name-asc">{t('products.sort_options.name_a_z', { ns: 'pages' })}</option>
+                                    <option value="name-desc">{t('products.sort_options.name_z_a', { ns: 'pages' })}</option>
+                                    <option value="price-asc">{t('products.sort_options.price_low_high', { ns: 'pages' })}</option>
+                                    <option value="price-desc">{t('products.sort_options.price_high_low', { ns: 'pages' })}</option>
                                 </select>
                             </div>
                         </div>
@@ -225,7 +233,7 @@ const Products = () => {
                         {/* Products Grid */}
                         {currentProducts.length === 0 ? (
                             <div className="text-center py-10">
-                                <h4 className="text-gray-400">Không tìm thấy sản phẩm nào</h4>
+                                <h4 className="text-gray-400">{t('products.no_products', { ns: 'pages' })}</h4>
                             </div>
                         ) : (
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -235,13 +243,13 @@ const Products = () => {
                                             <div className="relative">
                                                 <img
                                                     src={product.image || (product.images && (product.images[0]?.url || product.images[0])) || '/no-image.png'}
-                                                    alt={product.name}
+                                                    alt={productTranslationService.translateProductName(product.name)}
                                                     className="w-full h-40 object-contain group-hover:scale-105 transition-transform duration-200 no-underline"
                                                 />
                                             </div>
                                             <div className="p-4 flex flex-col flex-1">
                                                 <div className="flex items-center justify-between mb-2">
-                                                    <h3 className="text-base font-bold text-green-700 line-clamp-2 no-underline">{product.name}</h3>
+                                                    <h3 className="text-base font-bold text-green-700 line-clamp-2 no-underline">{productTranslationService.translateProductName(product.name)}</h3>
                                                 </div>
                                                 <div className="flex items-center gap-2 mb-2">
                                                     <div className="flex text-yellow-400">
@@ -249,11 +257,11 @@ const Products = () => {
                                                             <i key={i} className={`fas fa-star ${i < (product.ratings || 0) ? '' : 'text-gray-300'}`}></i>
                                                         ))}
                                                     </div>
-                                                    <span className="text-xs text-gray-500">({product.reviews?.length || 0} đánh giá)</span>
+                                                    <span className="text-xs text-gray-500">({product.reviews?.length || 0} {t('products.reviews', { ns: 'pages' })})</span>
                                                 </div>
                                                 <div className="flex items-center justify-between mb-2">
                                                     <span className="text-lg font-bold text-green-600">{formatPrice(product.price)}</span>
-                                                    <span className={`px-3 py-1 rounded-full text-xs font-bold ${product.stock > 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600'}`}>{product.stock > 0 ? 'Còn hàng' : 'Hết hàng'}</span>
+                                                    <span className={`px-3 py-1 rounded-full text-xs font-bold ${product.stock > 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600'}`}>{product.stock > 0 ? t('products.in_stock', { ns: 'pages' }) : t('products.out_of_stock', { ns: 'pages' })}</span>
                                                     {product.discount > 0 && (
                                                         <span className="text-sm text-gray-400 line-through ml-2">{formatPrice(product.price / (1 - product.discount / 100))}</span>
                                                     )}
@@ -263,7 +271,7 @@ const Products = () => {
                                                     disabled={product.stock <= 0}
                                                     onClick={e => { e.preventDefault(); handleAddToCart(product); }}
                                                 >
-                                                    {product.stock > 0 ? 'Thêm vào giỏ hàng' : 'Hết hàng'}
+                                                    {product.stock > 0 ? t('buttons.add_to_cart', { ns: 'common' }) : t('products.out_of_stock', { ns: 'pages' })}
                                                 </button>
                                             </div>
                                         </div>
@@ -299,4 +307,4 @@ const Products = () => {
     );
 };
 
-export default Products; 
+export default Products;

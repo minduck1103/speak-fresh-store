@@ -1,14 +1,5 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import api from "../../services/api";
-
-const ROLES = [
-  { value: "all", label: "Tất cả" },
-  { value: "admin", label: "Admin" },
-  { value: "user", label: "User" },
-  { value: "seller", label: "Seller" },
-  { value: "delivery", label: "Delivery" },
-  { value: "warehouse", label: "Warehouse" }
-];
 
 const ROLE_COLORS = {
   admin: "bg-blue-100 text-blue-700",
@@ -19,6 +10,15 @@ const ROLE_COLORS = {
 };
 
 const AdminCustomers = () => {
+  const ROLES = [
+    { value: "all", label: "All" },
+    { value: "admin", label: "Admin" },
+    { value: "user", label: "User" },
+    { value: "seller", label: "Seller" },
+    { value: "delivery", label: "Delivery" },
+    { value: "warehouse", label: "Warehouse" }
+  ];
+
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -27,9 +27,9 @@ const AdminCustomers = () => {
   const [showViewModal, setShowViewModal] = useState(false);
   const [showInfoModal, setShowInfoModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
-  const [editForm, setEditForm] = useState({ 
-    name: "", 
-    email: "", 
+  const [editForm, setEditForm] = useState({
+    name: "",
+    email: "",
     role: "user",
     password: ""
   });
@@ -61,7 +61,7 @@ const AdminCustomers = () => {
       }
       setCustomers(Array.isArray(users) ? users : []);
     } catch (err) {
-      setError("Không thể tải danh sách khách hàng. Vui lòng thử lại sau.");
+      setError("Unable to load customer list. Please try again later.");
     } finally {
       setLoading(false);
     }
@@ -90,13 +90,13 @@ const AdminCustomers = () => {
       } else if (user.role === "admin") {
         // Giả lập lịch sử truy cập
         setViewData([
-          { time: "2024-04-27 10:00", action: "Đăng nhập hệ thống" },
-          { time: "2024-04-27 10:05", action: "Xem dashboard quản trị" },
-          { time: "2024-04-27 10:10", action: "Quản lý người dùng" }
+          { time: "2024-04-27 10:00", action: "Login to the system" },
+          { time: "2024-04-27 10:05", action: "View admin dashboard" },
+          { time: "2024-04-27 10:10", action: "User Management" }
         ]);
       }
     } catch (err) {
-      setViewError("Không thể tải dữ liệu lịch sử.");
+      setViewError("Unable to load historical data.");
     } finally {
       setViewLoading(false);
     }
@@ -134,7 +134,7 @@ const AdminCustomers = () => {
       await fetchCustomers();
       closeEditModal();
     } catch (err) {
-      alert("Lưu thay đổi thất bại!");
+      alert("Save changes failed!");
     } finally {
       setSaving(false);
     }
@@ -157,7 +157,7 @@ const AdminCustomers = () => {
       await fetchCustomers();
       closeDeleteModal();
     } catch (err) {
-      alert("Xóa người dùng thất bại!");
+      alert("Delete user failed!");
     } finally {
       setDeleting(false);
     }
@@ -179,22 +179,22 @@ const AdminCustomers = () => {
     ? customers
     : customers.filter(c => c.role === activeRoleTab);
 
-  if (loading) return <div className="text-center py-10">Đang tải khách hàng...</div>;
+  if (loading) return <div className="text-center py-10">Loading...</div>;
   if (error) return (
     <div className="text-center py-10">
       <div className="text-red-600 font-bold mb-2">⚠️ {error}</div>
-      <button 
-        onClick={() => window.location.reload()} 
+      <button
+        onClick={() => window.location.reload()}
         className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
       >
-        Thử lại
+        Retry
       </button>
     </div>
   );
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-green-700 mb-6 flex items-center gap-2">👤 Quản lý khách hàng</h1>
+      <h1 className="text-2xl font-bold text-green-700 mb-6 flex items-center gap-2">👤 Customers</h1>
       {/* Tab section switch */}
       <div className="flex gap-2 mb-4">
         {ROLES.map(r => (
@@ -211,11 +211,11 @@ const AdminCustomers = () => {
         <table className="w-full text-left border border-green-100 rounded-xl">
           <thead>
             <tr className="bg-green-100 text-green-800">
-              <th className="py-2 px-3">Tên</th>
+              <th className="py-2 px-3">Name</th>
               <th className="py-2 px-3">Email</th>
-              <th className="py-2 px-3">Vai trò</th>
-              <th className="py-2 px-3">Ngày tạo</th>
-              <th className="py-2 px-3 text-center">Hành động</th>
+              <th className="py-2 px-3">Role</th>
+              <th className="py-2 px-3">Created Date</th>
+              <th className="py-2 px-3 text-center">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -228,10 +228,10 @@ const AdminCustomers = () => {
                 </td>
                 <td className="py-2 px-3">{c.createdAt ? new Date(c.createdAt).toLocaleDateString() : ''}</td>
                 <td className="py-2 px-3 text-center flex gap-2 justify-center">
-                  <button onClick={() => openViewModal(c)} className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded shadow text-xs">Xem</button>
-                  <button onClick={() => openInfoModal(c)} className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded shadow text-xs">Thông tin</button>
-                  <button onClick={() => openEditModal(c)} className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded shadow text-xs">Chỉnh sửa</button>
-                  <button onClick={() => openDeleteModal(c)} className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded shadow text-xs">Xóa</button>
+                  <button onClick={() => openViewModal(c)} className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded shadow text-xs">View</button>
+                  <button onClick={() => openInfoModal(c)} className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded shadow text-xs">Info</button>
+                  <button onClick={() => openEditModal(c)} className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded shadow text-xs">Edit</button>
+                  <button onClick={() => openDeleteModal(c)} className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded shadow text-xs">Delete</button>
                 </td>
               </tr>
             ))}
@@ -419,4 +419,4 @@ const AdminCustomers = () => {
   );
 };
 
-export default AdminCustomers; 
+export default AdminCustomers;

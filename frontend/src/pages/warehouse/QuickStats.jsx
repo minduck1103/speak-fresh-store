@@ -1,10 +1,10 @@
 import { FaBoxes, FaChartBar, FaFileAlt, FaBell } from 'react-icons/fa';
 
 const stats = [
-  { label: 'Tổng số lượng tồn kho', value: 1200, icon: <FaBoxes className="text-green-600" /> },
-  { label: 'Giá trị tồn kho', value: '₫1,200,000', icon: <FaChartBar className="text-green-600" /> },
-  { label: 'Đơn hàng chờ xử lý', value: 8, icon: <FaFileAlt className="text-green-600" /> },
-  { label: 'Cảnh báo hết hàng', value: 2, icon: <FaBell className="text-red-500" /> },
+  { label: 'Total stock', value: 1200, icon: <FaBoxes className="text-green-600" /> },
+  { label: 'Total value', value: '₫1,200,000', icon: <FaChartBar className="text-green-600" /> },
+  { label: 'Orders to process', value: 8, icon: <FaFileAlt className="text-green-600" /> },
+  { label: 'Out of stock', value: 2, icon: <FaBell className="text-red-500" /> },
 ];
 
 const QuickStats = () => (

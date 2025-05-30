@@ -1,0 +1,75 @@
+{
+  "brand": {
+    "name": "PEAKFRESH",
+    "tagline": "Trái cây tươi ngon"
+  },
+  "navigation": {
+    "home": "Trang chủ",
+    "products": "Sản phẩm",
+    "about": "Giới thiệu",
+    "contact": "Liên hệ",
+    "cart": "Giỏ hàng",
+    "login": "Đăng nhập",
+    "logout": "Đăng xuất",
+    "account": "Tài khoản",
+    "orders": "Đơn hàng"
+  },
+  "user": {
+    "account_info": "Thông tin tài khoản",
+    "order_management": "Quản lý đơn hàng",
+    "logout": "Đăng xuất"
+  },
+  "roles": {
+    "admin": "Quản trị viên",
+    "seller": "Người bán",
+    "delivery": "Người giao hàng",
+    "warehouse": "Nhân viên kho",
+    "user": "Khách hàng"
+  },
+  "buttons": {
+    "add_to_cart": "Thêm vào giỏ",
+    "buy_now": "Mua ngay",
+    "view_details": "Xem chi tiết",
+    "submit": "Gửi",
+    "cancel": "Hủy",
+    "save": "Lưu",
+    "edit": "Chỉnh sửa",
+    "delete": "Xóa",
+    "retry": "Thử lại",
+    "order_now": "Đặt Hàng Ngay",
+    "close": "Đóng",
+    "no": "Không"
+  },
+  "messages": {
+    "loading": "Đang tải...",
+    "no_products": "Không tìm thấy sản phẩm nào",
+    "error": "Đã xảy ra lỗi",
+    "success": "Thành công",
+    "added_to_cart": "Sản phẩm đã được thêm vào giỏ hàng",
+    "login_required": "Vui lòng đăng nhập",
+    "login_success": "Đăng nhập thành công",
+    "login_failed": "Đăng nhập thất bại"
+  },
+  "language": {
+    "vietnamese": "Tiếng Việt",
+    "english": "English",
+    "switch_language": "Chuyển ngôn ngữ"
+  },
+  "footer": {
+    "description": "Chúng tôi cam kết mang đến những sản phẩm trái cây tươi ngon nhất, được tuyển chọn kỹ lưỡng từ các vườn trái cây uy tín.",
+    "quick_links": "Liên kết nhanh",
+    "customer_service": "Dịch vụ khách hàng",
+    "contact_info": "Thông tin liên hệ",
+    "follow_us": "Theo dõi chúng tôi",
+    "privacy_policy": "Chính sách bảo mật",
+    "terms_service": "Điều khoản dịch vụ",
+    "support": "Hỗ trợ",
+    "faq": "Câu hỏi thường gặp",
+    "shipping_info": "Thông tin vận chuyển",
+    "return_policy": "Chính sách đổi trả",
+    "phone": "Điện thoại",
+    "email": "Email",
+    "address": "Địa chỉ",
+    "copyright": "Bản quyền thuộc về PEAKFRESH. Tất cả quyền được bảo lưu."
+  }
+}

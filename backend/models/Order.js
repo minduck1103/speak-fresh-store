@@ -39,8 +39,16 @@ const OrderSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ['Chờ xác nhận', 'Chờ lấy hàng', 'Đang giao', 'Đã giao', 'Đã hủy', 'Không thành công', 'Đã từ chối'],
-        default: 'Chờ xác nhận'
+        enum: [
+            'pending',         // pending
+            'waiting_pickup',  // waiting_pickup
+            'delivering',      // delivering
+            'delivered',       // delivered
+            'cancelled',       // cancelled
+            'failed',          // failed
+            'rejected'         // rejected
+        ],
+        default: 'pending'
     },
     codConfirmed: {
         type: Boolean,

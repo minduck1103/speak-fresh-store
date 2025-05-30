@@ -1,0 +1,75 @@
+{
+  "brand": {
+    "name": "PEAKFRESH",
+    "tagline": "Fresh Fruits"
+  },
+  "navigation": {
+    "home": "Home",
+    "products": "Products",
+    "about": "About",
+    "contact": "Contact",
+    "cart": "Cart",
+    "login": "Login",
+    "logout": "Logout",
+    "account": "Account",
+    "orders": "Orders"
+  },
+  "user": {
+    "account_info": "Account Information",
+    "order_management": "Order Management",
+    "logout": "Logout"
+  },
+  "roles": {
+    "admin": "Administrator",
+    "seller": "Seller",
+    "delivery": "Delivery Staff",
+    "warehouse": "Warehouse Staff",
+    "user": "Customer"
+  },
+  "buttons": {
+    "add_to_cart": "Add to Cart",
+    "buy_now": "Buy Now",
+    "view_details": "View Details",
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "save": "Save",
+    "edit": "Edit",
+    "delete": "Delete",
+    "retry": "Retry",
+    "order_now": "Order Now",
+    "close": "Close",
+    "no": "No"
+  },
+  "messages": {
+    "loading": "Loading...",
+    "no_products": "No products found",
+    "error": "An error occurred",
+    "success": "Success",
+    "added_to_cart": "Product added to cart",
+    "login_required": "Please login",
+    "login_success": "Login successful",
+    "login_failed": "Login failed"
+  },
+  "language": {
+    "vietnamese": "Tiếng Việt",
+    "english": "English",
+    "switch_language": "Switch Language"
+  },
+  "footer": {
+    "description": "We are committed to bringing you the freshest and most delicious fruits, carefully selected from reputable orchards.",
+    "quick_links": "Quick Links",
+    "customer_service": "Customer Service",
+    "contact_info": "Contact Information",
+    "follow_us": "Follow Us",
+    "privacy_policy": "Privacy Policy",
+    "terms_service": "Terms of Service",
+    "support": "Support",
+    "faq": "FAQ",
+    "shipping_info": "Shipping Information",
+    "return_policy": "Return Policy",
+    "phone": "Phone",
+    "email": "Email",
+    "address": "Address",
+    "copyright": "Copyright © PEAKFRESH. All rights reserved."
+  }
+}

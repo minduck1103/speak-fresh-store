@@ -38,7 +38,7 @@ const AdminShipping = () => {
       const res = await api.get("/api/v1/shipping");
       setShippingFees(res.data.data || []);
     } catch (err) {
-      setError("Không thể tải danh sách phí vận chuyển");
+      setError("Unable to load shipping fee list");
       console.error(err);
     } finally {
       setLoading(false);
@@ -69,9 +69,9 @@ const AdminShipping = () => {
       await api.put(`/api/v1/shipping/${selected._id}`, formData);
       setEditing(false);
       fetchShippingFees();
-      setMessage("Cập nhật phí vận chuyển thành công!");
+      setMessage("Shipping fee updated successfully!");
     } catch (err) {
-      setMessage(err.response?.data?.error || "Không thể cập nhật phí vận chuyển. Vui lòng thử lại!");
+      setMessage(err.response?.data?.error || "Unable to update shipping fee. Please try again!");
       console.error(err);
     }
   };
@@ -90,9 +90,9 @@ const AdminShipping = () => {
       setShowAddModal(false);
       setAddForm({ districtName: '', shippingFee: 0 });
       fetchShippingFees();
-      setMessage('Thêm phí vận chuyển thành công!');
+      setMessage('Shipping fee added successfully!');
     } catch (err) {
-      setMessage(err.response?.data?.error || 'Không thể thêm phí vận chuyển. Vui lòng thử lại!');
+      setMessage(err.response?.data?.error || 'Unable to add shipping fee. Please try again!');
     } finally {
       setAddLoading(false);
     }
@@ -105,7 +105,7 @@ const AdminShipping = () => {
       const res = await api.get("/reviews");
       setReviews(res.data.data || []);
     } catch (err) {
-      setReviewError("Không thể tải danh sách đánh giá");
+      setReviewError("Unable to load review list");
     } finally {
       setReviewLoading(false);
     }
@@ -177,28 +177,28 @@ const AdminShipping = () => {
     try {
       if (editingReview) {
         await api.put(`/reviews/${editingReview._id}`, reviewForm);
-        setReviewMessage("Cập nhật đánh giá thành công!");
+        setReviewMessage("Shipping fee updated successfully!");
       } else {
         await api.post(`/products/${reviewForm.product}/reviews`, reviewForm);
-        setReviewMessage("Thêm đánh giá thành công!");
+        setReviewMessage("Shipping fee added successfully!");
       }
       fetchReviews();
       setShowReviewModal(false);
     } catch (err) {
-      setReviewMessage(err.response?.data?.error || "Không thể lưu đánh giá. Vui lòng thử lại!");
+      setReviewMessage(err.response?.data?.error || "Unable to save review. Please try again!");
     } finally {
       setReviewSaving(false);
     }
   };
 
   const deleteReview = async (r) => {
-    if (!window.confirm("Bạn có chắc chắn muốn xóa đánh giá này?")) return;
+    if (!window.confirm("Are you sure you want to delete this review?")) return;
     try {
       await api.delete(`/reviews/${r._id}`);
       fetchReviews();
-      setReviewMessage("Xóa đánh giá thành công!");
+      setReviewMessage("Review deleted successfully!");
     } catch (err) {
-      setReviewMessage("Không thể xóa đánh giá. Vui lòng thử lại!");
+      setReviewMessage("Unable to delete review. Please try again!");
     }
   };
 
@@ -206,7 +206,7 @@ const AdminShipping = () => {
     <div>
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-green-700 flex items-center gap-2">
-          🚚 Quản lý phí vận chuyển
+          🚚 Manage Shipping Fee
         </h1>
         <div className="flex gap-4 items-center">
           <input
@@ -220,13 +220,13 @@ const AdminShipping = () => {
             onClick={() => setShowAddModal(true)}
             className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
           >
-            + Thêm phí vận chuyển
+            + Add Shipping Fee
           </button>
         </div>
       </div>
 
       {loading ? (
-        <div className="text-center py-10">Đang tải dữ liệu...</div>
+        <div className="text-center py-10">Loading...</div>
       ) : error ? (
         <div className="text-center text-red-500 py-10">{error}</div>
       ) : (
@@ -235,9 +235,9 @@ const AdminShipping = () => {
             <table className="w-full text-left">
               <thead>
                 <tr className="bg-green-100">
-                  <th className="py-3 px-4">Tên quận</th>
-                  <th className="py-3 px-4">Phí vận chuyển</th>
-                  <th className="py-3 px-4">Hành động</th>
+                  <th className="py-3 px-4">District Name</th>
+                  <th className="py-3 px-4">Shipping Fee</th>
+                  <th className="py-3 px-4">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -256,7 +256,7 @@ const AdminShipping = () => {
                         onClick={() => handleEdit(shipping)}
                         className="bg-green-100 text-green-700 px-3 py-1 rounded hover:bg-green-200 transition-colors"
                       >
-                        Sửa
+                        Edit
                       </button>
                     </td>
                   </tr>
@@ -272,11 +272,11 @@ const AdminShipping = () => {
         <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
           <div className="bg-white rounded-xl shadow-lg p-6 w-full max-w-md">
             <h2 className="text-xl font-bold text-green-700 mb-4">
-              Chỉnh sửa phí vận chuyển
+              Edit Shipping Fee
             </h2>
             <form onSubmit={handleSubmit}>
               <div className="mb-4">
-                <label className="block text-gray-700 mb-2">Tên quận</label>
+                <label className="block text-gray-700 mb-2">District Name</label>
                 <input
                   type="text"
                   name="districtName"
@@ -287,7 +287,7 @@ const AdminShipping = () => {
               </div>
               <div className="mb-4">
                 <label className="block text-gray-700 mb-2">
-                  Phí vận chuyển (VNĐ)
+                  Shipping Fee (VND)
                 </label>
                 <input
                   type="number"
@@ -305,13 +305,13 @@ const AdminShipping = () => {
                   onClick={() => setEditing(false)}
                   className="px-4 py-2 border border-gray-300 rounded hover:bg-gray-100 transition-colors"
                 >
-                  Hủy
+                  Cancel
                 </button>
                 <button
                   type="submit"
                   className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-colors"
                 >
-                  Lưu
+                  Save
                 </button>
               </div>
             </form>
@@ -323,10 +323,10 @@ const AdminShipping = () => {
       {showAddModal && (
         <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
           <div className="bg-white rounded-xl shadow-lg p-6 w-full max-w-md">
-            <h2 className="text-xl font-bold text-blue-700 mb-4">Thêm phí vận chuyển</h2>
+            <h2 className="text-xl font-bold text-blue-700 mb-4">Add Shipping Fee</h2>
             <form onSubmit={handleAddSubmit}>
               <div className="mb-4">
-                <label className="block text-gray-700 mb-2">Tên quận</label>
+                <label className="block text-gray-700 mb-2">District Name</label>
                 <input
                   type="text"
                   name="districtName"
@@ -337,7 +337,7 @@ const AdminShipping = () => {
                 />
               </div>
               <div className="mb-4">
-                <label className="block text-gray-700 mb-2">Phí vận chuyển (VNĐ)</label>
+                <label className="block text-gray-700 mb-2">Shipping Fee (VND)</label>
                 <input
                   type="number"
                   name="shippingFee"
@@ -354,14 +354,14 @@ const AdminShipping = () => {
                   onClick={() => setShowAddModal(false)}
                   className="px-4 py-2 border border-gray-300 rounded hover:bg-gray-100 transition-colors"
                 >
-                  Hủy
+                  Cancel
                 </button>
                 <button
                   type="submit"
                   className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
                   disabled={addLoading}
                 >
-                  {addLoading ? 'Đang thêm...' : 'Thêm'}
+                  {addLoading ? 'Adding...' : 'Add'}
                 </button>
               </div>
             </form>
@@ -370,7 +370,7 @@ const AdminShipping = () => {
       )}
 
       {message && (
-        <div className={`my-4 text-center font-bold ${message.includes('thành công') ? 'text-green-600' : 'text-red-500'}`}>{message}</div>
+        <div className={`my-4 text-center font-bold ${message.includes('successfully') ? 'text-green-600' : 'text-red-500'}`}>{message}</div>
       )}
 
     </div>

@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import authService from '../services/authService';
 
 const Register = () => {
+    const { t } = useTranslation();
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -40,7 +42,7 @@ const Register = () => {
             });
             navigate('/login');
         } catch (err) {
-            setError(err.message || 'Đăng ký thất bại');
+            setError(err.message || t('messages.register_failed', { ns: 'pages' }));
         } finally {
             setLoading(false);
         }
@@ -56,7 +58,7 @@ const Register = () => {
                             <span className="text-orange-400">FRESH</span>
                             <span className="text-green-500 ml-1">🍃</span>
                         </h2>
-                        <p className="mt-2 text-gray-600">Tạo tài khoản mới</p>
+                        <p className="mt-2 text-gray-600">{t('register.subtitle', { ns: 'pages' })}</p>
                     </div>
 
                     {error && (
@@ -68,7 +70,7 @@ const Register = () => {
                     <form className="space-y-6" onSubmit={handleSubmit}>
                         <div>
                             <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-                                Họ và tên
+                                {t('register.full_name', { ns: 'pages' })}
                             </label>
                             <div className="mt-1">
                                 <input
@@ -79,14 +81,14 @@ const Register = () => {
                                     value={formData.name}
                                     onChange={handleChange}
                                     className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-green-500 focus:border-green-500"
-                                    placeholder="Nguyễn Văn A"
+                                    placeholder={t('register.full_name_placeholder', { ns: 'pages' })}
                                 />
                             </div>
                         </div>
 
                         <div>
                             <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                                Email
+                                {t('register.email', { ns: 'pages' })}
                             </label>
                             <div className="mt-1">
                                 <input
@@ -97,14 +99,14 @@ const Register = () => {
                                     value={formData.email}
                                     onChange={handleChange}
                                     className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-green-500 focus:border-green-500"
-                                    placeholder="you@example.com"
+                                    placeholder={t('login.email_placeholder', { ns: 'pages' })}
                                 />
                             </div>
                         </div>
 
                         <div>
                             <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                                Mật khẩu
+                                {t('register.password', { ns: 'pages' })}
                             </label>
                             <div className="mt-1">
                                 <input
@@ -116,14 +118,14 @@ const Register = () => {
                                     value={formData.password}
                                     onChange={handleChange}
                                     className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-green-500 focus:border-green-500"
-                                    placeholder="••••••••"
+                                    placeholder={t('login.password_placeholder', { ns: 'pages' })}
                                 />
                             </div>
                         </div>
 
                         <div>
                             <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
-                                Xác nhận mật khẩu
+                                {t('register.confirm_password', { ns: 'pages' })}
                             </label>
                             <div className="mt-1">
                                 <input
@@ -165,16 +167,16 @@ const Register = () => {
                                 disabled={loading}
                                 className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
                             >
-                                {loading ? 'Đang đăng ký...' : 'Đăng ký'}
+                                {loading ? t('messages.registering', { ns: 'pages' }) : t('register.register_button', { ns: 'pages' })}
                             </button>
                         </div>
                     </form>
 
                     <div className="mt-6 text-center">
                         <p className="text-sm text-gray-600">
-                            Đã có tài khoản?{' '}
+                            {t('register.have_account', { ns: 'pages' })}{' '}
                             <Link to="/login" className="font-medium text-green-600 hover:text-green-500">
-                                Đăng nhập
+                                {t('register.login_here', { ns: 'pages' })}
                             </Link>
                         </p>
                     </div>
@@ -184,4 +186,4 @@ const Register = () => {
     );
 };
 
-export default Register; 
+export default Register;

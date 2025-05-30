@@ -142,9 +142,9 @@ const AdminReviews = () => {
       setShowDeleteModal(false);
       setShowDeleteSuccess(true);
       setTimeout(() => setShowDeleteSuccess(false), 2000);
-      setReviewMessage("Xóa đánh giá thành công!");
+      setReviewMessage("Delete review successfully!");
     } catch (err) {
-      setReviewMessage("Không thể xóa đánh giá. Vui lòng thử lại!");
+      setReviewMessage("Cannot delete review. Please try again!");
       setShowDeleteModal(false);
     }
   };
@@ -152,11 +152,11 @@ const AdminReviews = () => {
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-green-700 flex items-center gap-2">⭐ Quản lý đánh giá sản phẩm</h1>
+        <h1 className="text-2xl font-bold text-green-700 flex items-center gap-2">⭐ Manage Product Reviews</h1>
         <div className="flex gap-4 items-center">
           <input
             type="text"
-            placeholder="Tìm kiếm..."
+            placeholder="Search..."
             value={searchReview}
             onChange={e => setSearchReview(e.target.value)}
             className="border border-green-300 rounded-lg px-4 py-2 focus:outline-none focus:border-green-500"
@@ -165,12 +165,12 @@ const AdminReviews = () => {
             onClick={openAddReview}
             className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
           >
-            + Thêm đánh giá
+            + Add Review
           </button>
         </div>
       </div>
       {reviewLoading ? (
-        <div className="text-center py-10">Đang tải đánh giá...</div>
+        <div className="text-center py-10">Loading...</div>
       ) : reviewError ? (
         <div className="text-center text-red-500 py-10">{reviewError}</div>
       ) : (
@@ -179,12 +179,12 @@ const AdminReviews = () => {
             <table className="w-full text-left">
               <thead>
                 <tr className="bg-green-100">
-                  <th className="py-3 px-4">Người dùng</th>
-                  <th className="py-3 px-4">Sản phẩm</th>
-                  <th className="py-3 px-4">Tên hiển thị</th>
-                  <th className="py-3 px-4">Số sao</th>
-                  <th className="py-3 px-4">Ngày tạo</th>
-                  <th className="py-3 px-4">Hành động</th>
+                  <th className="py-3 px-4">User</th>
+                  <th className="py-3 px-4">Product</th>
+                  <th className="py-3 px-4">Display Name</th>
+                  <th className="py-3 px-4">Rating</th>
+                  <th className="py-3 px-4">Created At</th>
+                  <th className="py-3 px-4">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -205,8 +205,8 @@ const AdminReviews = () => {
                     <td className="py-3 px-4">{r.rating} ⭐</td>
                     <td className="py-3 px-4">{r.createdAt ? new Date(r.createdAt).toLocaleDateString() : ''}</td>
                     <td className="py-3 px-4 flex gap-2">
-                      <button onClick={() => openViewReview(r)} className="bg-green-100 text-green-700 px-3 py-1 rounded hover:bg-green-200 transition-colors">Xem</button>
-                      <button onClick={() => openDeleteModal(r)} className="bg-red-100 text-red-700 px-3 py-1 rounded hover:bg-red-200 transition-colors">Xóa</button>
+                      <button onClick={() => openViewReview(r)} className="bg-green-100 text-green-700 px-3 py-1 rounded hover:bg-green-200 transition-colors">View</button>
+                      <button onClick={() => openDeleteModal(r)} className="bg-red-100 text-red-700 px-3 py-1 rounded hover:bg-red-200 transition-colors">Delete</button>
                     </td>
                   </tr>
                 ))}
@@ -216,45 +216,45 @@ const AdminReviews = () => {
         </div>
       )}
       {reviewMessage && (
-        <div className={`my-4 text-center font-bold ${reviewMessage.includes('thành công') ? 'text-green-600' : 'text-red-500'}`}>{reviewMessage}</div>
+        <div className={`my-4 text-center font-bold ${reviewMessage.includes('success') ? 'text-green-600' : 'text-red-500'}`}>{reviewMessage}</div>
       )}
       {/* Modal thêm/sửa review */}
       {showReviewModal && (
         <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
           <div className="bg-white rounded-xl shadow-lg p-6 w-full max-w-md">
-            <h2 className="text-xl font-bold text-blue-700 mb-4">{editingReview ? 'Sửa đánh giá' : 'Thêm đánh giá'}</h2>
+            <h2 className="text-xl font-bold text-blue-700 mb-4">{editingReview ? 'Edit Review' : 'Add Review'}</h2>
             <form onSubmit={saveReview}>
               <div className="mb-4">
-                <label className="block text-gray-700 mb-2">Người dùng</label>
+                <label className="block text-gray-700 mb-2">User</label>
                 <select name="user" value={reviewForm.user} onChange={handleReviewFormChange} className="w-full px-3 py-2 border border-gray-300 rounded" required>
-                  <option value="">Chọn người dùng</option>
+                  <option value="">Select User</option>
                   {reviewUsers.map(u => <option key={u._id} value={u._id}>{u.name} ({u.email})</option>)}
                 </select>
               </div>
               <div className="mb-4">
-                <label className="block text-gray-700 mb-2">Sản phẩm</label>
+                <label className="block text-gray-700 mb-2">Product</label>
                 <select name="product" value={reviewForm.product} onChange={handleReviewFormChange} className="w-full px-3 py-2 border border-gray-300 rounded" required>
-                  <option value="">Chọn sản phẩm</option>
+                  <option value="">Select Product</option>
                   {reviewProducts.map(p => <option key={p._id} value={p._id}>{p.name}</option>)}
                 </select>
               </div>
               <div className="mb-4">
-                <label className="block text-gray-700 mb-2">Tên hiển thị</label>
+                <label className="block text-gray-700 mb-2">Display Name</label>
                 <input type="text" name="name" value={reviewForm.name} onChange={handleReviewFormChange} className="w-full px-3 py-2 border border-gray-300 rounded" required />
               </div>
               <div className="mb-4">
-                <label className="block text-gray-700 mb-2">Số sao</label>
+                <label className="block text-gray-700 mb-2">Rating</label>
                 <select name="rating" value={reviewForm.rating} onChange={handleReviewFormChange} className="w-full px-3 py-2 border border-gray-300 rounded" required>
                   {[1,2,3,4,5].map(n => <option key={n} value={n}>{n} ⭐</option>)}
                 </select>
               </div>
               <div className="mb-4">
-                <label className="block text-gray-700 mb-2">Bình luận</label>
+                <label className="block text-gray-700 mb-2">Comment</label>
                 <textarea name="comment" value={reviewForm.comment} onChange={handleReviewFormChange} className="w-full px-3 py-2 border border-gray-300 rounded" required />
               </div>
               <div className="flex justify-end gap-2">
-                <button type="button" onClick={closeReviewModal} className="px-4 py-2 border border-gray-300 rounded hover:bg-gray-100 transition-colors">Hủy</button>
-                <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors" disabled={reviewSaving}>{reviewSaving ? 'Đang lưu...' : 'Lưu'}</button>
+                <button type="button" onClick={closeReviewModal} className="px-4 py-2 border border-gray-300 rounded hover:bg-gray-100 transition-colors">Cancel</button>
+                <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors" disabled={reviewSaving}>{reviewSaving ? 'Saving...' : 'Save'}</button>
               </div>
             </form>
           </div>
@@ -264,15 +264,15 @@ const AdminReviews = () => {
       {showViewModal && viewReview && (
         <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
           <div className="bg-white rounded-xl shadow-lg p-6 w-full max-w-md">
-            <h2 className="text-xl font-bold text-green-700 mb-4">Chi tiết đánh giá</h2>
-            <div className="mb-2"><b>Người dùng:</b> {reviewUsers.find(u => u._id === (viewReview.user?._id || viewReview.user))?.name || viewReview.name || viewReview.user}</div>
-            <div className="mb-2"><b>Sản phẩm:</b> {reviewProducts.find(p => p._id === (viewReview.product?._id || viewReview.product))?.name || viewReview.product}</div>
-            <div className="mb-2"><b>Tên hiển thị:</b> {viewReview.name}</div>
-            <div className="mb-2"><b>Số sao:</b> {viewReview.rating} ⭐</div>
-            <div className="mb-2"><b>Bình luận:</b> {viewReview.comment}</div>
-            <div className="mb-2"><b>Ngày tạo:</b> {viewReview.createdAt ? new Date(viewReview.createdAt).toLocaleDateString() : ''}</div>
+            <h2 className="text-xl font-bold text-green-700 mb-4">Review Details</h2>
+            <div className="mb-2"><b>User:</b> {reviewUsers.find(u => u._id === (viewReview.user?._id || viewReview.user))?.name || viewReview.name || viewReview.user}</div>
+            <div className="mb-2"><b>Product:</b> {reviewProducts.find(p => p._id === (viewReview.product?._id || viewReview.product))?.name || viewReview.product}</div>
+            <div className="mb-2"><b>Display Name:</b> {viewReview.name}</div>
+            <div className="mb-2"><b>Rating:</b> {viewReview.rating} ⭐</div>
+            <div className="mb-2"><b>Comment:</b> {viewReview.comment}</div>
+            <div className="mb-2"><b>Created At:</b> {viewReview.createdAt ? new Date(viewReview.createdAt).toLocaleDateString() : ''}</div>
             <div className="flex justify-end gap-2 mt-4">
-              <button type="button" onClick={closeViewModal} className="px-4 py-2 border border-gray-300 rounded hover:bg-gray-100 transition-colors">Đóng</button>
+              <button type="button" onClick={closeViewModal} className="px-4 py-2 border border-gray-300 rounded hover:bg-gray-100 transition-colors">Close</button>
             </div>
           </div>
         </div>
@@ -281,11 +281,11 @@ const AdminReviews = () => {
       {showDeleteModal && deleteTarget && (
         <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
           <div className="bg-white rounded-xl shadow-lg p-6 w-full max-w-sm">
-            <h2 className="text-xl font-bold text-red-600 mb-4">Xác nhận xóa đánh giá</h2>
-            <p className="mb-6">Bạn có chắc chắn muốn xóa đánh giá của <span className="font-bold">{reviewUsers.find(u => u._id === (deleteTarget.user?._id || deleteTarget.user))?.name || deleteTarget.name || deleteTarget.user}</span> cho sản phẩm <span className="font-bold">{reviewProducts.find(p => p._id === (deleteTarget.product?._id || deleteTarget.product))?.name || deleteTarget.product}</span> không?</p>
+            <h2 className="text-xl font-bold text-red-600 mb-4">Confirm Delete</h2>
+            <p className="mb-6">Are you sure you want to delete the review of <span className="font-bold">{reviewUsers.find(u => u._id === (deleteTarget.user?._id || deleteTarget.user))?.name || deleteTarget.name || deleteTarget.user}</span> for product <span className="font-bold">{reviewProducts.find(p => p._id === (deleteTarget.product?._id || deleteTarget.product))?.name || deleteTarget.product}</span>?</p>
             <div className="flex gap-3 justify-end">
-              <button onClick={closeDeleteModal} className="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300 font-semibold">Hủy</button>
-              <button onClick={confirmDeleteReview} className="px-4 py-2 rounded bg-red-600 hover:bg-red-700 text-white font-semibold">Xóa</button>
+              <button onClick={closeDeleteModal} className="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300 font-semibold">Cancel</button>
+              <button onClick={confirmDeleteReview} className="px-4 py-2 rounded bg-red-600 hover:bg-red-700 text-white font-semibold">Delete</button>
             </div>
           </div>
         </div>

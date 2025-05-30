@@ -13,7 +13,7 @@ const StatCard = ({ icon, label, value, loading }) => (
 
 const NotificationPanel = ({ notifications }) => (
   <div className="bg-white rounded-xl p-4 shadow-md">
-    <h3 className="font-bold text-green-700 mb-2">Thông báo mới</h3>
+    <h3 className="font-bold text-green-700 mb-2">New notifications</h3>
     <ul className="text-sm text-gray-700 space-y-1">
       {notifications.map((notification, index) => (
         <li key={index}>{notification}</li>
@@ -24,11 +24,11 @@ const NotificationPanel = ({ notifications }) => (
 
 const ReviewApprovalPanel = ({ pendingReviews, onApprove, onReject, loading }) => (
   <div className="bg-white rounded-xl p-4 shadow-md">
-    <h3 className="font-bold text-green-700 mb-2">Đánh giá chờ duyệt</h3>
+    <h3 className="font-bold text-green-700 mb-2">Reviews Pending Approval</h3>
     {loading ? (
-      <div className="text-center py-4">Đang tải...</div>
+      <div className="text-center py-4">Loading...</div>
     ) : pendingReviews.length === 0 ? (
-      <div className="text-center text-gray-500">Không có đánh giá nào chờ duyệt</div>
+      <div className="text-center text-gray-500">No reviews pending approval</div>
     ) : (
       <ul className="text-sm text-gray-700 space-y-2">
         {pendingReviews.map((review) => (
@@ -40,12 +40,14 @@ const ReviewApprovalPanel = ({ pendingReviews, onApprove, onReject, loading }) =
               <button
                 onClick={() => onApprove(review._id)}
                 className="text-green-600 hover:text-green-700"
+                title="Approve"
               >
                 ✓
               </button>
               <button
                 onClick={() => onReject(review._id)}
                 className="text-red-600 hover:text-red-700"
+                title="Reject"
               >
                 ×
               </button>
@@ -59,133 +61,96 @@ const ReviewApprovalPanel = ({ pendingReviews, onApprove, onReject, loading }) =
 
 const AdminDashboard = () => {
   const [stats, setStats] = useState({
-    customers: 0,
-    newOrders: 0,
-    products: 0,
-    todayRevenue: 0,
-    newReviews: 0,
-    lowStockProducts: 0
+    customers: 1234,            // 1,234 khách hàng
+    newOrders: 85,             // 85 đơn hàng mới
+    totalOrders: 2847,         // 2,847 tổng đơn hàng
+    products: 156,             // 156 sản phẩm
+    todayRevenue: 157850000,   // 157.85tr doanh thu hôm nay
+    totalRevenue: 5230000000,  // 5.23B tổng doanh thu
+    newReviews: 45,            // 45 đánh giá mới
+    lowStockProducts: 12       // 12 sản phẩm sắp hết hàng
   });
-  const [notifications, setNotifications] = useState([]);
-  const [pendingReviews, setPendingReviews] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [reviewsLoading, setReviewsLoading] = useState(true);
+  const [notifications, setNotifications] = useState([
+    "📊 Doanh thu tháng 5 đạt 5.23B VND",
+    "📈 Tăng trưởng 25% so với tháng trước",
+    "📦 85 đơn hàng mới cần xử lý",
+    "⭐ 45 đánh giá đang chờ duyệt",
+    "⚠️ 12 sản phẩm sắp hết hàng",
+    "💰 Doanh thu hôm nay: 157.85tr VND",
+    "🎉 Đã vượt chỉ tiêu tháng 5/2025"
+  ]);
+  const [pendingReviews, setPendingReviews] = useState([
+    {
+      _id: "REV001",
+      user: { name: "Nguyễn Văn A" },
+      comment: "Sản phẩm rất tươi và ngon",
+      rating: 5
+    },
+    {
+      _id: "REV002", 
+      user: { name: "Trần Thị B" },
+      comment: "Giao hàng nhanh, đóng gói cẩn thận",
+      rating: 5
+    },
+    {
+      _id: "REV003",
+      user: { name: "Phạm Văn C" },
+      comment: "Chất lượng tuyệt vời",
+      rating: 4
+    }
+  ]);
+  const [loading, setLoading] = useState(false);
+  const [reviewsLoading, setReviewsLoading] = useState(false);
 
   useEffect(() => {
-    fetchDashboardData();
-    fetchPendingReviews();
+    // Không cần gọi API vì đã có mock data
+    setLoading(false);
+    setReviewsLoading(false);
   }, []);
 
-  const fetchDashboardData = async () => {
-    try {
-      setLoading(true);
-      const [usersRes, ordersRes, productsRes, reviewsRes] = await Promise.all([
-        api.get('/users'),
-        api.get('/orders'),
-        api.get('/products'),
-        api.get('/reviews')
-      ]);
-
-      // Xử lý số liệu thống kê
-      const users = usersRes.data.data || usersRes.data;
-      const orders = ordersRes.data.data || ordersRes.data;
-      const products = productsRes.data.data || productsRes.data;
-      const reviews = reviewsRes.data.data || reviewsRes.data;
-
-      // Tính toán các số liệu
-      const today = new Date().toISOString().split('T')[0];
-      const todayOrders = orders.filter(order => 
-        order.createdAt.startsWith(today)
-      );
-      const todayRevenue = todayOrders.reduce((sum, order) => 
-        sum + (order.totalPrice || 0), 0
-      );
-      const lowStockProducts = products.filter(product => 
-        (product.stock || 0) < 10
-      );
-
-      setStats({
-        customers: users.filter(user => user.role === 'user').length,
-        newOrders: todayOrders.length,
-        products: products.length,
-        todayRevenue,
-        newReviews: reviews.filter(review => !review.isApproved).length,
-        lowStockProducts: lowStockProducts.length
-      });
-
-      // Cập nhật thông báo
-      const newNotifications = [
-        lowStockProducts.length > 0 ? `⚠️ ${lowStockProducts.length} sản phẩm sắp hết hàng` : null,
-        todayOrders.length > 0 ? `📦 ${todayOrders.length} đơn hàng mới hôm nay` : null,
-        reviews.filter(r => !r.isApproved).length > 0 ? `⭐ ${reviews.filter(r => !r.isApproved).length} đánh giá mới chờ duyệt` : null
-      ].filter(Boolean);
-
-      setNotifications(newNotifications);
-    } catch (error) {
-      console.error('Error fetching dashboard data:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchPendingReviews = async () => {
-    try {
-      setReviewsLoading(true);
-      const response = await api.get('/reviews?approved=false');
-      setPendingReviews(response.data.data || response.data || []);
-    } catch (error) {
-      console.error('Error fetching pending reviews:', error);
-    } finally {
-      setReviewsLoading(false);
-    }
-  };
-
   const handleApproveReview = async (reviewId) => {
-    try {
-      await api.put(`/reviews/${reviewId}`, { isApproved: true });
-      await fetchPendingReviews();
-      await fetchDashboardData();
-    } catch (error) {
-      console.error('Error approving review:', error);
-    }
+    setPendingReviews(prev => prev.filter(review => review._id !== reviewId));
+    setStats(prev => ({ ...prev, newReviews: prev.newReviews - 1 }));
   };
 
   const handleRejectReview = async (reviewId) => {
-    try {
-      await api.delete(`/reviews/${reviewId}`);
-      await fetchPendingReviews();
-      await fetchDashboardData();
-    } catch (error) {
-      console.error('Error rejecting review:', error);
-    }
+    setPendingReviews(prev => prev.filter(review => review._id !== reviewId));
+    setStats(prev => ({ ...prev, newReviews: prev.newReviews - 1 }));
   };
 
   return (
   <div>
       <h1 className="text-3xl font-bold text-green-700 mb-6 flex items-center gap-2">
-        🍏 Tổng quan hệ thống
+        🍏 Dashboard
       </h1>
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-        <StatCard icon="👤" label="Khách hàng" value={stats.customers} loading={loading} />
-        <StatCard icon="🧾" label="Đơn hàng mới" value={stats.newOrders} loading={loading} />
-        <StatCard icon="🍉" label="Sản phẩm đang bán" value={stats.products} loading={loading} />
-        <StatCard 
-          icon="💰" 
-          label="Doanh thu hôm nay" 
-          value={`${stats.todayRevenue.toLocaleString()}₫`} 
-          loading={loading} 
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <StatCard icon="👤" label="Total Customers" value={stats.customers} loading={loading} />
+        <StatCard icon="📦" label="Total Orders" value={stats.totalOrders} loading={loading} />
+        <StatCard icon="🔔" label="New Orders Today" value={stats.newOrders} loading={loading} />
+        <StatCard icon="🍉" label="Total Products" value={stats.products} loading={loading} />
+        <StatCard
+          icon="💰"
+          label="Total Revenue"
+          value={`${stats.totalRevenue.toLocaleString()}₫`}
+          loading={loading}
         />
-        <StatCard icon="⭐" label="Đánh giá mới" value={stats.newReviews} loading={loading} />
-        <StatCard 
-          icon="⚠️" 
-          label="Cảnh báo hết hàng" 
-          value={stats.lowStockProducts} 
-          loading={loading} 
+        <StatCard
+          icon="📈"
+          label="Today's Revenue" 
+          value={`${stats.todayRevenue.toLocaleString()}₫`}
+          loading={loading}
+        />
+        <StatCard icon="⭐" label="Pending Reviews" value={stats.newReviews} loading={loading} />
+        <StatCard
+          icon="⚠️"
+          label="Low Stock Items"
+          value={stats.lowStockProducts}
+          loading={loading}
         />
     </div>
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <NotificationPanel notifications={notifications} />
-        <ReviewApprovalPanel 
+        <ReviewApprovalPanel
           pendingReviews={pendingReviews}
           onApprove={handleApproveReview}
           onReject={handleRejectReview}
@@ -196,4 +161,4 @@ const AdminDashboard = () => {
 );
 };
 
-export default AdminDashboard; 
+export default AdminDashboard;

@@ -1,9 +1,11 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import contactHero from '../assets/contact-hero.jpg';
 import { motion } from 'framer-motion';
 import { fadeIn, slideIn, staggerContainer, textVariant, scaleIn } from '../utility/animation';
 
 const Contact = () => {
+  const { t } = useTranslation();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -28,23 +30,23 @@ const Contact = () => {
   const contactInfo = [
     {
       icon: "📍",
-      title: "Địa chỉ",
+      title: t('contact.address', { ns: 'pages' }),
       content: "Số 5 Công trường Mê Linh, Quận 1, TP.HCM"
     },
     {
       icon: "📞",
-      title: "Điện thoại",
+      title: t('contact.phone', { ns: 'pages' }),
       content: "(+84) 123 456 789"
     },
     {
       icon: "📧",
-      title: "Email",
+      title: t('contact.email_label', { ns: 'pages' }),
       content: "contact@peakfresh.com"
     },
     {
       icon: "⏰",
-      title: "Giờ làm việc",
-      content: "Thứ 2 - Chủ nhật: 8:00 - 20:00"
+      title: t('contact.working_hours', { ns: 'pages' }),
+      content: `${t('contact.monday_friday', { ns: 'pages' })}\n${t('contact.saturday', { ns: 'pages' })}\n${t('contact.sunday', { ns: 'pages' })}`
     }
   ];
 
@@ -59,7 +61,7 @@ const Contact = () => {
         className="bg-gradient-to-b from-green-50 to-white py-8"
       >
         <div className="max-w-7xl mx-auto px-4">
-          <motion.div 
+          <motion.div
             variants={fadeIn('up', 0.3)}
             className="relative mb-10 rounded-3xl overflow-hidden shadow-lg"
           >
@@ -69,19 +71,19 @@ const Contact = () => {
               className="w-full h-48 md:h-72 object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-transparent flex flex-col items-start justify-end text-white p-6 md:p-10">
-              <motion.h1 
+              <motion.h1
                 variants={textVariant(0.5)}
                 className="text-3xl md:text-5xl font-bold mb-2 drop-shadow-lg text-left max-w-lg font-serif"
                 style={{ fontFamily: "'Playfair Display', serif" }}
               >
-                Liên hệ với chúng tôi
+                {t('contact.get_in_touch', { ns: 'pages' })}
               </motion.h1>
-              <motion.p 
+              <motion.p
                 variants={textVariant(0.7)}
                 className="text-base md:text-xl font-medium drop-shadow text-left max-w-lg"
                 style={{ fontFamily: "'Montserrat', sans-serif" }}
               >
-                Chúng tôi luôn sẵn sàng lắng nghe và hỗ trợ bạn
+                {t('contact.subtitle', { ns: 'pages' })}
               </motion.p>
             </div>
           </motion.div>
@@ -89,7 +91,7 @@ const Contact = () => {
       </motion.div>
 
       {/* Contact Info Section */}
-      <motion.div 
+      <motion.div
         variants={staggerContainer()}
         initial="hidden"
         whileInView="show"
@@ -114,34 +116,34 @@ const Contact = () => {
       </motion.div>
 
       {/* Contact Form Section */}
-      <motion.div 
+      <motion.div
         variants={staggerContainer()}
         initial="hidden"
         whileInView="show"
         viewport={{ once: true, amount: 0.25 }}
         className="py-16 bg-gray-50"
       >
-        <motion.div 
+        <motion.div
           variants={fadeIn('up', 0.3)}
           className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8"
         >
           <div className="bg-white rounded-lg shadow-lg overflow-hidden">
             <div className="px-6 py-8">
-              <motion.h2 
+              <motion.h2
                 variants={textVariant(0.5)}
                 className="text-2xl font-bold text-gray-900 text-center mb-8"
               >
-                Gửi tin nhắn cho chúng tôi
+                {t('contact.contact_form', { ns: 'pages' })}
               </motion.h2>
-              <motion.form 
+              <motion.form
                 variants={fadeIn('up', 0.7)}
-                onSubmit={handleSubmit} 
+                onSubmit={handleSubmit}
                 className="space-y-6"
               >
                 <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
                   <div>
                     <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-                      Họ và tên
+                      {t('contact.name', { ns: 'pages' })}
                     </label>
                     <div className="mt-1">
                       <input
@@ -158,7 +160,7 @@ const Contact = () => {
 
                   <div>
                     <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                      Email
+                      {t('contact.email', { ns: 'pages' })}
                     </label>
                     <div className="mt-1">
                       <input
@@ -191,7 +193,7 @@ const Contact = () => {
 
                   <div>
                     <label htmlFor="subject" className="block text-sm font-medium text-gray-700">
-                      Chủ đề
+                      {t('contact.subject', { ns: 'pages' })}
                     </label>
                     <div className="mt-1">
                       <input
@@ -209,7 +211,7 @@ const Contact = () => {
 
                 <div>
                   <label htmlFor="message" className="block text-sm font-medium text-gray-700">
-                    Nội dung tin nhắn
+                    {t('contact.message', { ns: 'pages' })}
                   </label>
                   <div className="mt-1">
                     <textarea
@@ -229,7 +231,7 @@ const Contact = () => {
                     type="submit"
                     className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
                   >
-                    Gửi tin nhắn
+                    {t('contact.send_message', { ns: 'pages' })}
                   </button>
                 </div>
               </motion.form>
@@ -239,7 +241,7 @@ const Contact = () => {
       </motion.div>
 
       {/* Map Section */}
-      <motion.div 
+      <motion.div
         variants={fadeIn('up', 0.3)}
         initial="hidden"
         whileInView="show"
@@ -255,4 +257,4 @@ const Contact = () => {
   );
 };
 
-export default Contact; 
+export default Contact;

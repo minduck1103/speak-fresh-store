@@ -1,52 +1,54 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import aboutHero from '../assets/about-hero.jpg';
 import { motion } from 'framer-motion';
 import { fadeIn, slideIn, staggerContainer, textVariant, scaleIn } from '../utility/animation';
 
 const About = () => {
+  const { t } = useTranslation();
   const values = [
     {
       icon: "🌱",
-      title: "Nguồn gốc tự nhiên",
-      description: "Chúng tôi cam kết cung cấp các sản phẩm trái cây tươi ngon, được trồng và thu hoạch từ những vùng đất màu mỡ nhất."
+      title: t('about.values.natural_origin', { ns: 'pages' }),
+      description: t('about.values.natural_desc', { ns: 'pages' })
     },
     {
       icon: "✨",
-      title: "Chất lượng hàng đầu",
-      description: "Mỗi sản phẩm đều trải qua quy trình kiểm định nghiêm ngặt để đảm bảo đạt tiêu chuẩn chất lượng cao nhất."
+      title: t('about.values.top_quality', { ns: 'pages' }),
+      description: t('about.values.quality_desc', { ns: 'pages' })
     },
     {
       icon: "🌍",
-      title: "Bền vững môi trường",
-      description: "Chúng tôi áp dụng các phương pháp canh tác bền vững và thân thiện với môi trường trong toàn bộ quy trình sản xuất."
+      title: t('about.values.sustainable', { ns: 'pages' }),
+      description: t('about.values.sustainable_desc', { ns: 'pages' })
     },
     {
       icon: "🤝",
-      title: "Đối tác tin cậy",
-      description: "Xây dựng mối quan hệ bền vững với nông dân và đối tác, đảm bảo nguồn cung ổn định và chất lượng."
+      title: t('about.values.trusted_partner', { ns: 'pages' }),
+      description: t('about.values.partner_desc', { ns: 'pages' })
     }
   ];
 
   const milestones = [
     {
       year: "2018",
-      title: "Khởi đầu hành trình",
-      description: "PEAKFRESH được thành lập với sứ mệnh mang đến những sản phẩm trái cây tươi ngon nhất."
+      title: t('about.milestones.2018_title', { ns: 'pages' }),
+      description: t('about.milestones.2018_desc', { ns: 'pages' })
     },
     {
       year: "2019",
-      title: "Mở rộng thị trường",
-      description: "Phát triển mạng lưới đối tác và mở rộng phạm vi phục vụ trên toàn quốc."
+      title: t('about.milestones.2019_title', { ns: 'pages' }),
+      description: t('about.milestones.2019_desc', { ns: 'pages' })
     },
     {
       year: "2020",
-      title: "Chuyển đổi số",
-      description: "Ra mắt nền tảng thương mại điện tử, giúp khách hàng dễ dàng tiếp cận sản phẩm."
+      title: t('about.milestones.2020_title', { ns: 'pages' }),
+      description: t('about.milestones.2020_desc', { ns: 'pages' })
     },
     {
       year: "2023",
-      title: "Phát triển bền vững",
-      description: "Đạt chứng nhận về nông nghiệp bền vững và mở rộng quan hệ đối tác quốc tế."
+      title: t('about.milestones.2023_title', { ns: 'pages' }),
+      description: t('about.milestones.2023_desc', { ns: 'pages' })
     }
   ];
 
@@ -61,7 +63,7 @@ const About = () => {
         className="bg-gradient-to-b from-green-50 to-white py-8"
       >
         <div className="max-w-7xl mx-auto px-4">
-          <motion.div 
+          <motion.div
             variants={fadeIn('up', 0.3)}
             className="relative mb-10 rounded-3xl overflow-hidden shadow-lg"
           >
@@ -71,19 +73,19 @@ const About = () => {
               className="w-full h-48 md:h-72 object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-transparent flex flex-col items-start justify-end text-white p-6 md:p-10">
-              <motion.h1 
+              <motion.h1
                 variants={textVariant(0.5)}
                 className="text-3xl md:text-5xl font-bold mb-2 drop-shadow-lg text-left max-w-lg font-serif"
                 style={{ fontFamily: "'Playfair Display', serif" }}
               >
-                Về PEAKFRESH
+                {t('about.hero_title', { ns: 'pages' })}
               </motion.h1>
-              <motion.p 
+              <motion.p
                 variants={textVariant(0.7)}
                 className="text-base md:text-xl font-medium drop-shadow text-left max-w-lg"
                 style={{ fontFamily: "'Montserrat', sans-serif" }}
               >
-                Chúng tôi tin rằng mỗi người đều xứng đáng được thưởng thức những trái cây tươi ngon và bổ dưỡng nhất
+                {t('about.hero_description', { ns: 'pages' })}
               </motion.p>
             </div>
           </motion.div>
@@ -91,7 +93,7 @@ const About = () => {
       </motion.div>
 
       {/* Values Section */}
-      <motion.div 
+      <motion.div
         variants={staggerContainer()}
         initial="hidden"
         whileInView="show"
@@ -99,12 +101,12 @@ const About = () => {
         className="py-16 bg-white"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div 
+          <motion.div
             variants={fadeIn('up', 0.3)}
             className="text-center"
           >
             <h2 className="text-3xl font-bold text-gray-900 mb-8">
-              Giá trị cốt lõi
+              {t('about.values_title', { ns: 'pages' })}
             </h2>
           </motion.div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -128,7 +130,7 @@ const About = () => {
       </motion.div>
 
       {/* Timeline Section */}
-      <motion.div 
+      <motion.div
         variants={staggerContainer()}
         initial="hidden"
         whileInView="show"
@@ -138,7 +140,7 @@ const About = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-gray-900">
-              Hành trình phát triển
+              {t('about.timeline_title', { ns: 'pages' })}
             </h2>
           </div>
           <div className="relative">
@@ -171,7 +173,7 @@ const About = () => {
       </motion.div>
 
       {/* Mission Section */}
-      <motion.div 
+      <motion.div
         variants={staggerContainer()}
         initial="hidden"
         whileInView="show"
@@ -182,19 +184,16 @@ const About = () => {
           <div className="lg:grid lg:grid-cols-2 lg:gap-8 lg:items-center">
             <motion.div variants={slideIn('left', 'tween', 0.3, 1)}>
               <h2 className="text-3xl font-bold text-gray-900 mb-4">
-                Sứ mệnh của chúng tôi
+                {t('about.mission_title', { ns: 'pages' })}
               </h2>
               <p className="text-lg text-gray-600 mb-6">
-                PEAKFRESH cam kết mang đến cho khách hàng những sản phẩm trái cây tươi ngon nhất, 
-                được tuyển chọn kỹ lưỡng từ những vùng trồng uy tín trong và ngoài nước.
+                {t('about.mission_description_1', { ns: 'pages' })}
               </p>
               <p className="text-lg text-gray-600">
-                Chúng tôi không ngừng nỗ lực cải tiến quy trình, ứng dụng công nghệ hiện đại 
-                trong bảo quản và vận chuyển, đảm bảo trái cây luôn giữ được độ tươi ngon 
-                khi đến tay người tiêu dùng.
+                {t('about.mission_description_2', { ns: 'pages' })}
               </p>
             </motion.div>
-            <motion.div 
+            <motion.div
               variants={slideIn('right', 'tween', 0.3, 1)}
               className="mt-8 lg:mt-0"
             >
@@ -211,4 +210,4 @@ const About = () => {
   );
 };
 
-export default About; 
+export default About;
