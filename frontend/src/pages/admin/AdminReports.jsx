@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Bar } from 'react-chartjs-2';
+
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -9,7 +10,6 @@ import {
   Tooltip,
   Legend
 } from 'chart.js';
-import htmlDocx from 'html-docx-js/dist/html-docx';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
@@ -54,6 +54,132 @@ const StatCard = ({ icon, label, value }) => (
     <div className="text-green-800 mt-1">{label}</div>
   </div>
 );
+
+// Function to export data as downloadable HTML file
+const exportToHTML = () => {
+  const htmlContent = `
+    <!DOCTYPE html>
+    <html lang="vi">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Speak Fresh - Admin Report</title>
+        <style>
+            body { font-family: Arial, sans-serif; margin: 20px; }
+            .header { text-align: center; margin-bottom: 30px; }
+            .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-bottom: 30px; }
+            .stat-card { background: #f0fdf4; padding: 20px; border-radius: 8px; border: 1px solid #bbf7d0; }
+            .stat-value { font-size: 24px; font-weight: bold; color: #15803d; }
+            .stat-label { color: #166534; margin-top: 5px; }
+            table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+            th, td { padding: 10px; text-align: left; border-bottom: 1px solid #ddd; }
+            th { background-color: #f0fdf4; color: #15803d; font-weight: bold; }
+            .section { margin-bottom: 30px; }
+            .section-title { color: #15803d; font-size: 18px; font-weight: bold; margin-bottom: 15px; }
+            @media print { body { margin: 0; } }
+        </style>
+    </head>
+    <body>
+        <div class="header">
+            <h1>🍃 SPEAK FRESH - ADMIN REPORT</h1>
+            <p>Generated on: ${new Date().toLocaleDateString('vi-VN')}</p>
+        </div>
+        
+        <div class="section">
+            <h2 class="section-title">📊 Summary Statistics</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Total Revenue</div>
+                    <div class="stat-value">${mockStats.totalRevenue.toLocaleString()}₫</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Total Orders</div>
+                    <div class="stat-value">${mockStats.totalOrders.toLocaleString()}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Total Customers</div>
+                    <div class="stat-value">${mockStats.totalCustomers.toLocaleString()}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Monthly Growth</div>
+                    <div class="stat-value">${mockStats.monthlyGrowth}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">🏆 Top 5 Best-Selling Products</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Sold</th>
+                        <th>Revenue</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${mockBestProducts.map(product => `
+                        <tr>
+                            <td>${product.name}</td>
+                            <td>${product.sold}</td>
+                            <td>${product.revenue.toLocaleString()}₫</td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">👥 Top 5 Loyal Customers</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Customer</th>
+                        <th>Orders</th>
+                        <th>Total Spent</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${mockBestCustomers.map(customer => `
+                        <tr>
+                            <td>${customer.name}</td>
+                            <td>${customer.orders}</td>
+                            <td>${customer.totalSpent.toLocaleString()}₫</td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">💰 Daily Revenue (Last 5 Days)</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Revenue</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${mockRevenue.map(day => `
+                        <tr>
+                            <td>${new Date(day.date).toLocaleDateString('vi-VN')}</td>
+                            <td>${day.value.toLocaleString()}₫</td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        </div>
+    </body>
+    </html>
+  `;
+
+  const blob = new Blob([htmlContent], { type: 'text/html' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = `speak-fresh-admin-report-${new Date().toISOString().split('T')[0]}.html`;
+  link.click();
+};
 
 const AdminReports = () => {
   const [showExportModal, setShowExportModal] = useState(false);
@@ -150,56 +276,38 @@ const AdminReports = () => {
 
       {showExportModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl p-8 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-xl p-8 max-w-md w-full">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-2xl font-bold text-green-700">Export Report</h2>
               <button onClick={() => setShowExportModal(false)} className="text-gray-500 hover:text-gray-700">✕</button>
             </div>
 
-            <div id="admin-report-word-content" className="space-y-8">
-              <div>
-                <h3 className="text-xl font-bold text-green-700 mb-4">Summary Statistics</h3>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-green-50 p-4 rounded-lg">
-                    <div className="text-sm text-gray-600">Total Revenue</div>
-                    <div className="text-2xl font-bold text-green-700">{mockStats.totalRevenue.toLocaleString()}₫</div>
-                  </div>
-                  <div className="bg-green-50 p-4 rounded-lg">
-                    <div className="text-sm text-gray-600">Total Orders</div>
-                    <div className="text-2xl font-bold text-green-700">{mockStats.totalOrders}</div>
-                  </div>
-                  <div className="bg-green-50 p-4 rounded-lg">
-                    <div className="text-sm text-gray-600">Average Order Value</div>
-                    <div className="text-2xl font-bold text-green-700">{mockStats.averageOrderValue.toLocaleString()}₫</div>
-                  </div>
-                  <div className="bg-green-50 p-4 rounded-lg">
-                    <div className="text-sm text-gray-600">Best Seller</div>
-                    <div className="text-2xl font-bold text-green-700">{mockStats.bestSeller}</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="mt-8 flex justify-end gap-2">
+            <div className="space-y-4">
+              <p className="text-gray-600">Choose export format:</p>
+              
               <button 
-                onClick={() => window.print()}
-                className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700"
+                onClick={() => {
+                  window.print();
+                  setShowExportModal(false);
+                }}
+                className="w-full bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 flex items-center justify-center gap-2"
               >
                 🖨️ Print Report
               </button>
+              
               <button
                 onClick={() => {
-                  const el = document.getElementById('admin-report-word-content');
-                  const html = el.innerHTML;
-                  const blob = htmlDocx.asBlob(html);
-                  const link = document.createElement('a');
-                  link.href = URL.createObjectURL(blob);
-                  link.download = 'admin-report.docx';
-                  link.click();
+                  exportToHTML();
+                  setShowExportModal(false);
                 }}
-                className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700"
+                className="w-full bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 flex items-center justify-center gap-2"
               >
-                📄 Export Word
+                📄 Download HTML Report
               </button>
+              
+              <div className="text-sm text-gray-500 mt-4">
+                <p>💡 Tip: HTML report can be opened in any browser and saved as PDF using Ctrl+P → Save as PDF</p>
+              </div>
             </div>
           </div>
         </div>
