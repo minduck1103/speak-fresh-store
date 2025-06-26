@@ -9,7 +9,7 @@ import {
   Tooltip,
   Legend
 } from 'chart.js';
-import html2pdf from 'html2pdf.js';
+import htmlDocx from 'html-docx-js/dist/html-docx';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
@@ -156,7 +156,7 @@ const AdminReports = () => {
               <button onClick={() => setShowExportModal(false)} className="text-gray-500 hover:text-gray-700">✕</button>
             </div>
 
-            <div id="admin-report-pdf-content" className="space-y-8">
+            <div id="admin-report-word-content" className="space-y-8">
               <div>
                 <h3 className="text-xl font-bold text-green-700 mb-4">Summary Statistics</h3>
                 <div className="grid grid-cols-2 gap-4">
@@ -188,12 +188,17 @@ const AdminReports = () => {
               </button>
               <button
                 onClick={() => {
-                  const el = document.getElementById('admin-report-pdf-content');
-                  html2pdf().from(el).save('admin-report.pdf');
+                  const el = document.getElementById('admin-report-word-content');
+                  const html = el.innerHTML;
+                  const blob = htmlDocx.asBlob(html);
+                  const link = document.createElement('a');
+                  link.href = URL.createObjectURL(blob);
+                  link.download = 'admin-report.docx';
+                  link.click();
                 }}
-                className="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700"
+                className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700"
               >
-                🖨️ Export PDF
+                📄 Export Word
               </button>
             </div>
           </div>

@@ -15,9 +15,7 @@ dotenv.config({ path: './config/.env' });
 // Check required environment variables
 const requiredEnvVars = [
     'MONGODB_URI',
-    'JWT_SECRET',
-    'JWT_EXPIRE',
-    'JWT_COOKIE_EXPIRE'
+    'JWT_SECRET'
 ];
 
 const missingEnvVars = requiredEnvVars.filter(envVar => !process.env[envVar]);
@@ -26,6 +24,17 @@ if (missingEnvVars.length > 0) {
     console.error('Missing required environment variables:', missingEnvVars);
     console.error('Please check your .env file or environment configuration');
     process.exit(1);
+}
+
+// Set default values for JWT configuration if not provided
+if (!process.env.JWT_EXPIRE) {
+    process.env.JWT_EXPIRE = '30d';
+    console.log('JWT_EXPIRE not set, using default: 30d');
+}
+
+if (!process.env.JWT_COOKIE_EXPIRE) {
+    process.env.JWT_COOKIE_EXPIRE = '30';
+    console.log('JWT_COOKIE_EXPIRE not set, using default: 30 days');
 }
 
 // Connect to database
